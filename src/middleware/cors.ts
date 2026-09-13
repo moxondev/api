@@ -33,6 +33,5 @@ export function setupCors(app: Express): void {
         next();
     });
 
-    app.use('/favicon.ico', express.static(join(__dirname, '..', '..', 'src', 'favicon.ico')));
     app.use('/robots.txt', express.static(join(__dirname, '..', '..', 'robots.txt')));
 }
