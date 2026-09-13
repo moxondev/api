@@ -1,7 +1,6 @@
 .github/
 dist/plugins/
 src/*
-!src/favicon.ico
 tests/
 tsconfig*.json
 .env
