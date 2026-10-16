@@ -1,7 +1,6 @@
 import { type Request, type Response, Router } from 'express';
 
 import { MAX_TOKEN_LENGTH, MIN_TOKEN_LENGTH } from '../constants.js';
-import type { HashResult } from '../modules/v4/hash.js';
 import type { CsvResult } from '../modules/v5/csv.js';
 import type { JwtResult } from '../modules/v5/jwt.js';
 import { challengeStorage, chatStorage, ticTacToeStorage } from '../storage/index.js';
@@ -260,28 +259,6 @@ router.post('/:version/diff', (req: Request, res: Response) => {
 
     try {
         const result = diffFn(a, b, mode as string | undefined);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Generate hash
-router.post('/:version/hash', (req: Request, res: Response) => {
-    const { text, method, encoding } = (req.body as Record<string, string>) || {};
-
-    if (!text) {
-        error(res, 400, 'Please provide a text (?text={text})');
-        return;
-    }
-    if (!method) {
-        error(res, 400, 'Please provide a valid hash algorithm (&method={algorithm})');
-        return;
-    }
-
-    try {
-        const hashFn = req.module.hash as (t: string, m: string, e?: string) => HashResult;
-        const result = hashFn(text, method, encoding);
         res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);

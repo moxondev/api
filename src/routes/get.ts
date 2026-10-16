@@ -501,9 +501,6 @@ router.get('/:version/geo', (req: Request, res: Response) => {
     }
 });
 
-// GET hash error
-router.get('/:version/hash', postOnly('hash'));
-
 // Echo request headers
 router.get('/:version/headers', (req: Request, res: Response) => {
     const redacted = new Set(['authorization', 'cookie', 'set-cookie', 'proxy-authorization']);
