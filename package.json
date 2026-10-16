@@ -1,6 +1,6 @@
 {
-    "version": "6.0.0",
-    "name": "@20syldev/api",
+    "version": "6.0.0-pre",
+    "name": "@moxon/api",
     "description": "Node.js API with multiple features. Check the documentation at https://docs.sylvain.sh",
     "main": "./dist/modules/v6.js",
     "types": "./dist/modules/v6.d.ts",
@@ -72,7 +72,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/20syldev/api.git"
+        "url": "git+https://github.com/20syldev/moxon.git"
     },
     "keywords": [
         "api",
@@ -84,7 +84,7 @@
     "author": "Sylvain L.",
     "license": "BSD 3-Clause",
     "bugs": {
-        "url": "https://github.com/20syldev/api/issues"
+        "url": "https://github.com/20syldev/moxon/issues"
     },
     "homepage": "https://api.sylvain.sh"
 }
