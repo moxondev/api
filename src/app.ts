@@ -1,6 +1,8 @@
 import express, { type Request, type Response, type Router } from 'express';
 
 import { env } from './config/env.js';
+import { endpoints } from './endpoints/index.js';
+import { build } from './endpoints/router.js';
 import { setupCors } from './middleware/cors.js';
 import { errorHandler } from './middleware/error.js';
 import { jsonResponseMiddleware } from './middleware/json.js';
@@ -44,7 +46,8 @@ try {
     // No plugins bundled in this build
 }
 
-// Versioned routes
+// Versioned routes, declared endpoints first
+app.use(build(endpoints));
 app.use(getRoutes);
 app.use(postRoutes);
 app.use(patchRoutes);
