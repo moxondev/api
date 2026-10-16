@@ -1,8 +1,8 @@
-# @20syldev/api
+# @moxon/api
 
 ## About
 
-`@20syldev/api` bundles 40+ self-contained utilities: encryption, matrix math, SVG charts, CSV, JWT, TOTP, barcodes, fake data generation, text processing, validation and more. Install it and import — no configuration, no setup step, types included.
+`@moxon/api` bundles 40+ self-contained utilities: encryption, matrix math, SVG charts, CSV, JWT, TOTP, barcodes, fake data generation, text processing, validation and more. Install it and import — no configuration, no setup step, types included.
 
 It works two ways:
 
@@ -11,25 +11,41 @@ It works two ways:
 
 The HTTP surface is versioned from `v4` to `v6`, and every version stays mounted side by side, so a new release never changes the behaviour of the one you already target. The full endpoint reference lives on [docs.sylvain.sh](https://docs.sylvain.sh).
 
+## Migrating from `@20syldev/api`
+
+`@moxon/api` is the new name of `@20syldev/api`. This release is the code of `@20syldev/api@6.0.0` under its new name: same exports, same `/v6` HTTP API. Nothing else changed.
+
+```bash
+npm uninstall @20syldev/api
+npm install @moxon/api
+```
+
+Then replace the package name in your imports. The subpaths are the same.
+
+```diff
+- import { evaluate } from '@20syldev/api/v6';
++ import { evaluate } from '@moxon/api/v6';
+```
+
 ## Requirements
 
 **Node.js >= 22.12.0.** The package ships as ESM, but that does not lock out CommonJS: Node has been able to `require()` an ESM module since 22.12, which is why that is the floor. The library entry works from both module systems.
 
 ```js
-import { evaluate } from '@20syldev/api'; // ESM
-const { evaluate } = require('@20syldev/api'); // CommonJS
+import { evaluate } from '@moxon/api'; // ESM
+const { evaluate } = require('@moxon/api'); // CommonJS
 ```
 
 The server entry loads its plugins asynchronously, so it must be imported rather than required:
 
 ```js
-await import('@20syldev/api/server'); // from CommonJS
+await import('@moxon/api/server'); // from CommonJS
 ```
 
 ## Installation
 
 ```console
-$ npm install @20syldev/api
+$ npm install @moxon/api
 ```
 
 ## Quick start
@@ -37,11 +53,11 @@ $ npm install @20syldev/api
 The root import always resolves to the latest version. Use a subpath (`/v4` to `/v6`) to pin a specific one.
 
 ```js
-// Latest version, equivalent to '@20syldev/api/v6'
-import { color, evaluate, username } from '@20syldev/api';
+// Latest version, equivalent to '@moxon/api/v6'
+import { color, evaluate, username } from '@moxon/api';
 
 // Or a specific version
-import { color as colorV4 } from '@20syldev/api/v4';
+import { color as colorV4 } from '@moxon/api/v4';
 
 // Evaluate a math expression
 const expr = evaluate('sin(pi / 2) + sqrt(4)', 5);
@@ -106,7 +122,7 @@ import {
     parseUrl,
     symmetric,
     validate,
-} from '@20syldev/api/v5';
+} from '@moxon/api/v5';
 
 // RSA key generation, encryption and decryption
 const { publicKey, privateKey } = asymmetric('keygen', {});
@@ -173,7 +189,7 @@ console.log(validate.email('alice@example.com').valid); // true
 From the installed package, one import mounts every version:
 
 ```js
-import '@20syldev/api/server';
+import '@moxon/api/server';
 ```
 
 From a clone of the repository:
@@ -183,10 +199,10 @@ $ npm run build && npm start
 ```
 
 ```console
-> @20syldev/api@6.0.0 build
+> @moxon/api@6.0.0-pre build
 > tsc
 
-> @20syldev/api@6.0.0 start
+> @moxon/api@6.0.0-pre start
 > node dist/app.js
 
 API is running on
