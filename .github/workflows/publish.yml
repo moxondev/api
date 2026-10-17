@@ -1,4 +1,4 @@
-name: 20syldev/api package publish
+name: moxon package publish
 
 on:
   release:
