@@ -9,11 +9,11 @@ It works two ways:
 - **As a library** — import any module directly into your code.
 - **As a server** — a single import boots an Express app that exposes every module over HTTP.
 
-The HTTP surface is versioned from `v4` to `v6`, and every version stays mounted side by side, so a new release never changes the behaviour of the one you already target. The full endpoint reference lives on [docs.sylvain.sh](https://docs.sylvain.sh).
+The HTTP surface is versioned from `v4` to `v6`, and every version stays mounted side by side, so a new release never changes the behaviour of the one you already target. The full endpoint reference lives on [moxon.dev](https://moxon.dev).
 
 ## Migrating from `@20syldev/api`
 
-`@moxon/api` is the new name of `@20syldev/api`. This release is the code of `@20syldev/api@6.0.0` under its new name: same exports, same `/v6` HTTP API. Nothing else changed.
+`@moxon/api` is the new name of `@20syldev/api`, which no longer receives updates. `6.0.0-pre` carries the code of `@20syldev/api@6.0.0` under the new name, and every release since ships only as `@moxon/api`. The exports and the `/v6` HTTP API are unchanged, so migrating only takes a rename.
 
 ```bash
 npm uninstall @20syldev/api
@@ -184,6 +184,21 @@ console.log(parsed.host, parsed.port, parsed.params, parsed.fragment);
 console.log(validate.email('alice@example.com').valid); // true
 ```
 
+## Endpoint manifest
+
+`@moxon/api/manifest` describes the HTTP endpoints as data — method, path, category, parameters and a request example — for tools that document or call the API. Each entry is typed as `ManifestEntry`.
+
+```js
+import { manifest } from '@moxon/api/manifest';
+
+const hash = manifest.find((entry) => entry.name === 'hash');
+console.log(hash.method, hash.path); // 'post' '/hash'
+console.log(Object.keys(hash.params)); // ['text', 'method', 'encoding']
+console.log(hash.example); // { text: 'hello', method: 'sha256' }
+```
+
+> _The manifest is experimental: it only lists the endpoints already declared as contracts (`hash` for now), and its shape may still change in a minor release._
+
 ## Running the server
 
 From the installed package, one import mounts every version:
@@ -270,7 +285,7 @@ Every version is fully typed. The package root always tracks the latest one.
 
 ## Hosted instance
 
-A public instance runs at [api.sylvain.sh](https://api.sylvain.sh), with the complete endpoint reference, request examples and usage guides on [docs.sylvain.sh](https://docs.sylvain.sh).
+A public instance runs at [api.sylvain.sh](https://api.sylvain.sh), with the complete endpoint reference, request examples and usage guides on [moxon.sylvain.sh](https://moxon.sylvain.sh).
 
 ## License
 
