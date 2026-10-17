@@ -1,5 +1,5 @@
 {
-    "version": "6.0.0-pre",
+    "version": "6.1.0",
     "name": "@moxon/api",
     "description": "Node.js API with 40+ utilities, usable as a library or over HTTP. Documentation at https://moxon.dev",
     "main": "./dist/modules/v6.js",
