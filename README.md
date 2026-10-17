@@ -215,7 +215,10 @@ $ npm run build && npm start
 
 ```console
 > @moxon/api@6.0.0-pre build
-> tsc
+> npm run clean && tsc
+
+> @moxon/api@6.0.0-pre clean
+> node -e "require('node:fs').rmSync('dist', { recursive: true, force: true })"
 
 > @moxon/api@6.0.0-pre start
 > node dist/app.js
@@ -231,7 +234,7 @@ For development with automatic reloading:
 $ npm run dev
 ```
 
-Endpoints follow the `/:version/:endpoint` pattern — `GET /v5/color`, `GET /v5/evaluate?expr=2%2B2`, `POST /v5/matrix`. `GET /` lists the available versions, and `GET /:version` lists that version's endpoints with their parameters.
+Endpoints follow the `/:version/:endpoint` pattern — `GET /v5/color`, `GET /v5/evaluate?expr=2%2B2`, `POST /v5/matrix`. `GET /` lists the available versions, and `GET /:version` lists that version's endpoints with their paths.
 
 ### Configuration
 
@@ -283,9 +286,9 @@ Every version is fully typed. The package root always tracks the latest one.
 | `npm run format` | Format with Prettier and auto-fix with ESLint           |
 | `npm run check`  | TypeScript and ESLint verification                      |
 
-## Hosted instance
+## Documentation
 
-A public instance runs at [api.sylvain.sh](https://api.sylvain.sh), with the complete endpoint reference, request examples and usage guides on [moxon.sylvain.sh](https://moxon.sylvain.sh).
+The complete endpoint reference, request examples and usage guides live on [moxon.dev](https://moxon.dev).
 
 ## License
 
