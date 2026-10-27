@@ -1,8 +1,9 @@
 import { createCanvas } from 'canvas';
 
+import { MAX_CAPTCHA_TEXT_LENGTH } from '../../constants.js';
 import type { ChallengeStorage } from '../../types/storage.js';
 import type { ChallengeVerification } from '../../utils/challenge.js';
-import { signToken, verifyToken } from '../../utils/challenge.js';
+import { readToken, signToken, verifyToken } from '../../utils/challenge.js';
 import { normalizeColor } from '../../utils/colors.js';
 import type { CaptchaOptions, CaptchaResult } from '../v4/captcha.js';
 
@@ -10,6 +11,11 @@ export interface CaptchaChallenge {
     contentType: string;
     body: Buffer;
     token: string;
+}
+
+export interface CaptchaVerification {
+    valid: boolean;
+    reason?: ChallengeVerification['reason'] | 'weak';
 }
 
 const NOISE_LEVELS = new Set(['low', 'medium', 'high']);
@@ -45,9 +51,12 @@ const muted = (): string =>
  *
  * @param options - Captcha configuration options
  * @returns Object containing the PNG buffer, content type, and the challenge text
- * @throws Error if any option is out of the accepted range
+ * @throws Error if the text is too long or any option is out of the accepted range
  */
 function hardened(options: CaptchaOptions): CaptchaResult {
+    if (options.text && options.text.length > MAX_CAPTCHA_TEXT_LENGTH) {
+        throw new Error(`Text cannot exceed ${MAX_CAPTCHA_TEXT_LENGTH} characters`);
+    }
     const text = options.text || generateText(clamp(options.length, 'length', 6, 1, 20));
     const height = clamp(options.height, 'height', 120, 50, 400);
     const width = clamp(options.width, 'width', text.length * 60, 100, 800);
@@ -150,15 +159,18 @@ function hardened(options: CaptchaOptions): CaptchaResult {
 /**
  * Generates a hardened captcha whose answer is bound to a signed token instead
  * of being returned in clear. The answer lives only inside the HMAC, so the
- * caller holds a token it cannot read the solution from.
+ * caller holds a token it cannot read the solution from. The token also
+ * carries the answer length in clear, signed along with the answer, so the
+ * verifying side can refuse a captcha generated too short to resist guessing.
  *
  * @param options - Captcha configuration options
  * @returns PNG buffer, content type, and the token to verify the answer against
- * @throws Error if any option is out of the accepted range
+ * @throws Error if the text is too long or any option is out of the accepted range
  */
 export default function captchaChallenge(options: CaptchaOptions): CaptchaChallenge {
     const { contentType, body, text } = hardened(options);
-    return { contentType, body, token: signToken('img', text.toLowerCase()) };
+    const { length } = text;
+    return { contentType, body, token: signToken('img', `${length}.${text.toLowerCase()}`, { length }) };
 }
 
 /**
@@ -168,8 +180,23 @@ export default function captchaChallenge(options: CaptchaOptions): CaptchaChalle
  * @param token - Token issued alongside the challenge image
  * @param answer - Answer read by the user, compared case-insensitively
  * @param storage - Store of already consumed nonces
+ * @param minLength - Shortest answer accepted; a correct answer to a shorter captcha is refused as weak
  * @returns Verification result, with a reason when it fails
  */
-export function verifyCaptcha(token: string, answer: string, storage: ChallengeStorage): ChallengeVerification {
-    return verifyToken(token, answer.trim().toLowerCase(), storage, 'img');
+export function verifyCaptcha(
+    token: string,
+    answer: string,
+    storage: ChallengeStorage,
+    minLength?: number,
+): CaptchaVerification {
+    const normalized = answer.trim().toLowerCase();
+    const length = (readToken(token) as { length?: unknown } | null)?.length;
+    const signed = typeof length === 'number';
+
+    // Tokens issued before the length was signed carry the bare answer
+    const result = verifyToken(token, signed ? `${length}.${normalized}` : normalized, storage, 'img');
+    if (result.valid && minLength !== undefined && !(signed && length >= minLength)) {
+        return { valid: false, reason: 'weak' };
+    }
+    return result;
 }

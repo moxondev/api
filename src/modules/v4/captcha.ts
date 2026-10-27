@@ -1,5 +1,6 @@
 import { createCanvas } from 'canvas';
 
+import { MAX_CAPTCHA_TEXT_LENGTH } from '../../constants.js';
 import { normalizeColor } from '../../utils/colors.js';
 
 export interface CaptchaOptions {
@@ -42,9 +43,12 @@ function clamp(value: number | undefined, name: string, def: number, min: number
  *
  * @param options - Captcha configuration options
  * @returns Object containing the PNG buffer, content type, and the challenge text
- * @throws Error if any option is out of the accepted range
+ * @throws Error if the text is too long or any option is out of the accepted range
  */
 export default function captcha(options: CaptchaOptions): CaptchaResult {
+    if (options.text && options.text.length > MAX_CAPTCHA_TEXT_LENGTH) {
+        throw new Error(`Text cannot exceed ${MAX_CAPTCHA_TEXT_LENGTH} characters`);
+    }
     const text = options.text || generateText(clamp(options.length, 'length', 6, 1, 20));
     const height = clamp(options.height, 'height', 120, 50, 400);
     const width = clamp(options.width, 'width', text.length * 60, 100, 800);
