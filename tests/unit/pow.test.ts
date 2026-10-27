@@ -73,4 +73,16 @@ describe('pow', () => {
     test('malformed token is invalid', () => {
         assert.equal(verifyPow('garbage', '0', store()).reason, 'invalid');
     });
+
+    test('wrong nonces never burn the challenge', () => {
+        const storage = store();
+        const challenge = pow(2);
+
+        // About one random nonce in 256 solves difficulty 2, so keep only the ones that really fail
+        const wrong = Array.from({ length: 100 }, (_, i) => `nope-${i}`).filter(
+            (nonce) => !createHash('sha256').update(`${challenge.salt}${nonce}`).digest('hex').startsWith('00'),
+        );
+        for (const nonce of wrong.slice(0, 10)) assert.equal(verifyPow(challenge.token, nonce, storage).valid, false);
+        assert.deepEqual(verifyPow(challenge.token, solve(challenge.salt, 2), storage), { valid: true });
+    });
 });
