@@ -136,3 +136,42 @@ describe('barcode v5 (5.4.0 fixes)', () => {
         assert.ok(/<rect x="20" /.test(svg));
     });
 });
+
+describe('barcode data length cap', () => {
+    for (const [name, fn] of [
+        ['v4', barcode],
+        ['v5', barcodeV5],
+    ] as const) {
+        test(`${name}: code128 accepts up to 128 characters`, () => {
+            assert.doesNotThrow(() => fn({ data: 'A'.repeat(128) }));
+            assert.doesNotThrow(() => fn({ data: 'A'.repeat(128), format: 'png', width: 5 }));
+        });
+
+        test(`${name}: code128 rejects longer data`, () => {
+            assert.throws(() => fn({ data: 'A'.repeat(129) }), /Data cannot exceed 128 characters/);
+            assert.throws(() => fn({ data: 'A'.repeat(7000) }), /Data cannot exceed 128 characters/);
+            assert.throws(() => fn({ data: 'A'.repeat(590), format: 'png' }), /Data cannot exceed/);
+        });
+
+        test(`${name}: code39 accepts up to 128 characters and rejects longer data`, () => {
+            assert.doesNotThrow(() => fn({ data: 'A'.repeat(128), type: 'code39' }));
+            assert.throws(() => fn({ data: 'A'.repeat(129), type: 'code39' }), /Data cannot exceed 128 characters/);
+        });
+
+        test(`${name}: rejects data that is not a string, such as a repeated query key`, () => {
+            for (const data of [['A'.repeat(100), 'B'.repeat(100)], { a: 1 }, 42]) {
+                assert.throws(
+                    () => fn({ data } as never),
+                    /^Error: Please provide data to encode \(\?data=\{string\}\)$/,
+                );
+            }
+        });
+
+        test(`${name}: fixed-length formats keep their own validation`, () => {
+            assert.doesNotThrow(() => fn({ data: '978030640615', type: 'ean13' }));
+            assert.throws(() => fn({ data: '9'.repeat(200), type: 'ean13' }), /EAN-13 requires 12 or 13 digits/);
+            assert.throws(() => fn({ data: '1'.repeat(200), type: 'ean8' }), /EAN-8 requires 7 or 8 digits/);
+            assert.throws(() => fn({ data: '1'.repeat(200), type: 'upca' }), /UPC-A requires 11 or 12 digits/);
+        });
+    }
+});
