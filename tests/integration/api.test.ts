@@ -287,6 +287,33 @@ describe('GET /v4/qrcode', () => {
     });
 });
 
+describe('Server-side fetches refuse internal hosts', () => {
+    test('qrcode icon on an internal host is refused the same way in v4, v5 and v6', async () => {
+        for (const icon of [
+            'https://127.0.0.2/icon.png',
+            'https://[::ffff:169.254.169.254]/',
+            'https://localhost./x',
+        ]) {
+            const query = `url=https%3A%2F%2Fexample.com&icon=${encodeURIComponent(icon)}`;
+            for (const version of ['v4', 'v5', 'v6']) {
+                const { status, body } = await getJson(`/${version}/qrcode?${query}`);
+                assert.equal(status, 400, `${version} ${icon}`);
+                assert.equal(body.error, 'Icon URL must point to a public host');
+            }
+        }
+    });
+
+    test('hyperplanning on an internal host is refused the same way in v4, v5 and v6', async () => {
+        for (const url of ['https://127.0.0.2/a.ics', 'https://[::]/a.ics', 'https://100.64.0.1/a.ics']) {
+            for (const version of ['v4', 'v5', 'v6']) {
+                const { status, body } = await sendJson('POST', `/${version}/hyperplanning`, { url });
+                assert.equal(status, 400, `${version} ${url}`);
+                assert.equal(body.error, 'Access to private/internal hosts is not allowed.');
+            }
+        }
+    });
+});
+
 describe('GET /v4/statistics', () => {
     test('basic stats', async () => {
         const { body } = await getJson('/v4/statistics?values=1,2,3,4,5');
@@ -810,6 +837,49 @@ describe('GET /v4/cron', () => {
     });
 });
 
+describe('GET /v6/cron', () => {
+    test('0 12 1 6 * in Europe/Paris returns both June dates', async () => {
+        const { status, body } = await getJson(
+            '/v6/cron?expr=0%2012%201%206%20*&count=2&from=2026-01-01T00:00:00Z&timezone=Europe/Paris',
+        );
+        assert.equal(status, 200);
+        assert.deepEqual(body.next, ['2026-06-01T10:00:00.000Z', '2027-06-01T10:00:00.000Z']);
+    });
+
+    test('never-matching 0 0 31 2 * returns 200 with no dates', async () => {
+        const start = Date.now();
+        const { status, body } = await getJson('/v6/cron?expr=0%200%2031%202%20*');
+        assert.equal(status, 200);
+        assert.deepEqual(body.next, []);
+        assert.ok(Date.now() - start < 1000);
+    });
+
+    test('UTC output matches v4', async () => {
+        const query = '/cron?expr=*%2F15%209-17%20*%20*%201-5&count=20&from=2026-01-05T08:45:00Z';
+        const v4 = await getJson(`/v4${query}`);
+        const v6 = await getJson(`/v6${query}`);
+        assert.equal(v6.status, 200);
+        assert.deepEqual(v6.body, v4.body);
+    });
+
+    test('invalid expression returns the v4 error', async () => {
+        const v4 = await getJson('/v4/cron?expr=60%20*%20*%20*%20*');
+        const v6 = await getJson('/v6/cron?expr=60%20*%20*%20*%20*');
+        assert.equal(v6.status, 400);
+        assert.deepEqual(v6.body, v4.body);
+    });
+});
+
+describe('GET /v4/cron time budget', () => {
+    test('never-matching 0 0 31 2 * returns 200 with no dates without hanging', async () => {
+        const start = Date.now();
+        const { status, body } = await getJson('/v4/cron?expr=0%200%2031%202%20*');
+        assert.equal(status, 200);
+        assert.deepEqual(body.next, []);
+        assert.ok(Date.now() - start < 5000);
+    });
+});
+
 describe('GET /v4/regex', () => {
     test('basic match returns count and matches', async () => {
         const { status, body } = await getJson('/v4/regex?pattern=hello&text=hello%20world');
@@ -827,6 +897,37 @@ describe('GET /v4/regex', () => {
     test('missing pattern returns 400', async () => {
         const { status } = await getJson('/v4/regex?text=hello');
         assert.equal(status, 400);
+    });
+
+    test('a normal pattern gets the same body in v4, v5 and v6', async () => {
+        const query = `pattern=${encodeURIComponent('(?<y>\\d{4})-(\\d{2})|(x)')}&text=2026-05%20x&flags=i`;
+        const expected = JSON.stringify({
+            valid: true,
+            pattern: '(?<y>\\d{4})-(\\d{2})|(x)',
+            flags: 'gi',
+            matches: [
+                { match: '2026-05', index: 0, groups: ['2026', '05', ''], namedGroups: { y: '2026' } },
+                { match: 'x', index: 8, groups: ['', '', 'x'], namedGroups: {} },
+            ],
+            count: 2,
+        });
+        for (const version of ['v4', 'v5', 'v6']) {
+            const res = await fetch(`${baseUrl}/${version}/regex?${query}`);
+            assert.equal(res.status, 200);
+            assert.equal(JSON.stringify(await res.json()), expected);
+        }
+    });
+
+    test('catastrophic backtracking returns 400 quickly in every version', async () => {
+        const query = `pattern=${encodeURIComponent('(a+)+$')}&text=${'a'.repeat(32)}b`;
+        for (const version of ['v4', 'v5', 'v6']) {
+            const start = Date.now();
+            const { status, body } = await getJson(`/${version}/regex?${query}`);
+            assert.equal(status, 400);
+            assert.equal(body.error, 'Pattern took too long to evaluate');
+            assert.ok(Date.now() - start < 2000);
+        }
+        assert.equal((await getJson('/v6/regex?pattern=a&text=a')).status, 200);
     });
 });
 
@@ -1036,6 +1137,46 @@ describe('POST /v5/asymmetric', () => {
     test('not available in v4 returns 404', async () => {
         const { status } = await sendJson('POST', '/v4/asymmetric', { action: 'keygen' });
         assert.equal(status, 404);
+    });
+    test('v5 and v6 keygen responses keep the same fields in the same order', async () => {
+        for (const version of ['v5', 'v6']) {
+            const { status, body } = await sendJson('POST', `/${version}/asymmetric`, {
+                action: 'keygen',
+                modulusLength: '2048',
+            });
+            assert.equal(status, 200);
+            assert.deepEqual(Object.keys(body), ['action', 'algorithm', 'modulusLength', 'publicKey', 'privateKey']);
+            assert.equal(body.modulusLength, 2048);
+        }
+    });
+    test('invalid modulus length keeps its 400 message', async () => {
+        const { status, body } = await sendJson('POST', '/v6/asymmetric', { action: 'keygen', modulusLength: 1024 });
+        assert.equal(status, 400);
+        assert.equal(body.error, 'Modulus length must be 2048 or 4096');
+    });
+    test('invalid action keeps its 400 message', async () => {
+        const { status, body } = await sendJson('POST', '/v6/asymmetric', { action: 'sign' });
+        assert.equal(status, 400);
+        assert.equal(body.error, 'Action must be "keygen", "encrypt", or "decrypt"');
+    });
+    test('4096-bit keygen does not hold up other requests', async () => {
+        const order: string[] = [];
+        const keygen = sendJson('POST', '/v6/asymmetric', { action: 'keygen', modulusLength: 4096 }).then((res) => {
+            order.push('keygen');
+            return res;
+        });
+
+        // Give the keygen request a head start so the server receives it first
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        const listing = getJson('/v6').then((res) => {
+            order.push('listing');
+            return res;
+        });
+        const [kg, ls] = await Promise.all([keygen, listing]);
+        assert.equal(kg.status, 200);
+        assert.equal(kg.body.modulusLength, 4096);
+        assert.equal(ls.status, 200);
+        assert.deepEqual(order, ['listing', 'keygen']);
     });
 });
 
@@ -1644,6 +1785,139 @@ describe('GET and POST /v5/pow', () => {
     });
 });
 
+describe('Captcha and image generator hardening', () => {
+    test('a pow token is not accepted by POST /captcha', async () => {
+        for (const version of ['v5', 'v6']) {
+            const { body } = await getJson(`/${version}/pow?difficulty=6`);
+            const answer = `${body.salt as string}.${body.difficulty as number}`;
+            const forged = await sendJson('POST', `/${version}/captcha`, { token: body.token, answer });
+            const garbage = await sendJson('POST', `/${version}/captcha`, { token: 'garbage', answer: 'x' });
+            assert.equal(forged.status, 200);
+            assert.deepEqual(forged.body, garbage.body);
+            assert.deepEqual(forged.body, { valid: false, reason: 'invalid' });
+        }
+    });
+    test('a captcha token is burnt after five wrong answers', async () => {
+        const res = await fetch(`${baseUrl}/v6/captcha`);
+        const token = res.headers.get('x-captcha-token')!;
+        for (let i = 0; i < 5; i++) {
+            const { status, body } = await sendJson('POST', '/v6/captcha', { token, answer: `guess${i}` });
+            assert.equal(status, 200);
+            assert.deepEqual(body, { valid: false, reason: 'wrong' });
+        }
+        const { body } = await sendJson('POST', '/v6/captcha', { token, answer: 'whatever' });
+        assert.deepEqual(body, { valid: false, reason: 'used' });
+    });
+    test('a known answer still verifies after four typos', async () => {
+        const { default: captchaChallenge } = await import('../../src/modules/v5/captcha.js');
+        const { token } = captchaChallenge({ text: 'Qm7Rtx' });
+        for (let i = 0; i < 4; i++) {
+            assert.equal((await sendJson('POST', '/v5/captcha', { token, answer: `typo${i}` })).body.reason, 'wrong');
+        }
+        assert.deepEqual((await sendJson('POST', '/v5/captcha', { token, answer: 'qm7rtx' })).body, { valid: true });
+    });
+    test('an over-long captcha text returns 400 in every version', async () => {
+        for (const prefix of ['/v4/captcha?', '/v5/captcha?', '/v6/captcha?mode=image&']) {
+            const { status, body } = await getJson(`${prefix}text=${'W'.repeat(540)}&height=400&noise=high`);
+            assert.equal(status, 400);
+            assert.equal(body.error, 'Text cannot exceed 32 characters');
+        }
+    });
+    test('a 32-character captcha text is still served', async () => {
+        const text = 'a'.repeat(32);
+        const res = await fetch(`${baseUrl}/v4/captcha?text=${text}`);
+        assert.equal(res.status, 200);
+        assert.equal(res.headers.get('x-captcha-text'), text);
+        assert.equal(Buffer.from(await res.arrayBuffer()).readUInt32BE(16), 1920);
+    });
+    test('over-long barcode data returns 400 in every version', async () => {
+        for (const version of ['v4', 'v5', 'v6']) {
+            const { status, body } = await getJson(`/${version}/barcode?data=${'A'.repeat(500)}&format=png`);
+            assert.equal(status, 400);
+            assert.equal(body.error, 'Data cannot exceed 128 characters');
+            assert.equal((await getJson(`/${version}/barcode?data=${'A'.repeat(129)}&type=code39`)).status, 400);
+        }
+    });
+    test('barcode data of up to 128 characters is still served', async () => {
+        for (const version of ['v4', 'v5', 'v6']) {
+            const res = await fetch(`${baseUrl}/${version}/barcode?data=${'A'.repeat(128)}`);
+            assert.equal(res.status, 200);
+            assert.match(res.headers.get('content-type') ?? '', /image\/svg\+xml/);
+        }
+    });
+    test('repeated barcode data keys return 400 in every version', async () => {
+        for (const version of ['v4', 'v5', 'v6']) {
+            const { status, body } = await getJson(
+                `/${version}/barcode?data=${'A'.repeat(100)}&data=${'B'.repeat(100)}`,
+            );
+            assert.equal(status, 400);
+            assert.equal(body.error, 'Please provide data to encode (?data={string})');
+        }
+    });
+    test('the default captcha width stays 60 px per character in every version', async () => {
+        for (const prefix of [
+            '/v4/captcha?',
+            '/v5/captcha?',
+            '/v6/captcha?mode=image&',
+            '/v6/captcha?mode=challenge&',
+        ]) {
+            const res = await fetch(`${baseUrl}${prefix}length=14`);
+            assert.equal(res.status, 200);
+            assert.equal(Buffer.from(await res.arrayBuffer()).readUInt32BE(16), 840, prefix);
+        }
+    });
+});
+
+describe('Regex query arrays', () => {
+    test('a repeated pattern or text key returns 400 in every version', async () => {
+        const text = 'a'.repeat(700);
+        for (const version of ['v4', 'v5', 'v6']) {
+            const patterns = await getJson(`/${version}/regex?pattern=(?=(.*))&pattern=&text=${text}`);
+            assert.equal(patterns.status, 400);
+            assert.equal(patterns.body.error, 'Please provide a pattern (?pattern={regex})');
+            const texts = await getJson(`/${version}/regex?pattern=a&text=${text}&text=${text}`);
+            assert.equal(texts.status, 400);
+            assert.equal(texts.body.error, 'Please provide a text (&text={string})');
+        }
+    });
+    test('a single pattern and text are matched as before', async () => {
+        const { status, body } = await getJson('/v6/regex?pattern=(\\d%2B)&text=a1b22');
+        assert.equal(status, 200);
+        assert.equal(body.count, 2);
+    });
+});
+
+describe('POST /captcha minLength', () => {
+    test('a correct answer to a shorter captcha is reported as weak', async () => {
+        const { default: captchaChallenge } = await import('../../src/modules/v5/captcha.js');
+        for (const version of ['v5', 'v6']) {
+            const { token } = captchaChallenge({ text: 'Ab' });
+            const { status, body } = await sendJson('POST', `/${version}/captcha`, {
+                token,
+                answer: 'ab',
+                minLength: 6,
+            });
+            assert.equal(status, 200);
+            assert.deepEqual(body, { valid: false, reason: 'weak' });
+        }
+    });
+    test('a long enough captcha verifies, minLength sent as a number or a string', async () => {
+        const { default: captchaChallenge } = await import('../../src/modules/v5/captcha.js');
+        for (const minLength of [6, '6']) {
+            const { token } = captchaChallenge({ text: 'Zx9Kfp' });
+            const { body } = await sendJson('POST', '/v6/captcha', { token, answer: 'zx9kfp', minLength });
+            assert.deepEqual(body, { valid: true });
+        }
+    });
+    test('an invalid minLength returns 400', async () => {
+        for (const minLength of ['abc', 0, -3, 2.5]) {
+            const { status, body } = await sendJson('POST', '/v6/captcha', { token: 'x', answer: 'y', minLength });
+            assert.equal(status, 400, String(minLength));
+            assert.equal(body.error, 'Please provide a valid minimum length (&minLength={number})');
+        }
+    });
+});
+
 describe('GET /v5/base', () => {
     test('converts decimal to hexadecimal', async () => {
         const { status, body } = await getJson('/v5/base?value=255&from=10&to=16');
@@ -1887,10 +2161,12 @@ describe('API v6', () => {
     });
 
     test('hyperplanning stays functional in v6, just unlisted', async () => {
-        const v6 = await sendJson('POST', '/v6/hyperplanning', { url: 'https://example.test/a.ics' });
-        const v5 = await sendJson('POST', '/v5/hyperplanning', { url: 'https://example.test/a.ics' });
-        assert.notEqual(v6.status, 404);
-        assert.equal(v6.status, v5.status);
+        // A loopback URL is rejected by the module itself, so the handler runs without any network call
+        const v6 = await sendJson('POST', '/v6/hyperplanning', { url: 'https://127.0.0.1/a.ics' });
+        const v5 = await sendJson('POST', '/v5/hyperplanning', { url: 'https://127.0.0.1/a.ics' });
+        assert.equal(v6.status, 400);
+        assert.equal(v6.body.error, 'Access to private/internal hosts is not allowed.');
+        assert.deepEqual(v6, v5);
         assert.equal((await getJson('/v6/hyperplanning')).status, 404);
     });
 
@@ -2009,5 +2285,76 @@ describe('Route hardening (5.4.0 fixes)', () => {
         const { status, body } = await getJson('/v5/evaluate?expr=1%2F3&precision=abc');
         assert.equal(status, 200);
         assert.equal(body.result, 0.3333333333);
+    });
+});
+
+describe('Middleware order', () => {
+    const post = (body: string, type = 'application/json'): Promise<Response> =>
+        fetch(`${baseUrl}/v6/hash`, { method: 'POST', headers: { 'Content-Type': type }, body });
+
+    const assertGuarded = (res: Response): void => {
+        assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
+        assert.equal(res.headers.get('x-frame-options'), 'DENY');
+        assert.notEqual(res.headers.get('x-ratelimit-limit'), null);
+    };
+
+    test('a malformed JSON body keeps its 400, now behind the limiter and the security headers', async () => {
+        for (const version of ['v4', 'v5', 'v6']) {
+            const res = await fetch(`${baseUrl}/${version}/hash`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{bad',
+            });
+            assert.equal(res.status, 400, version);
+            assertGuarded(res);
+            const body = (await res.json()) as Record<string, unknown>;
+            assert.equal(body.message, 'Bad Request');
+            assert.equal(body.status, 400);
+        }
+    });
+
+    test('a body over 10 KB keeps its 413, now counted by the limiter', async () => {
+        const before = await fetch(`${baseUrl}/v6/color`);
+        const res = await post(JSON.stringify({ text: 'a'.repeat(20_000), method: 'sha256' }));
+        assert.equal(res.status, 413);
+        assertGuarded(res);
+        const remaining = (r: Response): number => Number(r.headers.get('x-ratelimit-remaining'));
+        assert.ok(remaining(res) < remaining(before));
+    });
+
+    test('a JSON body just under 10 KB is still parsed', async () => {
+        const res = await post(JSON.stringify({ text: 'a'.repeat(9_000), method: 'sha256' }));
+        assert.equal(res.status, 200);
+        assertGuarded(res);
+    });
+
+    test('a URL-encoded body is still parsed', async () => {
+        const json = await post(JSON.stringify({ text: 'a', method: 'sha256' }));
+        const form = await post('text=a&method=sha256', 'application/x-www-form-urlencoded');
+        assert.equal(form.status, 200);
+        assert.deepEqual(await form.json(), await json.json());
+    });
+
+    test('a CORS preflight answers 204 with the security headers and no quota use', async () => {
+        const res = await fetch(`${baseUrl}/v6/hash`, {
+            method: 'OPTIONS',
+            headers: {
+                Origin: 'https://example.test',
+                'Access-Control-Request-Method': 'POST',
+                'Access-Control-Request-Headers': 'content-type',
+            },
+        });
+        assert.equal(res.status, 204);
+        assert.equal(res.headers.get('access-control-allow-origin'), '*');
+        assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
+        assert.equal(res.headers.get('x-ratelimit-limit'), null);
+    });
+
+    test('robots.txt is still served outside the limiter', async () => {
+        const res = await fetch(`${baseUrl}/robots.txt`);
+        assert.equal(res.status, 200);
+        assert.match(res.headers.get('content-type') ?? '', /^text\/plain/);
+        assert.equal(res.headers.get('x-frame-options'), 'DENY');
+        assert.equal(res.headers.get('x-ratelimit-limit'), null);
     });
 });
