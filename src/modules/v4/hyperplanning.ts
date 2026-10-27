@@ -1,6 +1,8 @@
 import ical from 'ical.js';
 
+import { ICS_FETCH_TIMEOUT, MAX_ICS_BYTES, MAX_ICS_EVENTS } from '../../constants.js';
 import { formatDate } from '../../utils/helpers.js';
+import { fetchRemote, type RemoteFetcher } from '../../utils/remote.js';
 
 interface CalendarEvent {
     summary: string[] | string;
@@ -12,22 +14,6 @@ interface CalendarEvent {
     end: string;
 }
 
-function blocked(hostname: string): boolean {
-    const list = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]', 'metadata.google.internal'];
-    if (list.includes(hostname)) return true;
-
-    const parts = hostname.split('.').map(Number);
-    if (parts.length === 4 && parts.every((n) => !isNaN(n))) {
-        if (parts[0] === 10) return true;
-        if (parts[0] === 172 && parts[1]! >= 16 && parts[1]! <= 31) return true;
-        if (parts[0] === 192 && parts[1] === 168) return true;
-        if (parts[0] === 169 && parts[1] === 254) return true;
-        if (parts[0] === 0) return true;
-    }
-
-    return false;
-}
-
 /**
  * Fetches and parses an ICS calendar from a Hyperplanning URL, filtering out past events.
  *
@@ -36,7 +22,24 @@ function blocked(hostname: string): boolean {
  * @returns Array of calendar events sorted by start time, excluding past events
  * @throws Error if the URL is invalid, uses HTTP, points to a private host, or does not return a valid ICS file
  */
-export default async function hyperplanning(url: string, detail?: string): Promise<CalendarEvent[]> {
+export default function hyperplanning(url: string, detail?: string): Promise<CalendarEvent[]> {
+    return fetchCalendar(url, detail, fetchRemote);
+}
+
+/**
+ * Same as hyperplanning, with the remote fetch implementation passed in so tests can replace it.
+ *
+ * @param url - HTTPS URL to the ICS calendar
+ * @param detail - Level of detail: "full" (subject/teacher/classes), "list" (summary/times), or default (summary only)
+ * @param fetcher - Remote fetch implementation, fetchRemote in production
+ * @returns Array of calendar events sorted by start time, excluding past events
+ * @throws Error if the URL is invalid or internal, the file is too large or has too many events, or is not an ICS file
+ */
+export async function fetchCalendar(
+    url: string,
+    detail: string | undefined,
+    fetcher: RemoteFetcher,
+): Promise<CalendarEvent[]> {
     let parsed: URL;
     try {
         parsed = new URL(url);
@@ -45,18 +48,23 @@ export default async function hyperplanning(url: string, detail?: string): Promi
     }
 
     if (parsed.protocol !== 'https:') throw new Error('Only HTTPS URLs are allowed.');
-    if (blocked(parsed.hostname)) throw new Error('Access to private/internal hosts is not allowed.');
 
-    const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+    const body = await fetcher(url, {
+        maxBytes: MAX_ICS_BYTES,
+        timeout: ICS_FETCH_TIMEOUT,
+        messages: { size: 'ICS file must be under 1MB.' },
+        check: ({ ok, contentType }) => {
+            if (!ok || !contentType.includes('text/calendar')) throw new Error('Invalid ICS file format.');
+        },
+    });
 
-    if (!response.ok || !(response.headers.get('content-type') || '').includes('text/calendar')) {
-        throw new Error('Invalid ICS file format.');
-    }
+    const vevents = new ical.Component(ical.parse(new TextDecoder().decode(body))).getAllSubcomponents('vevent');
+    if (vevents.length > MAX_ICS_EVENTS) throw new Error(`ICS file must have at most ${MAX_ICS_EVENTS} events.`);
 
-    const events: CalendarEvent[] = new ical.Component(ical.parse(await response.text()))
-        .getAllSubcomponents('vevent')
+    const events: CalendarEvent[] = vevents
         .map((e: ical.Component) => {
-            const evt = new ical.Event(e);
+            // Without an exception list, ical.js scans every sibling event for each one (quadratic)
+            const evt = new ical.Event(e, { exceptions: [] });
             const summary = (evt.summary || '').split(' ').filter((part: string) => part !== '-');
             const start = formatDate(evt.startDate.toJSDate());
             const end = formatDate(evt.endDate.toJSDate());
