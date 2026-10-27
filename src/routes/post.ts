@@ -1,6 +1,8 @@
 import { type Request, type Response, Router } from 'express';
 
 import { MAX_TOKEN_LENGTH, MIN_TOKEN_LENGTH } from '../constants.js';
+import type { asymmetricAsync, default as asymmetric } from '../modules/v5/asymmetric.js';
+import type { CaptchaVerification } from '../modules/v5/captcha.js';
 import type { CsvResult } from '../modules/v5/csv.js';
 import type { JwtResult } from '../modules/v5/jwt.js';
 import { challengeStorage, chatStorage, ticTacToeStorage } from '../storage/index.js';
@@ -12,25 +14,14 @@ import { error } from '../utils/response.js';
 const router = Router();
 
 // Asymmetric RSA key generation, encryption and decryption
-router.post('/:version/asymmetric', (req: Request, res: Response) => {
+router.post('/:version/asymmetric', async (req: Request, res: Response) => {
     const body = (req.body as Record<string, unknown>) || {};
     const { action, text, publicKey, privateKey, modulusLength, algorithm } = body;
     const { version } = req.params;
 
-    const asymmetricFn = (
-        req.module as {
-            asymmetric?: (
-                a: string,
-                o: {
-                    text?: string;
-                    publicKey?: string;
-                    privateKey?: string;
-                    modulusLength?: number;
-                    algorithm?: string;
-                },
-            ) => unknown;
-        }
-    ).asymmetric;
+    // Prefer the async variant so RSA keygen does not block the event loop
+    const mod = req.module as { asymmetric?: typeof asymmetric; asymmetricAsync?: typeof asymmetricAsync };
+    const asymmetricFn = mod.asymmetricAsync ?? mod.asymmetric;
     if (!asymmetricFn) {
         error(res, 404, `Endpoint not available in ${version}.`);
         return;
@@ -41,7 +32,7 @@ router.post('/:version/asymmetric', (req: Request, res: Response) => {
     }
 
     try {
-        const result = asymmetricFn(action as string, {
+        const result = await asymmetricFn(action as string, {
             text: text as string | undefined,
             publicKey: publicKey as string | undefined,
             privateKey: privateKey as string | undefined,
@@ -57,11 +48,13 @@ router.post('/:version/asymmetric', (req: Request, res: Response) => {
 // Verify a captcha answer against its token
 router.post('/:version/captcha', (req: Request, res: Response) => {
     const body = (req.body as Record<string, unknown>) || {};
-    const { token, answer } = body;
+    const { token, answer, minLength } = body;
     const { version } = req.params;
 
     const verifyFn = (
-        req.module as { verifyCaptcha?: (t: string, a: string, s: ChallengeStorage) => ChallengeVerification }
+        req.module as {
+            verifyCaptcha?: (t: string, a: string, s: ChallengeStorage, m?: number) => CaptchaVerification;
+        }
     ).verifyCaptcha;
     if (!verifyFn) {
         error(res, 404, `Endpoint not available in ${version}.`);
@@ -75,9 +68,14 @@ router.post('/:version/captcha', (req: Request, res: Response) => {
         error(res, 400, 'Please provide an answer (&answer={answer})');
         return;
     }
+    const min = minLength === undefined ? undefined : Number(minLength);
+    if (min !== undefined && (!Number.isInteger(min) || min < 1)) {
+        error(res, 400, 'Please provide a valid minimum length (&minLength={number})');
+        return;
+    }
 
     try {
-        res.jsonResponse(verifyFn(token, answer, challengeStorage));
+        res.jsonResponse(verifyFn(token, answer, challengeStorage, min));
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
