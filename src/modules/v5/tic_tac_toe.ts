@@ -1,7 +1,15 @@
 import { randomBytes } from 'crypto';
 
-import { GAME_CLEANUP_TTL, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW, SESSION_TTL } from '../../constants.js';
+import {
+    GAME_CLEANUP_TTL,
+    MAX_ID_LENGTH,
+    MAX_USERNAME_LENGTH,
+    RATE_LIMIT_MAX,
+    RATE_LIMIT_WINDOW,
+    SESSION_TTL,
+} from '../../constants.js';
 import type { TicTacToeGame, TicTacToeMove, TicTacToeStorage } from '../../types/storage.js';
+import { checkString } from '../../utils/helpers.js';
 
 interface TicTacToeParams {
     username?: string;
@@ -29,9 +37,9 @@ interface GameResult {
 export default function tic_tac_toe(action: string, params: TicTacToeParams): Record<string, unknown> {
     const storage = params.storage;
 
-    storage.games ??= {};
-    storage.sessions ??= {};
-    storage.rateLimits ??= {};
+    storage.games ??= Object.create(null);
+    storage.sessions ??= Object.create(null);
+    storage.rateLimits ??= Object.create(null);
 
     const { games, sessions, rateLimits } = storage;
 
@@ -39,10 +47,14 @@ export default function tic_tac_toe(action: string, params: TicTacToeParams): Re
 
     if (!params.username) throw new Error('Please provide a username');
 
+    checkString(params.username, 'username', MAX_USERNAME_LENGTH);
+    checkString(params.session, 'session ID', MAX_ID_LENGTH);
+    checkString(params.game, 'game ID', MAX_ID_LENGTH);
+
     const u = params.username.toLowerCase();
     const now = Date.now();
 
-    rateLimits[u] = (rateLimits[u] ?? []).filter((ts) => now - ts < RATE_LIMIT_WINDOW);
+    rateLimits[u] = (Object.hasOwn(rateLimits, u) ? rateLimits[u]! : []).filter((ts) => now - ts < RATE_LIMIT_WINDOW);
     if (rateLimits[u]!.length >= RATE_LIMIT_MAX) {
         const remainingTime = Math.ceil((rateLimits[u]![0]! + RATE_LIMIT_WINDOW - now) / 1000);
         throw new Error(`Rate limit exceeded. Try again in ${remainingTime} seconds.`);
@@ -60,6 +72,15 @@ export default function tic_tac_toe(action: string, params: TicTacToeParams): Re
     }
 }
 
+/**
+ * Ends a game on behalf of one of its players, the other player winning.
+ *
+ * @param params - Game parameters holding the game ID, session and username
+ * @param games - Games keyed by ID
+ * @param sessions - Session bound to each lowercased username
+ * @returns Forfeit message with the winner, or null when the player was alone, and the loser
+ * @throws Error if the game or session is missing, the game does not exist, the session does not match, or the user is not a player
+ */
 function forfeitGame(
     params: TicTacToeParams,
     games: Record<string, TicTacToeGame>,
@@ -69,10 +90,10 @@ function forfeitGame(
 
     if (!game) throw new Error('Please provide a valid game ID');
     if (!session) throw new Error('Please provide a valid session ID');
-    if (!games[game]) throw new Error('Game not found');
+    if (!Object.hasOwn(games, game)) throw new Error('Game not found');
 
     const u = params.username!.toLowerCase();
-    if (sessions[u] && sessions[u].user !== session) {
+    if (Object.hasOwn(sessions, u) && sessions[u]!.user !== session) {
         throw new Error('Session ID mismatch');
     }
 
@@ -90,6 +111,17 @@ function forfeitGame(
     };
 }
 
+/**
+ * Records a move in a game, creating the game on its first move.
+ *
+ * @param params - Game parameters holding the move, session, game ID and username
+ * @param games - Games keyed by ID
+ * @param sessions - Session bound to each lowercased username
+ * @param u - Lowercased username
+ * @param now - Current timestamp in milliseconds
+ * @returns Confirmation message, with the winner, loser or tie once the game is over
+ * @throws Error if a parameter is missing or invalid, the session does not match, the game is full, or it is not the user's turn
+ */
 function playMove(
     params: TicTacToeParams,
     games: Record<string, TicTacToeGame>,
@@ -105,16 +137,18 @@ function playMove(
     if (!game) throw new Error('Please provide a valid game ID');
     if (!validMoves.includes(move)) throw new Error('Invalid move. Please provide a valid move (e.g., 1-1, 2-2, 3-3).');
 
-    if (sessions[u] && sessions[u].user !== session) {
+    if (Object.hasOwn(sessions, u) && sessions[u]!.user !== session) {
         throw new Error('Session ID mismatch');
     }
 
-    games[game] = games[game] ?? {
-        moves: [],
-        players: [],
-        private: params.private || false,
-        creation: Date.now(),
-    };
+    if (!Object.hasOwn(games, game)) {
+        games[game] = {
+            moves: [],
+            players: [],
+            private: params.private || false,
+            creation: Date.now(),
+        };
+    }
     const g = games[game]!;
     const moves = g.moves;
 
@@ -139,7 +173,7 @@ function playMove(
     const result = checkGame(moves);
     if (result.winner || result.tie) {
         setTimeout(() => {
-            if (games[game!] && games[game!]!.creation === creation) delete games[game!];
+            if (Object.hasOwn(games, game!) && games[game!]!.creation === creation) delete games[game!];
         }, GAME_CLEANUP_TTL).unref();
         return {
             message: `Move sent successfully. ${result.winner ? result.winner + ' wins. ' + result.loser + ' loses.' : "It's a tie."}`,
@@ -148,24 +182,32 @@ function playMove(
     }
 
     setTimeout(() => {
-        const cur = games[game!];
+        const cur = Object.hasOwn(games, game!) ? games[game!] : undefined;
         if (cur && cur.creation === creation && Date.now() - (cur.last ?? cur.creation) >= SESSION_TTL) {
             delete games[game!];
         }
     }, SESSION_TTL).unref();
 
-    sessions[u] = sessions[u] ?? { user: session, last: now };
+    if (!Object.hasOwn(sessions, u)) sessions[u] = { user: session, last: now };
     sessions[u]!.last = now;
     setTimeout(() => {
-        if (sessions[u] && Date.now() - sessions[u].last >= SESSION_TTL) delete sessions[u];
+        if (Object.hasOwn(sessions, u) && Date.now() - sessions[u]!.last >= SESSION_TTL) delete sessions[u];
     }, SESSION_TTL).unref();
 
     return { message: 'Move sent successfully' };
 }
 
+/**
+ * Returns the state of a game and adds the user to its players, creating it when needed.
+ *
+ * @param params - Game parameters holding the optional game ID, a random one being generated when absent
+ * @param games - Games keyed by ID
+ * @param u - Lowercased username
+ * @returns Game ID, moves, players, turn, status, privacy and result so far
+ */
 function fetchGame(params: TicTacToeParams, games: Record<string, TicTacToeGame>, u: string): Record<string, unknown> {
     const id = params.game || generateGameId();
-    if (!games[id]) {
+    if (!Object.hasOwn(games, id)) {
         games[id] = {
             moves: [],
             players: [],
@@ -239,11 +281,17 @@ function generateGameId(): string {
         .join('');
 }
 
+/**
+ * Replays the moves on a board to find the winner or a tie.
+ *
+ * @param moves - Moves in play order, the first player taking X
+ * @returns Winner and loser usernames, null when nobody won yet, and whether the board is full without a winner
+ */
 function checkGame(moves: TicTacToeMove[]): GameResult {
     const board: (string | null)[][] = Array(3)
         .fill(null)
         .map(() => Array(3).fill(null) as (string | null)[]);
-    const playerSymbols: Record<string, string> = {};
+    const playerSymbols: Record<string, string> = Object.create(null);
     const playersOrder: string[] = [];
 
     moves.forEach(({ username, move }) => {
