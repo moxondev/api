@@ -1,9 +1,11 @@
 import { strict as assert } from 'node:assert';
-import { after, before, describe, test } from 'node:test';
+import { createServer, request } from 'node:http';
+import { type AddressInfo, BlockList } from 'node:net';
+import { describe, test } from 'node:test';
 
-import hyperplanning from '../../src/modules/v4/hyperplanning.js';
-
-const ORIGINAL_FETCH = globalThis.fetch;
+import { ICS_FETCH_TIMEOUT, MAX_ICS_BYTES, MAX_ICS_EVENTS } from '../../src/constants.js';
+import hyperplanning, { fetchCalendar } from '../../src/modules/v4/hyperplanning.js';
+import { fetchRemote, type RemoteFetcher, type RemoteOptions } from '../../src/utils/remote.js';
 
 const sampleIcs = `BEGIN:VCALENDAR
 VERSION:2.0
@@ -18,22 +20,50 @@ DESCRIPTION:Matière : Mathematics\\nEnseignant : Mr Smith\\nPromotions : G1, G2
 END:VEVENT
 END:VCALENDAR`;
 
-function mockFetch(body: string, ok = true, contentType = 'text/calendar'): void {
-    globalThis.fetch = (async () => ({
-        ok,
-        headers: { get: (h: string) => (h.toLowerCase() === 'content-type' ? contentType : null) },
-        text: async () => body,
-    })) as unknown as typeof fetch;
+/**
+ * Builds a calendar of future events, every other one carrying a RECURRENCE-ID like an edited occurrence.
+ *
+ * @param count - Number of VEVENT blocks
+ * @returns ICS text of about 150 bytes per event
+ */
+function bulkIcs(count: number): string {
+    const events = Array.from(
+        { length: count },
+        (_, i) =>
+            `BEGIN:VEVENT\r\nUID:${i % 50}\r\nDTSTART:20991201T080000Z\r\nDTEND:20991201T090000Z\r\n` +
+            `${i % 2 ? 'RECURRENCE-ID:20991201T080000Z\r\n' : ''}SUMMARY:x\r\nEND:VEVENT\r\n`,
+    );
+    return `BEGIN:VCALENDAR\r\nVERSION:2.0\r\n${events.join('')}END:VCALENDAR\r\n`;
+}
+
+/**
+ * Builds a fetcher that answers every URL with the same response, without any network access.
+ *
+ * @param body - Response body
+ * @param ok - Whether the response status is in the 2xx range
+ * @param contentType - Content-Type header of the response
+ * @returns Fetcher running the module's response check before returning the body
+ */
+function mockFetch(body: string | Buffer, ok = true, contentType = 'text/calendar'): RemoteFetcher {
+    return async (_url, options) => {
+        options.check?.({ status: ok ? 200 : 404, ok, contentType });
+        return Buffer.from(body);
+    };
+}
+
+/**
+ * Builds a fetcher that runs the real helper with extra options merged over the module's ones.
+ *
+ * @param extra - Options added to the ones the module passes
+ * @returns Fetcher wrapping fetchRemote
+ */
+function realFetch(extra: Partial<RemoteOptions>): RemoteFetcher {
+    return (url, options) => fetchRemote(url, { ...options, ...extra });
 }
 
 describe('hyperplanning', () => {
-    after(() => {
-        globalThis.fetch = ORIGINAL_FETCH;
-    });
-
     test('parses valid ICS with default detail', async () => {
-        mockFetch(sampleIcs);
-        const events = await hyperplanning('https://fake.test/cal.ics');
+        const events = await fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch(sampleIcs));
         assert.equal(events.length, 1);
         assert.equal(events[0]!.summary, 'Mathematics - CM');
         assert.ok(events[0]!.start);
@@ -41,35 +71,55 @@ describe('hyperplanning', () => {
     });
 
     test('detail=list returns split summary', async () => {
-        mockFetch(sampleIcs);
-        const events = await hyperplanning('https://fake.test/cal.ics', 'list');
+        const events = await fetchCalendar('https://fake.test/cal.ics', 'list', mockFetch(sampleIcs));
         assert.deepEqual(events[0]!.summary, ['Mathematics', 'CM']);
     });
 
     test('detail=full extracts subject/teacher/classes', async () => {
-        mockFetch(sampleIcs);
-        const events = await hyperplanning('https://fake.test/cal.ics', 'full');
+        const events = await fetchCalendar('https://fake.test/cal.ics', 'full', mockFetch(sampleIcs));
         const e = events[0]!;
         assert.equal(e.subject, 'Mathematics');
         assert.equal(e.teacher, 'Mr Smith');
         assert.deepEqual(e.classes, ['G1', 'G2']);
     });
 
+    test('decodes the body as UTF-8 and drops a byte order mark, like Response.text()', async () => {
+        const body = Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from(sampleIcs, 'utf8')]);
+        const events = await fetchCalendar('https://fake.test/cal.ics', 'full', mockFetch(body));
+        assert.equal(events[0]!.subject, 'Mathematics');
+    });
+
     test('throws on non-OK response', async () => {
-        mockFetch('', false);
-        await assert.rejects(() => hyperplanning('https://fake.test/cal.ics'), /Invalid ICS/);
+        await assert.rejects(
+            () => fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch('', false)),
+            /Invalid ICS/,
+        );
     });
 
     test('throws on wrong content-type', async () => {
-        mockFetch(sampleIcs, true, 'text/html');
-        await assert.rejects(() => hyperplanning('https://fake.test/cal.ics'), /Invalid ICS/);
+        await assert.rejects(
+            () => fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch(sampleIcs, true, 'text/html')),
+            /Invalid ICS/,
+        );
     });
 
     test('filters out past events', async () => {
         const pastIcs = sampleIcs.replaceAll('20990101', '19990101');
-        mockFetch(pastIcs);
-        const events = await hyperplanning('https://fake.test/cal.ics');
+        const events = await fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch(pastIcs));
         assert.equal(events.length, 0);
+    });
+
+    test('fetches with a 1MB body limit and the 10 s timeout', async () => {
+        let seen: RemoteOptions | undefined;
+        const fetcher: RemoteFetcher = async (url, options) => {
+            seen = options;
+            return mockFetch(sampleIcs)(url, options);
+        };
+        await fetchCalendar('https://fake.test/cal.ics', undefined, fetcher);
+        assert.equal(seen?.maxBytes, MAX_ICS_BYTES);
+        assert.equal(MAX_ICS_BYTES, 1024 * 1024);
+        assert.equal(seen?.timeout, ICS_FETCH_TIMEOUT);
+        assert.equal(ICS_FETCH_TIMEOUT, 10_000);
     });
 
     test('throws on HTTP URL', async () => {
@@ -92,6 +142,98 @@ describe('hyperplanning', () => {
     });
 });
 
-before(() => {
-    globalThis.fetch = ORIGINAL_FETCH;
+describe('hyperplanning parse cost', () => {
+    test('parses a calendar of edited occurrences in linear time', async () => {
+        // ical.js used to scan every sibling event for each one: this calendar took several seconds
+        const start = performance.now();
+        const events = await fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch(bulkIcs(MAX_ICS_EVENTS)));
+        assert.equal(events.length, MAX_ICS_EVENTS);
+        assert.ok(performance.now() - start < 2000, `took ${performance.now() - start} ms`);
+    });
+
+    test('rejects a calendar with more events than the cap, in the module error style', async () => {
+        assert.equal(MAX_ICS_EVENTS, 5000);
+        await assert.rejects(
+            () => fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch(bulkIcs(MAX_ICS_EVENTS + 1))),
+            /^Error: ICS file must have at most 5000 events\.$/,
+        );
+    });
+
+    test('keeps each edited occurrence as its own event, as before', async () => {
+        const ics = sampleIcs.replace(
+            'END:VCALENDAR',
+            [
+                'BEGIN:VEVENT',
+                'UID:event-1@test',
+                'RECURRENCE-ID:20990101T080000Z',
+                'DTSTART:20990102T100000Z',
+                'DTEND:20990102T110000Z',
+                'SUMMARY:Physics - TD',
+                'END:VEVENT',
+                'END:VCALENDAR',
+            ].join('\n'),
+        );
+        const events = await fetchCalendar('https://fake.test/cal.ics', 'list', mockFetch(ics));
+        assert.deepEqual(
+            events.map((e) => e.summary),
+            [
+                ['Mathematics', 'CM'],
+                ['Physics', 'TD'],
+            ],
+        );
+        assert.ok(events[0]!.start < events[1]!.start);
+    });
+
+    test('ignores extra positional arguments, so it can be passed to Array.prototype.map', async () => {
+        const loose = hyperplanning as (...args: unknown[]) => Promise<unknown>;
+        await assert.rejects(() => loose('https://127.0.0.1/cal.ics', undefined, 0, []), /private/);
+    });
+});
+
+describe('hyperplanning SSRF protection', () => {
+    test('blocks the private hosts the old hostname list let through', async () => {
+        for (const url of [
+            'https://127.0.0.2/cal.ics',
+            'https://[::ffff:127.0.0.1]/cal.ics',
+            'https://[::]/cal.ics',
+            'https://localhost./cal.ics',
+            'https://100.64.0.1/cal.ics',
+            'https://[fd00::1]/cal.ics',
+            'https://metadata.google.internal./computeMetadata/v1/',
+        ]) {
+            await assert.rejects(
+                () => hyperplanning(url),
+                /^Error: Access to private\/internal hosts is not allowed\.$/,
+            );
+        }
+    });
+
+    test('blocks a public-looking hostname that resolves to a private address', async () => {
+        const fetcher = realFetch({ resolve: async () => [{ address: '169.254.169.254', family: 4 }] });
+        await assert.rejects(() => fetchCalendar('https://rebind.test/cal.ics', undefined, fetcher), /private/);
+    });
+
+    test('stops reading an ICS body past 1MB', async () => {
+        const server = createServer((_req, res) => {
+            res.writeHead(200, { 'Content-Type': 'text/calendar' });
+            res.end(Buffer.alloc(MAX_ICS_BYTES + 1, 'A'));
+        });
+        await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+        const port = (server.address() as AddressInfo).port;
+        const fetcher = realFetch({
+            blocklist: new BlockList(),
+            resolve: async () => [{ address: '127.0.0.1', family: 4 }],
+            request: (url, options, callback) =>
+                request({ ...options, agent: undefined, hostname: url.hostname, port, path: url.pathname }, callback),
+        });
+        try {
+            await assert.rejects(
+                () => fetchCalendar('https://big.test/cal.ics', undefined, fetcher),
+                /^Error: ICS file must be under 1MB\.$/,
+            );
+        } finally {
+            server.closeAllConnections();
+            await new Promise<void>((resolve) => server.close(() => resolve()));
+        }
+    });
 });
