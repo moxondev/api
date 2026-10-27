@@ -1,5 +1,6 @@
 import { createCanvas } from 'canvas';
 
+import { MAX_BARCODE_DATA_LENGTH } from '../../constants.js';
 import { normalizeColor } from '../../utils/colors.js';
 
 export interface BarcodeOptions {
@@ -22,6 +23,9 @@ type BarcodeFormat = 'svg' | 'png';
 
 const VALID_TYPES: BarcodeType[] = ['code128', 'ean13', 'ean8', 'upca', 'code39'];
 const VALID_FORMATS: BarcodeFormat[] = ['svg', 'png'];
+
+// Formats whose length follows the data, unlike the fixed-length EAN/UPC ones
+const VARIABLE_TYPES: BarcodeType[] = ['code128', 'code39'];
 
 function clamp(val: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, Math.round(val)));
@@ -440,10 +444,12 @@ function encodeCode39(data: string): number[] {
  * @param options.color - Bar color hex (default: #000000)
  * @param options.bg - Background color hex (default: #ffffff)
  * @returns Object with contentType and body
- * @throws Error if data is missing, invalid for the type, or parameters are out of range
+ * @throws Error if data is missing, too long or invalid for the type, or parameters are out of range
  */
 export default function barcode(options: BarcodeOptions): BarcodeResult {
-    if (!options.data) throw new Error('Please provide data to encode (?data={string})');
+    if (!options.data || typeof options.data !== 'string') {
+        throw new Error('Please provide data to encode (?data={string})');
+    }
 
     const type = (options.type ?? 'code128') as BarcodeType;
     const format = (options.format ?? 'svg') as BarcodeFormat;
@@ -463,6 +469,9 @@ export default function barcode(options: BarcodeOptions): BarcodeResult {
     }
     if (options.height !== undefined && (options.height < 50 || options.height > 300)) {
         throw new Error('Height must be between 50 and 300');
+    }
+    if (VARIABLE_TYPES.includes(type) && options.data.length > MAX_BARCODE_DATA_LENGTH) {
+        throw new Error(`Data cannot exceed ${MAX_BARCODE_DATA_LENGTH} characters`);
     }
 
     const encoders: Record<BarcodeType, (d: string) => number[]> = {

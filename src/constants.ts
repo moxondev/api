@@ -27,6 +27,7 @@ export const STATUS_MESSAGES: Record<number, string> = {
 // Modules
 export const EARTH_RADIUS_KM = 6371;
 export const MAX_ADDRESS_COUNT = 10;
+export const MAX_BARCODE_DATA_LENGTH = 128;
 export const MAX_BASE_VALUE_LENGTH = 100;
 export const MAX_CAPTCHA_TEXT_LENGTH = 32;
 export const MAX_CHART_DATASETS = 5;
