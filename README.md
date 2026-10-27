@@ -75,15 +75,15 @@ console.log(user.username);
 
 ## What's inside
 
-| Domain             | Exports                                                                               |
-| ------------------ | ------------------------------------------------------------------------------------- |
-| **Crypto**         | `asymmetric` `symmetric` `hash` `jwt` `otp` `token` `password` `captcha`              |
-| **Math & data**    | **`matrix`** **`algorithms`** `evaluate` `statistics` `convert` `csv`                 |
-| **Text**           | **`text`** **`encode`** **`validate`** `caseConvert` `levenshtein` `regex` `parseUrl` |
-| **Graphics**       | **`chart`** `barcode` `qrcode` `avatar` `placeholder` `color` `palette`               |
-| **Fake data**      | `personal` `address` `credit` `username` `dice` `domain` `agent`                      |
-| **Network & time** | `ip` `geo` `time` `cron` `hyperplanning`                                              |
-| **Stateful**       | `chat` `tic_tac_toe`                                                                  |
+| Domain             | Exports                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| **Crypto**         | `asymmetric` `asymmetricAsync` `symmetric` `hash` `jwt` `otp` `token` `password` `captcha` |
+| **Math & data**    | **`matrix`** **`algorithms`** `evaluate` `statistics` `convert` `csv`                      |
+| **Text**           | **`text`** **`encode`** **`validate`** `caseConvert` `levenshtein` `regex` `parseUrl`      |
+| **Graphics**       | **`chart`** `barcode` `qrcode` `avatar` `placeholder` `color` `palette`                    |
+| **Fake data**      | `personal` `address` `credit` `username` `dice` `domain` `agent`                           |
+| **Network & time** | `ip` `geo` `time` `cron` `hyperplanning`                                                   |
+| **Stateful**       | `chat` `tic_tac_toe`                                                                       |
 
 The six names in **bold** are namespaces — they group related functions, called as `namespace.method()`:
 
@@ -112,6 +112,7 @@ Two names differ from their HTTP endpoint, because `case` is a reserved word and
 ```js
 import {
     asymmetric,
+    asymmetricAsync,
     caseConvert,
     chart,
     csv,
@@ -129,6 +130,10 @@ const { publicKey, privateKey } = asymmetric('keygen', {});
 const { result: encrypted } = asymmetric('encrypt', { text: 'secret message', publicKey });
 const { result: decrypted } = asymmetric('decrypt', { text: encrypted, privateKey });
 console.log(decrypted); // 'secret message'
+
+// Same result, but the key pair is generated off the main thread
+const keys = await asymmetricAsync('keygen', { modulusLength: 4096 });
+console.log(keys.modulusLength); // 4096
 
 // AES-256-GCM symmetric encryption, key derived with scrypt
 const { result: blob } = symmetric('encrypt', 'secret message', 'a-strong-key');
@@ -248,7 +253,7 @@ Every setting is optional and read from the environment; a `.env` file at the pr
 | `INSTANCE_CREATED` | —       | Launch date reported by `/:version/infos`                                                                                                              |
 | `LOGS_TOKEN`       | —       | Value required in the `X-Logs-Token` header to read `/logs`; the route answers 404 while unset                                                         |
 | `CHALLENGE_SECRET` | random  | Key signing the captcha and proof-of-work tokens; a random one is generated at startup while unset                                                     |
-| `TRUSTED_PROXIES`  | one hop | CIDR blocks separated by spaces or commas, or the `loopback` / `linklocal` / `uniquelocal` shorthands, for deployments behind a CDN or platform router |
+| `TRUSTED_PROXIES`  | one hop | CIDR blocks or `loopback` / `linklocal` / `uniquelocal`, space or comma separated; unset, exactly one reverse proxy is assumed and a warning is logged |
 | `GLOBAL_LIMIT`     | `50000` | Requests per hour accepted across the whole instance                                                                                                   |
 | `DEFAULT_LIMIT`    | `2000`  | Per-client requests per hour                                                                                                                           |
 | `DEFAULT_BURST`    | `50`    | Per-client requests per 10-second window                                                                                                               |
@@ -257,7 +262,9 @@ The three metadata variables are omitted from responses when unset, so an instan
 
 Higher quotas can be granted per client: `ADVANCED_`, `PRO_` and `BUSINESS_` variants of `_LIMIT` and `_BURST` define the tiers, and the matching `*_TOKEN_LIST` variables hold the space-separated bearer tokens that map to them. A client's tier and quota are reported by `GET /auth`.
 
-> _Rate-limit counters live in process memory, so each instance of a multi-instance deployment counts separately._
+> _Rate-limit counters live in process memory, so each instance of a multi-instance deployment counts separately. Clients are counted by address: an IPv4-mapped IPv6 address counts as its IPv4 form and any other IPv6 address as its `/64` block, while all the `/64` blocks of one `/48` network share four times the per-client hourly quota. A forwarded address that is not an IP address counts as the connecting peer. Only requests the per-client limits let through use the `GLOBAL_LIMIT` budget._
+
+> _The one-hop default reads the client address from the last `X-Forwarded-For` entry, which is right behind a single reverse proxy such as nginx or Caddy. Exposed directly, callers can forge that header and pick their own address; behind several hops, every caller is counted as the nearest proxy. Set `TRUSTED_PROXIES` to match the actual chain._
 
 > _Captcha and proof-of-work tokens are signed with `CHALLENGE_SECRET`. While it is unset each process invents its own key, so tokens stop verifying after a restart and are rejected by sibling instances — set it explicitly for any deployment running more than one process, with a full-entropy value such as `openssl rand -hex 32`._
 
