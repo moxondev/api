@@ -1,6 +1,13 @@
-import { SESSION_TTL } from '../../constants.js';
+import {
+    MAX_CHAT_MESSAGES,
+    MAX_ID_LENGTH,
+    MAX_PRIVATE_CHATS,
+    MAX_STRING_LENGTH,
+    MAX_USERNAME_LENGTH,
+    SESSION_TTL,
+} from '../../constants.js';
 import type { ChatMessage, ChatStorage } from '../../types/storage.js';
-import { checkRateLimit } from '../../utils/helpers.js';
+import { checkRateLimit, checkString, isTimestamp } from '../../utils/helpers.js';
 
 interface ChatParams {
     username: string;
@@ -31,6 +38,12 @@ export default function chat(action: string, params: ChatParams): ChatMessage[] 
 
     if (!params.username) throw new Error('Please provide a username');
 
+    // Readers are keyed by their IP, which can be longer than a chat username
+    checkString(params.username, 'username', action === 'fetch' ? MAX_STRING_LENGTH : MAX_USERNAME_LENGTH);
+    checkString(params.message, 'message', MAX_STRING_LENGTH);
+    checkString(params.session, 'session ID', MAX_ID_LENGTH);
+    checkString(params.token, 'token', MAX_ID_LENGTH);
+
     const u = params.username.toLowerCase();
     const now = Date.now();
 
@@ -49,6 +62,18 @@ export default function chat(action: string, params: ChatParams): ChatMessage[] 
     }
 }
 
+/**
+ * Stores a message in the public room or in the private thread of its token.
+ *
+ * @param params - Chat parameters holding the message, session and optional private token
+ * @param messages - Public room, trimmed to its newest MAX_CHAT_MESSAGES entries
+ * @param privateChats - Private threads keyed by token, each trimmed the same way
+ * @param sessions - Session bound to each lowercased username
+ * @param u - Lowercased username
+ * @param now - Current timestamp in milliseconds
+ * @returns Confirmation message
+ * @throws Error if the message or session is missing, the session does not match, or too many private chats exist
+ */
 function sendMessage(
     params: ChatParams,
     messages: ChatMessage[],
@@ -62,43 +87,60 @@ function sendMessage(
     if (!message) throw new Error('Please provide a message');
     if (!session) throw new Error('Please provide a valid session ID');
 
-    if (sessions[u] && sessions[u].user !== session) {
+    if (Object.hasOwn(sessions, u) && sessions[u]!.user !== session) {
         throw new Error('Session ID mismatch');
     }
 
     const msg: ChatMessage = {
         username: params.username,
         message,
-        timestamp: params.timestamp || new Date().toISOString(),
+        timestamp: params.timestamp && isTimestamp(params.timestamp) ? params.timestamp : new Date().toISOString(),
     };
 
     if (token) {
-        privateChats[token] = privateChats[token] || [];
-        privateChats[token]!.push(msg);
+        if (!Object.hasOwn(privateChats, token)) {
+            if (Object.keys(privateChats).length >= MAX_PRIVATE_CHATS) throw new Error('Too many active private chats');
+            privateChats[token] = [];
+        }
+        const thread = privateChats[token]!;
+        thread.push(msg);
+        if (thread.length > MAX_CHAT_MESSAGES) thread.splice(0, thread.length - MAX_CHAT_MESSAGES);
         setTimeout(() => {
             delete privateChats[token];
         }, SESSION_TTL).unref();
     } else {
         messages.push(msg);
-        setTimeout(() => messages.splice(messages.indexOf(msg), 1), SESSION_TTL).unref();
+        if (messages.length > MAX_CHAT_MESSAGES) messages.splice(0, messages.length - MAX_CHAT_MESSAGES);
+        setTimeout(() => {
+            const idx = messages.indexOf(msg);
+            if (idx !== -1) messages.splice(idx, 1);
+        }, SESSION_TTL).unref();
     }
 
-    sessions[u] = sessions[u] || { user: session, last: now };
+    if (!Object.hasOwn(sessions, u)) sessions[u] = { user: session, last: now };
     sessions[u]!.last = now;
 
     setTimeout(() => {
-        if (sessions[u] && now - sessions[u].last >= SESSION_TTL) delete sessions[u];
+        if (Object.hasOwn(sessions, u) && now - sessions[u]!.last >= SESSION_TTL) delete sessions[u];
     }, SESSION_TTL).unref();
 
     return { message: 'Message sent successfully' };
 }
 
+/**
+ * Returns the messages of a private thread.
+ *
+ * @param params - Chat parameters holding the private token
+ * @param privateChats - Private threads keyed by token
+ * @returns Messages of the thread, oldest first
+ * @throws Error if the token is missing or no thread exists for it
+ */
 function getPrivateChat(params: ChatParams, privateChats: Record<string, ChatMessage[]>): ChatMessage[] {
     const { token } = params;
 
     if (!token) throw new Error('Please provide a valid token');
 
-    if (privateChats[token]) return privateChats[token];
+    if (Object.hasOwn(privateChats, token)) return privateChats[token]!;
 
     throw new Error('Invalid or expired token.');
 }
@@ -108,6 +150,16 @@ function fetchMessages(messages: ChatMessage[]): ChatMessage[] {
     throw new Error('No messages stored.');
 }
 
+/**
+ * Deletes a private thread and the session of the user clearing it.
+ *
+ * @param params - Chat parameters holding the private token and session
+ * @param privateChats - Private threads keyed by token
+ * @param sessions - Session bound to each lowercased username
+ * @param u - Lowercased username
+ * @returns Confirmation message
+ * @throws Error if the token or session is missing, the session does not match, or no thread exists for the token
+ */
 function clearPrivateChat(
     params: ChatParams,
     privateChats: Record<string, ChatMessage[]>,
@@ -118,10 +170,10 @@ function clearPrivateChat(
 
     if (!token) throw new Error('Please provide a valid token');
     if (!session) throw new Error('Please provide a valid session ID');
-    if (sessions[u] && sessions[u].user !== session) {
+    if (Object.hasOwn(sessions, u) && sessions[u]!.user !== session) {
         throw new Error('Session ID mismatch');
     }
-    if (!privateChats[token]) throw new Error('Invalid or expired token.');
+    if (!Object.hasOwn(privateChats, token)) throw new Error('Invalid or expired token.');
 
     delete privateChats[token];
     delete sessions[u];
