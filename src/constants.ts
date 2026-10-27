@@ -57,6 +57,7 @@ export const POW_DEFAULT_DIFFICULTY = 4;
 export const MAX_QRCODE_LOGO_BYTES = 2 * 1024 * 1024;
 export const MAX_READ_LENGTH = 50_000;
 export const MAX_REGEX_MATCHES = 100;
+export const REGEX_TIMEOUT = 25;
 export const MAX_REMOTE_REDIRECTS = 10;
 export const MAX_RSA_MODULUS = 4096;
 export const MAX_SEMVER_LENGTH = 256;
