@@ -1,18 +1,19 @@
 import type { ChallengeStorage, ChatStorage, IpLimits, TicTacToeStorage } from '../types/storage.js';
 
-export const ipLimits: IpLimits = {};
+// Keys come from clients, so the stores have no prototype ('constructor' or '__proto__' stay plain keys)
+export const ipLimits: IpLimits = Object.create(null);
 
 export const challengeStorage: ChallengeStorage = { usedNonces: new Map(), attempts: new Map() };
 
 export const chatStorage: ChatStorage = {
     messages: [],
-    privateChats: {},
-    sessions: {},
-    rateLimits: {},
+    privateChats: Object.create(null),
+    sessions: Object.create(null),
+    rateLimits: Object.create(null),
 };
 
 export const ticTacToeStorage: TicTacToeStorage = {
-    games: {},
-    sessions: {},
-    rateLimits: {},
+    games: Object.create(null),
+    sessions: Object.create(null),
+    rateLimits: Object.create(null),
 };
