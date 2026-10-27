@@ -3,7 +3,7 @@ import express, { type Request, type Response, type Router } from 'express';
 import { env } from './config/env.js';
 import { endpoints } from './endpoints/index.js';
 import { build } from './endpoints/router.js';
-import { setupCors } from './middleware/cors.js';
+import { setupCors, setupParsers } from './middleware/cors.js';
 import { errorHandler } from './middleware/error.js';
 import { jsonResponseMiddleware } from './middleware/json.js';
 import { loggerMiddleware } from './middleware/logger.js';
@@ -18,14 +18,17 @@ import { error } from './utils/response.js';
 
 const app = express();
 
-// Setup CORS, body parsing, static files
+// Security headers, CORS, static files
 setupCors(app);
 
 // Custom JSON response
 app.use(jsonResponseMiddleware);
 
-// Rate limiting
+// Rate limiting, ahead of body parsing so malformed bodies are counted too
 app.use(rateLimitMiddleware);
+
+// Body parsing
+setupParsers(app);
 
 // Request logging
 app.use(loggerMiddleware);
