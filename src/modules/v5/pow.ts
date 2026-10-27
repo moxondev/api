@@ -62,5 +62,5 @@ export function verifyPow(token: string, nonce: string, storage: ChallengeStorag
         return { valid: false, reason: 'wrong' };
     }
 
-    return verifyToken(token, `${decoded.salt}.${decoded.difficulty}`, storage);
+    return verifyToken(token, `${decoded.salt}.${decoded.difficulty}`, storage, 'pow');
 }

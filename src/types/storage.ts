@@ -42,6 +42,7 @@ export interface TicTacToeStorage {
 
 export interface ChallengeStorage {
     usedNonces: Map<string, number>;
+    attempts?: Map<string, { count: number; exp: number }>;
 }
 
 export interface IpLimits {

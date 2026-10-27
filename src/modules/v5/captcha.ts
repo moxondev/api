@@ -162,7 +162,8 @@ export default function captchaChallenge(options: CaptchaOptions): CaptchaChalle
 }
 
 /**
- * Verifies a captcha answer against its token, then consumes the token.
+ * Verifies a captcha answer against its token, then consumes the token. Only a
+ * captcha token is accepted, and it is burnt after too many wrong answers.
  *
  * @param token - Token issued alongside the challenge image
  * @param answer - Answer read by the user, compared case-insensitively
@@ -170,5 +171,5 @@ export default function captchaChallenge(options: CaptchaOptions): CaptchaChalle
  * @returns Verification result, with a reason when it fails
  */
 export function verifyCaptcha(token: string, answer: string, storage: ChallengeStorage): ChallengeVerification {
-    return verifyToken(token, answer.trim().toLowerCase(), storage);
+    return verifyToken(token, answer.trim().toLowerCase(), storage, 'img');
 }

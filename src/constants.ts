@@ -6,6 +6,7 @@ export const DEFAULT_PORT = 3000;
 export const START_TIME = Date.now();
 
 // Server
+export const CHALLENGE_MAX_ATTEMPTS = 5;
 export const CHALLENGE_TTL = 300_000;
 export const GAME_CLEANUP_TTL = 600_000;
 export const MAX_LOG_ENTRIES = 1000;

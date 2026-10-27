@@ -2,7 +2,7 @@ import type { ChallengeStorage, ChatStorage, IpLimits, TicTacToeStorage } from '
 
 export const ipLimits: IpLimits = {};
 
-export const challengeStorage: ChallengeStorage = { usedNonces: new Map() };
+export const challengeStorage: ChallengeStorage = { usedNonces: new Map(), attempts: new Map() };
 
 export const chatStorage: ChatStorage = {
     messages: [],
