@@ -1,3 +1,5 @@
+import { MAX_TIMESTAMP_LENGTH } from '../constants.js';
+
 /**
  * Tracks requests per user and throws if the rate limit is exceeded.
  *
@@ -22,7 +24,9 @@ export function checkRateLimit(
         }
     }
 
-    rateLimits[userId] = (rateLimits[userId] ?? []).filter((ts) => timestamp - ts < window);
+    rateLimits[userId] = (Object.hasOwn(rateLimits, userId) ? rateLimits[userId]! : []).filter(
+        (ts) => timestamp - ts < window,
+    );
 
     if (rateLimits[userId]!.length >= limit) {
         const remainingTime = Math.ceil((rateLimits[userId]![0]! + window - timestamp) / 1000);
@@ -31,6 +35,37 @@ export function checkRateLimit(
 
     rateLimits[userId]!.push(timestamp);
     return false;
+}
+
+/**
+ * Throws when a client value is an object or longer than the given limit.
+ *
+ * Numbers and booleans pass, measured as text, since the stores only compare them and use them as keys.
+ *
+ * @param value - The client value, skipped when empty so the caller's own missing-field error applies
+ * @param name - Field name used in the error messages (e.g. "session ID")
+ * @param max - Maximum length in characters
+ * @throws Error if the value is an object, an array or a function, or exceeds the limit
+ */
+export function checkString(value: unknown, name: string, max: number): void {
+    if (!value) return;
+    if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
+        throw new Error(`Please provide a valid ${name}`);
+    }
+    const label = name.charAt(0).toUpperCase() + name.slice(1);
+    if (String(value).length > max) throw new Error(`${label} cannot exceed ${max} characters`);
+}
+
+/**
+ * Checks that a client-supplied timestamp can be stored as it was sent.
+ *
+ * @param value - The client value, in any format the client chose
+ * @returns true for a finite number, a boolean or a string up to MAX_TIMESTAMP_LENGTH characters
+ */
+export function isTimestamp(value: unknown): boolean {
+    if (typeof value === 'number') return Number.isFinite(value);
+    if (typeof value === 'boolean') return true;
+    return typeof value === 'string' && value.length <= MAX_TIMESTAMP_LENGTH;
 }
 
 /**

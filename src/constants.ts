@@ -58,6 +58,7 @@ export const MAX_REGEX_MATCHES = 100;
 export const MAX_RSA_MODULUS = 4096;
 export const MAX_SEMVER_LENGTH = 256;
 export const MAX_STRING_LENGTH = 1000;
+export const MAX_TIMESTAMP_LENGTH = 128;
 export const MIN_TOKEN_LENGTH = 12;
 export const MAX_TOKEN_LENGTH = 4096;
 export const MAX_URL_LENGTH = 2048;
