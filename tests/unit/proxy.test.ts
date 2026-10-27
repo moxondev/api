@@ -6,6 +6,7 @@ import { after, before, describe, test } from 'node:test';
 import express from 'express';
 
 import { envList } from '../../src/config/env.js';
+import { setupCors } from '../../src/middleware/cors.js';
 
 // The following tests are adapted from the proxy-addr test suite
 const CDN_RANGE = '198.51.100.0/24';
@@ -71,6 +72,37 @@ describe('trust proxy left unconfigured', () => {
 
     test('trusts a single hop and stops on the nearest proxy', async () => {
         assert.equal(await resolveIp(CHAIN), '10.0.0.1');
+    });
+});
+
+describe('setupCors and the one-hop default', () => {
+    const configure = (nodeEnv: string): { warnings: unknown[][]; trust: unknown } => {
+        const saved = process.env.NODE_ENV;
+        const warnings: unknown[][] = [];
+        const original = console.warn;
+        console.warn = (...args: unknown[]) => warnings.push(args);
+        try {
+            process.env.NODE_ENV = nodeEnv;
+            const app = express();
+            setupCors(app);
+            return { warnings, trust: app.get('trust proxy') };
+        } finally {
+            console.warn = original;
+            process.env.NODE_ENV = saved;
+        }
+    };
+
+    test('warns once outside tests that one reverse proxy is assumed', () => {
+        const { warnings, trust } = configure('production');
+        assert.equal(warnings.length, 1);
+        assert.match(String(warnings[0]![0]), /TRUSTED_PROXIES is unset.*exactly one reverse proxy/);
+        assert.equal(trust, 1);
+    });
+
+    test('stays quiet under test and keeps the same default', () => {
+        const { warnings, trust } = configure('test');
+        assert.equal(warnings.length, 0);
+        assert.equal(trust, 1);
     });
 });
 
