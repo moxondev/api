@@ -1,4 +1,5 @@
-import { MAX_CRON_ITERATIONS, MAX_CRON_RESULTS } from '../../constants.js';
+import { MAX_CRON_DURATION_V4, MAX_CRON_ITERATIONS, MAX_CRON_RESULTS } from '../../constants.js';
+import { cronSearch } from '../v5/cron.js';
 import { VALID_TIMEZONES } from './time.js';
 
 type Timezone = (typeof VALID_TIMEZONES)[number];
@@ -190,6 +191,11 @@ export default function cron(expr: string, count: number = 5, from?: string, tim
         dowSet.delete(7);
     }
 
+    // v5 knows the last date, so the scan stops a minute past it (old offsets have seconds) instead of spinning
+    const exact = cronSearch(expr, count, from, timezone);
+    const last = exact.result.next.at(-1);
+    const horizon = !exact.complete ? Infinity : last ? Date.parse(last) + 60000 : -Infinity;
+
     const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: timezone,
         month: 'numeric',
@@ -202,10 +208,16 @@ export default function cron(expr: string, count: number = 5, from?: string, tim
 
     let currentMs = (Math.floor(fromMs / 60000) + 1) * 60000;
 
+    // The wall-clock budget only applies when v5 could not settle the search, so results do not depend on load
+    const settled = exact.complete || exact.result.next.length >= count;
     const next: string[] = [];
+    const deadline = settled ? Infinity : Date.now() + MAX_CRON_DURATION_V4;
+    let loopMs = NaN;
+    let loopHits = 0;
     let iterations = 0;
 
-    while (next.length < count && iterations < MAX_CRON_ITERATIONS) {
+    // The horizon and the replay check end every known endless search before the iteration cap
+    while (next.length < count && iterations < MAX_CRON_ITERATIONS && Date.now() < deadline && currentMs < horizon) {
         const { minute, hour, dom, month, dow } = getComponents(new Date(currentMs), formatter);
 
         if (!monthSet.has(month)) {
@@ -215,6 +227,13 @@ export default function cron(expr: string, count: number = 5, from?: string, tim
             d.setTime(d.getTime() - 14 * 3600000);
             while (getComponents(d, formatter).month === month) {
                 d.setTime(d.getTime() + 3600000);
+            }
+
+            // In UTC+ zones the jump can land back before the current instant, replaying the same span forever
+            if (d.getTime() <= currentMs) {
+                if (currentMs === loopMs && next.length === loopHits) break;
+                loopMs = currentMs;
+                loopHits = next.length;
             }
             currentMs = d.getTime();
         } else if (!domSet.has(dom) || !dowSet.has(dow)) {
