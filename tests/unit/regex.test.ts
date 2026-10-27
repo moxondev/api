@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, test } from 'node:test';
 
+import { REGEX_TIMEOUT } from '../../src/constants.js';
 import regex from '../../src/modules/v4/regex.js';
 
 describe('regex', () => {
@@ -75,7 +76,98 @@ describe('regex', () => {
         });
     });
 
+    describe('result shape', () => {
+        test('matches are plain objects of the caller realm', () => {
+            const r = regex('(?<w>\\w)(\\d)', 'a1 b2');
+            assert.equal(Object.getPrototypeOf(r.matches), Array.prototype);
+            assert.equal(Object.getPrototypeOf(r.matches[0]), Object.prototype);
+            assert.equal(Object.getPrototypeOf(r.matches[0]!.groups), Array.prototype);
+            assert.equal(Object.getPrototypeOf(r.matches[0]!.namedGroups), Object.prototype);
+            assert.deepEqual(r.matches, [
+                { match: 'a1', index: 0, groups: ['a', '1'], namedGroups: { w: 'a' } },
+                { match: 'b2', index: 3, groups: ['b', '2'], namedGroups: { w: 'b' } },
+            ]);
+        });
+
+        test('an unmatched named group keeps its key', () => {
+            const r = regex('(?<a>x)|(?<b>y)', 'y');
+            assert.deepEqual(r.matches[0]!.namedGroups, { a: undefined, b: 'y' });
+            assert.deepEqual(r.matches[0]!.groups, ['', 'y']);
+        });
+
+        test('a __proto__ group name stays an own key', () => {
+            const r = regex('(?<__proto__>a)', 'a');
+            assert.ok(Object.hasOwn(r.matches[0]!.namedGroups, '__proto__'));
+            assert.equal(Object.getPrototypeOf(r.matches[0]!.namedGroups), Object.prototype);
+        });
+
+        test('zero-length matches still advance', () => {
+            const r = regex('x*', 'abc');
+            assert.equal(r.count, 4);
+            assert.deepEqual(
+                r.matches.map((m) => m.index),
+                [0, 1, 2, 3],
+            );
+        });
+
+        test('matches are capped at 100', () => {
+            assert.equal(regex('.', 'a'.repeat(500)).count, 100);
+        });
+    });
+
+    describe('catastrophic backtracking', () => {
+        test('a nested quantifier is interrupted instead of blocking', () => {
+            const start = Date.now();
+            assert.throws(() => regex('(a+)+$', 'a'.repeat(32) + 'b'), {
+                message: 'Pattern took too long to evaluate',
+            });
+            assert.ok(Date.now() - start < 1000);
+        });
+
+        test('an alternation blowup is interrupted too', () => {
+            assert.throws(() => regex('^(a|a)*$', 'a'.repeat(40) + 'b', 'i'), /took too long/);
+        });
+
+        test('patterns still work after a timeout', () => {
+            assert.throws(() => regex('(a+)+$', 'a'.repeat(32) + 'b'), /took too long/);
+            const r = regex('\\d+', 'abc 42');
+            assert.equal(r.count, 1);
+            assert.equal(r.matches[0]!.match, '42');
+        });
+
+        test('a catastrophic pattern costs at most the 25 ms timeout', () => {
+            assert.equal(REGEX_TIMEOUT, 25);
+            const start = performance.now();
+            assert.throws(() => regex('(a+)+$', 'a'.repeat(34) + 'b'), /took too long/);
+            assert.ok(performance.now() - start < 250, `took ${performance.now() - start} ms`);
+        });
+
+        test('ordinary and Unicode property patterns on 1000 characters finish well within the timeout', () => {
+            const text = 'Lorem ipsum dolor sit amet, caf\u00e9 123 '.repeat(30).slice(0, 1000);
+            assert.equal(regex('[\\p{L}\\p{N}]+', text, 'gu').count, 100);
+            assert.equal(regex('(\\w+\\s?)+', text).valid, true);
+            assert.equal(regex('^.*$', text, 'ms').count, 1);
+        });
+
+        test('an invalid pattern is still reported as valid: false', () => {
+            assert.deepEqual(regex('(?<n>a)(?<n>b)', 'ab'), {
+                valid: false,
+                pattern: '(?<n>a)(?<n>b)',
+                flags: 'g',
+                matches: [],
+                count: 0,
+            });
+        });
+    });
+
     describe('errors', () => {
+        test('a pattern or text that is not a string, such as a repeated query key, throws', () => {
+            const text = ['a'.repeat(700), 'b'.repeat(700)];
+            assert.throws(() => regex(['(?=(.*))', ''] as never, 'abc'), /^Error: Please provide a pattern/);
+            assert.throws(() => regex('(?=(.*))', text as never), /^Error: Please provide a text/);
+            assert.throws(() => regex({ source: 'a' } as never, 'abc'), /^Error: Please provide a pattern/);
+        });
+
         test('missing pattern throws', () => {
             assert.throws(() => regex('', 'hello'), /pattern/);
         });
