@@ -27,7 +27,7 @@ export {
 } from './v4.js';
 export { default as address } from './v5/address.js';
 export * as algorithms from './v5/algorithms.js';
-export { default as asymmetric } from './v5/asymmetric.js';
+export { default as asymmetric, asymmetricAsync } from './v5/asymmetric.js';
 export { default as barcode } from './v5/barcode.js';
 export { default as base } from './v5/base.js';
 export { default as captchaChallenge, verifyCaptcha } from './v5/captcha.js';

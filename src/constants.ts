@@ -36,6 +36,7 @@ export const MAX_CHAT_MESSAGES = 200;
 export const MAX_CSV_LENGTH = 50_000;
 export const MAX_CSV_ROWS = 1000;
 export const MAX_CREDIT_COUNT = 10;
+export const MAX_CONCURRENT_KEYGENS = 2;
 export const MAX_COUNTDOWN_YEARS = 100;
 export const MAX_CRON_DURATION = 250;
 export const MAX_CRON_DURATION_V4 = 1000;
