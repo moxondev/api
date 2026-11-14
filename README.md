@@ -13,7 +13,7 @@ The HTTP surface is versioned from `v4` to `v6`, and every version stays mounted
 
 ## Migrating from `@20syldev/api`
 
-`@moxon/api` is the new name of `@20syldev/api`, which no longer receives updates. `6.0.0-pre` carries the code of `@20syldev/api@6.0.0` under the new name, and every release since ships only as `@moxon/api`. The exports and the `/v6` HTTP API are unchanged, so migrating only takes a rename.
+`@moxon/api` is the new name of `@20syldev/api`, which no longer receives updates. The `6.1.0-pre` pre-release (tagged `6.1.0-pre` on GitHub, published to npm as `6.0.0-pre`) carries the code of `@20syldev/api@6.0.0` under the new name, and every release since ships only as `@moxon/api`. The exports and the `/v6` HTTP API are unchanged, so migrating only takes a rename.
 
 ```bash
 npm uninstall @20syldev/api
@@ -80,7 +80,7 @@ console.log(user.username);
 | **Crypto**         | `asymmetric` `asymmetricAsync` `symmetric` `hash` `jwt` `otp` `token` `password` `captcha` |
 | **Math & data**    | **`matrix`** **`algorithms`** `evaluate` `statistics` `convert` `csv`                      |
 | **Text**           | **`text`** **`encode`** **`validate`** `caseConvert` `levenshtein` `regex` `parseUrl`      |
-| **Graphics**       | **`chart`** `barcode` `qrcode` `avatar` `placeholder` `color` `palette`                    |
+| **Graphics**       | **`chart`** `badge` `barcode` `qrcode` `avatar` `placeholder` `color` `palette`            |
 | **Fake data**      | `personal` `address` `credit` `username` `dice` `domain` `agent`                           |
 | **Network & time** | `ip` `geo` `time` `cron` `hyperplanning`                                                   |
 | **Stateful**       | `chat` `tic_tac_toe`                                                                       |
@@ -270,11 +270,11 @@ Higher quotas can be granted per client: `ADVANCED_`, `PRO_` and `BUSINESS_` var
 
 ## Versioning
 
-| Version | What it changes                                                                                                                                                          |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `v4`    | The first fully typed version, and the one that introduced the PATCH and DELETE routes                                                                                   |
-| `v5`    | Adds `base`, `case`, `csv`, `diff`, `evaluate`, `pow`, `read`, `semver`, `url`, `uuid`, asymmetric and symmetric crypto, charts, JWT, matrices and OTP                   |
-| `v6`    | The captcha answers with a signed token by default, `levenshtein` moves to POST, chat and tic-tac-toe carry their identifiers in the body, `hyperplanning` is deprecated |
+| Version | What it changes                                                                                                                                                                        |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `v4`    | The first fully typed version, and the one that introduced the PATCH and DELETE routes                                                                                                 |
+| `v5`    | Adds `base`, `case`, `csv`, `diff`, `evaluate`, `pow`, `read`, `semver`, `url`, `uuid`, asymmetric and symmetric crypto, charts, JWT, matrices and OTP                                 |
+| `v6`    | Adds `badge`, the captcha answers with a signed token by default, `levenshtein` moves to POST, chat and tic-tac-toe carry their identifiers in the body, `hyperplanning` is deprecated |
 
 Every version is fully typed. The package root always tracks the latest one.
 
