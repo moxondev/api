@@ -219,13 +219,13 @@ $ npm run build && npm start
 ```
 
 ```console
-> @moxon/api@6.1.0 build
+> @moxon/api@6.2.0 build
 > npm run clean && tsc
 
-> @moxon/api@6.1.0 clean
+> @moxon/api@6.2.0 clean
 > node -e "require('node:fs').rmSync('dist', { recursive: true, force: true })"
 
-> @moxon/api@6.1.0 start
+> @moxon/api@6.2.0 start
 > node dist/app.js
 
 API is running on
