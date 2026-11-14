@@ -13,6 +13,7 @@ import type { IpResult } from '../modules/v4/ip.js';
 import type { PasswordResult } from '../modules/v4/password.js';
 import type { QRCodeOptions, QRCodeResult } from '../modules/v4/qrcode.js';
 import type { CaptchaChallenge } from '../modules/v5/captcha.js';
+import type { BadgeOptions, BadgeResult } from '../modules/v6/badge.js';
 import { chatStorage } from '../storage/index.js';
 import { since } from '../utils/helpers.js';
 import { error } from '../utils/response.js';
@@ -151,6 +152,59 @@ router.get('/:version/avatar', (req: Request, res: Response) => {
             format: format as string | undefined,
         });
         res.type(contentType).send(body);
+    } catch (err) {
+        error(res, 400, (err as Error).message);
+    }
+});
+
+/**
+ * Reads a plain decimal number from a query value, so hexadecimal and exponent forms are refused.
+ *
+ * @param value - Raw query value
+ * @returns The number, NaN for anything that is not a plain decimal of at most three digits and two decimals, or
+ * undefined when the parameter is absent
+ */
+function decimal(value: unknown): number | undefined {
+    if (value === undefined) return undefined;
+    return typeof value === 'string' && /^\d{1,3}(\.\d{1,2})?$/.test(value) ? Number(value) : NaN;
+}
+
+// Generate a badge as an SVG image
+router.get('/:version/badge', (req: Request, res: Response) => {
+    const badgeFn = (req.module as { badge?: (opts: BadgeOptions) => BadgeResult }).badge;
+    if (!badgeFn) {
+        error(res, 404, `Endpoint not available in ${req.version}.`);
+        return;
+    }
+    const { label, icon, trail, start, end, ink, message, messageStart, messageEnd, messageInk } = req.query;
+    const { border, size, font, weight, lift, radius, angle } = req.query;
+    try {
+        const { contentType, body } = badgeFn({
+            label: label as string,
+            icon: icon as string | undefined,
+            trail: trail as string | undefined,
+            start: start as string | undefined,
+            end: end as string | undefined,
+            ink: ink as string | undefined,
+            message: message as string | undefined,
+            messageStart: messageStart as string | undefined,
+            messageEnd: messageEnd as string | undefined,
+            messageInk: messageInk as string | undefined,
+            border: border as string | undefined,
+            size: size as string | undefined,
+            font: font as string | undefined,
+            weight: weight as string | undefined,
+            lift: decimal(lift),
+            radius: decimal(radius),
+            angle: decimal(angle),
+        });
+        // The image only depends on the query string, so it can be cached by browsers and proxies alike
+        res.set({
+            'Cache-Control': 'public, max-age=86400',
+            'Content-Security-Policy': "default-src 'none'",
+        })
+            .type(contentType)
+            .send(body);
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
