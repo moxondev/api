@@ -1,9 +1,20 @@
 import { strict as assert } from 'node:assert';
 import type { Server } from 'node:http';
+import { request } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, test } from 'node:test';
 
 import app from '../../src/app.js';
+import {
+    FALLBACK_WIDTH,
+    MONO_ADVANCE,
+    SANS_BOLD,
+    SANS_REGULAR,
+    SERIF_BOLD,
+    SERIF_REGULAR,
+    UNITS_PER_EM,
+    type WidthRanges,
+} from '../../src/utils/fonts.js';
 
 let server: Server;
 let baseUrl: string;
@@ -42,6 +53,85 @@ async function sendJson(
     });
     const data = (await res.json()) as Record<string, unknown>;
     return { status: res.status, body: data };
+}
+
+/**
+ * Sends a GET request through node:http, because fetch hides 304 answers and rewrites the cache headers.
+ *
+ * @param path - Path from the server root, query string included
+ * @param headers - Request headers to send
+ * @returns Status code, response headers and raw body
+ */
+function rawGet(
+    path: string,
+    headers: Record<string, string> = {},
+): Promise<{ status: number; headers: Record<string, string | string[] | undefined>; body: string }> {
+    return new Promise((resolve, reject) => {
+        const req = request(`${baseUrl}${path}`, { headers }, (res) => {
+            let body = '';
+            res.setEncoding('utf8');
+            res.on('data', (chunk: string) => (body += chunk));
+            res.on('end', () => resolve({ status: res.statusCode ?? 0, headers: res.headers, body }));
+        });
+        req.on('error', reject);
+        req.end();
+    });
+}
+
+/**
+ * Looks up the advance of a code point in a width table.
+ *
+ * @param table - Compact width ranges
+ * @param code - Unicode code point
+ * @returns The advance in font units, or undefined when the table has no entry
+ */
+function tableUnits(table: WidthRanges, code: number): number | undefined {
+    for (const [first, widths] of table) {
+        if (code >= first && code < first + widths.length) return widths[code - first];
+    }
+    return undefined;
+}
+
+/**
+ * Computes the text length a badge must give to a text, from the exported width tables.
+ *
+ * @param text - Text to measure
+ * @param font - Font name
+ * @param weight - Weight name
+ * @param fontSize - Font size in pixels
+ * @returns The rounded width in pixels
+ */
+function expectedLength(text: string, font: string, weight: string, fontSize: number): number {
+    const tables: Record<string, Record<string, WidthRanges>> = {
+        sans: { normal: SANS_REGULAR, bold: SANS_BOLD },
+        serif: { normal: SERIF_REGULAR, bold: SERIF_BOLD },
+    };
+    let units = 0;
+    for (const char of text) {
+        const code = char.codePointAt(0)!;
+        if (font === 'mono') {
+            // Mono gives one advance to every code point the tables cover, soft hyphen excepted
+            const covered = tableUnits(SANS_BOLD, code) !== undefined;
+            units += covered ? (code === 0xad ? 0 : MONO_ADVANCE) : FALLBACK_WIDTH;
+        } else {
+            units += tableUnits(tables[font]![weight]!, code) ?? FALLBACK_WIDTH;
+        }
+    }
+    return Math.round((units / UNITS_PER_EM) * fontSize);
+}
+
+/**
+ * Reads the text elements of a badge SVG.
+ *
+ * @param svg - SVG markup
+ * @returns The font family, font weight, text length and content of each text
+ */
+function svgTexts(svg: string): { family: string; weight: string; length: number; content: string }[] {
+    return [
+        ...svg.matchAll(
+            /<text\b[^>]* font-family="([^"]*)" font-weight="([^"]*)"[^>]* textLength="(\d+)">([^<]*)<\/text>/g,
+        ),
+    ].map((m) => ({ family: m[1]!, weight: m[2]!, length: Number(m[3]), content: m[4]! }));
 }
 
 // --- v4 endpoints ---
@@ -959,6 +1049,633 @@ describe('GET /v4/barcode', () => {
     test('invalid type returns 400', async () => {
         const { status } = await getJson('/v4/barcode?data=test&type=qr');
         assert.equal(status, 400);
+    });
+});
+
+describe('GET /v6/badge', () => {
+    test('returns an SVG with the expected content type', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=Nouveau`);
+        assert.equal(res.status, 200);
+        assert.ok(res.headers.get('content-type')?.includes('image/svg+xml'));
+        const text = await res.text();
+        assert.ok(text.startsWith('<svg'));
+        assert.ok(text.includes('>Nouveau</text>'));
+    });
+
+    test('sets the cache and hardening headers', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=Nouveau`);
+        assert.equal(res.headers.get('cache-control'), 'public, max-age=86400');
+        assert.equal(res.headers.get('content-security-policy'), "default-src 'none'");
+        assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
+    });
+
+    test('sends an ETag and answers a matching If-None-Match with 304', async () => {
+        const first = await rawGet('/v6/badge?label=Nouveau');
+        assert.equal(first.status, 200);
+        const etag = first.headers.etag as string;
+        assert.ok(etag);
+        const second = await rawGet('/v6/badge?label=Nouveau', { 'If-None-Match': etag });
+        assert.equal(second.status, 304);
+        assert.equal(second.body, '');
+        assert.equal(second.headers['cache-control'], 'public, max-age=86400');
+        const other = await rawGet('/v6/badge?label=Nouveau', { 'If-None-Match': 'W/"stale"' });
+        assert.equal(other.status, 200);
+    });
+
+    test('a different query gives a different ETag', async () => {
+        const a = await rawGet('/v6/badge?label=Nouveau');
+        const b = await rawGet('/v6/badge?label=Ancien');
+        assert.notEqual(a.headers.etag, b.headers.etag);
+    });
+
+    test('same query is deterministic', async () => {
+        const [a, b] = await Promise.all([
+            fetch(`${baseUrl}/v6/badge?label=Nouveau&icon=sparkles`).then((r) => r.text()),
+            fetch(`${baseUrl}/v6/badge?label=Nouveau&icon=sparkles`).then((r) => r.text()),
+        ]);
+        assert.equal(a, b);
+    });
+
+    test('HEAD answers with the headers and no body', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=Nouveau`, { method: 'HEAD' });
+        assert.equal(res.status, 200);
+        assert.ok(res.headers.get('content-type')?.includes('image/svg+xml'));
+        assert.equal(res.headers.get('cache-control'), 'public, max-age=86400');
+        assert.equal(await res.text(), '');
+    });
+
+    test('every parameter goes through the query string', async () => {
+        const query = [
+            'label=Nouveau',
+            'icon=sparkles',
+            'trail=arrow-right',
+            'start=%23112233',
+            'end=%23445566',
+            'ink=%23ff0000',
+            'border=%23abcdef',
+            'size=lg',
+            'lift=3',
+        ].join('&');
+        const res = await fetch(`${baseUrl}/v6/badge?${query}`);
+        assert.equal(res.status, 200);
+        const text = await res.text();
+        assert.ok(text.includes('stop-color="#112233"'));
+        assert.ok(text.includes('stop-color="#445566"'));
+        assert.ok(text.includes('fill="#ff0000"'));
+        assert.ok(text.includes('stroke="#abcdef"'));
+        assert.ok(text.includes('height="34"'));
+        assert.ok(text.includes('font-size="13"'));
+        assert.equal(text.split('<g transform=').length - 1, 2);
+    });
+
+    test('hex colors work with %23 and without the #', async () => {
+        const encoded = await (await fetch(`${baseUrl}/v6/badge?label=a&start=%2316a34a&end=%2315803d`)).text();
+        const bare = await (await fetch(`${baseUrl}/v6/badge?label=a&start=16a34a&end=15803d`)).text();
+        assert.ok(encoded.includes('stop-color="#16a34a"'));
+        assert.ok(encoded.includes('stop-color="#15803d"'));
+        assert.equal(encoded, bare);
+        const short = await (await fetch(`${baseUrl}/v6/badge?label=a&start=fff`)).text();
+        assert.ok(short.includes('stop-color="#fff"'));
+    });
+
+    test('end defaults to start', async () => {
+        const text = await (await fetch(`${baseUrl}/v6/badge?label=a&start=%23123456`)).text();
+        assert.equal(text.split('stop-color="#123456"').length - 1, 2);
+    });
+
+    test('lift adds height around the pill', async () => {
+        const plain = await (await fetch(`${baseUrl}/v6/badge?label=a&size=sm`)).text();
+        const lifted = await (await fetch(`${baseUrl}/v6/badge?label=a&size=sm&lift=4`)).text();
+        assert.ok(plain.includes('height="20"'));
+        assert.ok(lifted.includes('height="28"'));
+    });
+
+    test('a URL-encoded accented label is decoded', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=${encodeURIComponent('Équipe créée')}`);
+        assert.equal(res.status, 200);
+        const text = await res.text();
+        assert.ok(text.includes('>Équipe créée</text>'));
+        assert.ok(text.includes('aria-label="Équipe créée"'));
+    });
+
+    test('markup in the label is escaped', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=${encodeURIComponent('<b>&"x"</b>')}`);
+        assert.equal(res.status, 200);
+        const text = await res.text();
+        assert.ok(!text.includes('<b>'));
+        assert.ok(text.includes('&lt;b&gt;&amp;&quot;x&quot;&lt;/b&gt;'));
+    });
+
+    test('a label of exactly 64 characters is accepted', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=${'a'.repeat(64)}`);
+        assert.equal(res.status, 200);
+    });
+
+    test('a message renders a second part inside a clipped group', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=Nouveau&message=v6`);
+        assert.equal(res.status, 200);
+        assert.ok(res.headers.get('content-type')?.includes('image/svg+xml'));
+        const text = await res.text();
+        assert.ok(text.startsWith('<svg'));
+        assert.ok(text.includes('>Nouveau</text>'));
+        assert.ok(text.includes('>v6</text>'));
+        assert.ok(text.includes('<clipPath id="c-'));
+        assert.ok(text.includes('<g clip-path="url(#c-'));
+        assert.equal(text.split('<linearGradient').length - 1, 2);
+        assert.ok(text.includes('<title>Nouveau: v6</title>'));
+        assert.ok(text.includes('aria-label="Nouveau: v6"'));
+    });
+
+    test('an empty message gives the single part badge', async () => {
+        const single = await (await fetch(`${baseUrl}/v6/badge?label=Nouveau`)).text();
+        const empty = await (await fetch(`${baseUrl}/v6/badge?label=Nouveau&message=`)).text();
+        assert.equal(empty, single);
+        assert.ok(!empty.includes('<clipPath'));
+    });
+
+    test('a message badge is wider than the single part badge', async () => {
+        const single = await (await fetch(`${baseUrl}/v6/badge?label=Nouveau`)).text();
+        const double = await (await fetch(`${baseUrl}/v6/badge?label=Nouveau&message=v6`)).text();
+        const widthOf = (svg: string): number => Number(svg.match(/<svg[^>]* width="([\d.]+)"/)![1]);
+        assert.ok(widthOf(double) > widthOf(single));
+    });
+
+    test('message, messageStart, messageEnd and messageInk go through the query string', async () => {
+        const query = [
+            'label=Nouveau',
+            'message=v6',
+            'messageStart=%23112233',
+            'messageEnd=%23445566',
+            'messageInk=%23ff0000',
+        ].join('&');
+        const res = await fetch(`${baseUrl}/v6/badge?${query}`);
+        assert.equal(res.status, 200);
+        const text = await res.text();
+        assert.ok(text.includes('id="m-112233-445566"'));
+        assert.ok(text.includes('stop-color="#112233"'));
+        assert.ok(text.includes('stop-color="#445566"'));
+        assert.ok(text.includes('fill="#ff0000"'));
+        assert.ok(text.includes('fill="url(#m-112233-445566)"'));
+    });
+
+    test('the message part defaults to blue and to the ink of the label', async () => {
+        const text = await (await fetch(`${baseUrl}/v6/badge?label=a&message=b&ink=%23abcdef`)).text();
+        assert.equal(text.split('stop-color="#0969da"').length - 1, 2);
+        assert.ok(text.includes('id="m-0969da-0969da"'));
+        assert.equal(text.split('fill="#abcdef"').length - 1, 2);
+    });
+
+    test('messageEnd defaults to messageStart', async () => {
+        const text = await (await fetch(`${baseUrl}/v6/badge?label=a&message=b&messageStart=%23123456`)).text();
+        assert.equal(text.split('stop-color="#123456"').length - 1, 2);
+    });
+
+    test('the trailing icon follows the message', async () => {
+        const text = await (
+            await fetch(`${baseUrl}/v6/badge?label=a&message=b&trail=arrow-right&messageInk=%23ff0000`)
+        ).text();
+        assert.equal(text.split('<g transform=').length - 1, 1);
+        assert.ok(text.includes('stroke="#ff0000"'));
+    });
+
+    test('a border on a message badge is drawn as a stroke rect on top', async () => {
+        const text = await (await fetch(`${baseUrl}/v6/badge?label=a&message=b&border=%23abcdef`)).text();
+        assert.ok(text.includes('fill="none" stroke="#abcdef"'));
+        assert.ok(text.indexOf('</g>') < text.indexOf('fill="none"'));
+    });
+
+    test('a message of exactly 64 characters is accepted', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=a&message=${'b'.repeat(64)}`);
+        assert.equal(res.status, 200);
+    });
+
+    test('a URL-encoded accented message is decoded and markup is escaped', async () => {
+        const accented = await fetch(`${baseUrl}/v6/badge?label=a&message=${encodeURIComponent('créée')}`);
+        assert.equal(accented.status, 200);
+        assert.ok((await accented.text()).includes('>créée</text>'));
+        const markup = await fetch(`${baseUrl}/v6/badge?label=a&message=${encodeURIComponent('<b>&"x"</b>')}`);
+        assert.equal(markup.status, 200);
+        const text = await markup.text();
+        assert.ok(!text.includes('<b>'));
+        assert.ok(text.includes('&lt;b&gt;&amp;&quot;x&quot;&lt;/b&gt;'));
+    });
+
+    test('the message badge is cached and deterministic', async () => {
+        const first = await rawGet('/v6/badge?label=a&message=b');
+        const again = await rawGet('/v6/badge?label=a&message=b');
+        const other = await rawGet('/v6/badge?label=a&message=c');
+        assert.equal(first.headers['cache-control'], 'public, max-age=86400');
+        assert.equal(first.body, again.body);
+        assert.equal(first.headers.etag, again.headers.etag);
+        assert.notEqual(first.headers.etag, other.headers.etag);
+    });
+
+    test('radius sets the corner rounding of a single part badge', async () => {
+        const pill = await (await fetch(`${baseUrl}/v6/badge?label=a`)).text();
+        const round = await (await fetch(`${baseUrl}/v6/badge?label=a&radius=4`)).text();
+        const square = await (await fetch(`${baseUrl}/v6/badge?label=a&radius=0`)).text();
+        assert.ok(pill.includes('rx="10"'));
+        assert.ok(round.includes('rx="4"'));
+        assert.ok(square.includes('rx="0"'));
+    });
+
+    test('a radius above half the height is clamped to a pill', async () => {
+        const pill = await (await fetch(`${baseUrl}/v6/badge?label=a`)).text();
+        const big = await (await fetch(`${baseUrl}/v6/badge?label=a&radius=100`)).text();
+        assert.equal(big, pill);
+    });
+
+    test('radius with two decimals is accepted and applies to the clip of a message badge', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=a&message=b&radius=3.25`);
+        assert.equal(res.status, 200);
+        const text = await res.text();
+        assert.ok(text.includes('rx="3.25"'));
+        assert.ok(text.includes('id="c-'));
+        assert.ok(text.includes('-20-3.25"'));
+    });
+
+    test('angle sets the gradient direction', async () => {
+        const corner = await (await fetch(`${baseUrl}/v6/badge?label=a`)).text();
+        const across = await (await fetch(`${baseUrl}/v6/badge?label=a&angle=90`)).text();
+        const down = await (await fetch(`${baseUrl}/v6/badge?label=a&angle=180`)).text();
+        assert.ok(corner.includes('x1="0" y1="0" x2="1" y2="1"'));
+        assert.ok(across.includes('x1="0" y1="0.5" x2="1" y2="0.5"'));
+        assert.ok(across.includes('id="g-2d333b-2d333b-90"'));
+        assert.ok(down.includes('x1="0.5" y1="0" x2="0.5" y2="1"'));
+        assert.ok(down.includes('id="g-2d333b-2d333b-180"'));
+    });
+
+    test('angle is rounded to whole degrees and applies to both parts', async () => {
+        const rounded = await (await fetch(`${baseUrl}/v6/badge?label=a&message=b&angle=45.6`)).text();
+        const whole = await (await fetch(`${baseUrl}/v6/badge?label=a&message=b&angle=46`)).text();
+        assert.equal(rounded, whole);
+        assert.ok(rounded.includes('id="g-2d333b-2d333b-46"'));
+        assert.ok(rounded.includes('id="m-0969da-0969da-46"'));
+    });
+
+    test('angle 0 and angle 360 are accepted', async () => {
+        for (const angle of ['0', '360']) {
+            const res = await fetch(`${baseUrl}/v6/badge?label=a&angle=${angle}`);
+            assert.equal(res.status, 200);
+            assert.ok((await res.text()).includes(`-${angle}"`));
+        }
+    });
+
+    test('lift, radius and angle accept the largest allowed values', async () => {
+        const res = await fetch(`${baseUrl}/v6/badge?label=a&lift=10&radius=100&angle=360`);
+        assert.equal(res.status, 200);
+    });
+
+    describe('font and weight', () => {
+        const stacks: Record<string, string> = {
+            sans: 'Verdana,DejaVu Sans,Geneva,sans-serif',
+            serif: 'Georgia,DejaVu Serif,Times New Roman,serif',
+            mono: 'Menlo,DejaVu Sans Mono,Consolas,monospace',
+        };
+        const weights: Record<string, string> = { normal: '400', bold: '600' };
+        // The default size is sm, drawn at 11 pixels
+        const fontSize = 11;
+        const label = 'Nouveau Wiki';
+        const message = 'v6 mmm';
+
+        test('the default is the sans bold face', async () => {
+            const text = await (await fetch(`${baseUrl}/v6/badge?label=${label}`)).text();
+            assert.ok(text.includes(`font-family="${stacks.sans}" font-weight="600"`));
+            const [first] = svgTexts(text);
+            assert.equal(first!.length, expectedLength(label, 'sans', 'bold', fontSize));
+        });
+
+        test('explicit sans and bold give the same bytes as the default', async () => {
+            const bare = await (await fetch(`${baseUrl}/v6/badge?label=${label}&message=${message}`)).text();
+            const explicit = await (
+                await fetch(`${baseUrl}/v6/badge?label=${label}&message=${message}&font=sans&weight=bold`)
+            ).text();
+            assert.equal(explicit, bare);
+            const sansOnly = await (
+                await fetch(`${baseUrl}/v6/badge?label=${label}&message=${message}&font=sans`)
+            ).text();
+            assert.equal(sansOnly, bare);
+            const boldOnly = await (
+                await fetch(`${baseUrl}/v6/badge?label=${label}&message=${message}&weight=bold`)
+            ).text();
+            assert.equal(boldOnly, bare);
+        });
+
+        for (const font of ['sans', 'serif', 'mono']) {
+            for (const weight of ['normal', 'bold']) {
+                test(`${font} ${weight} is drawn with its stack, weight and measured width on both parts`, async () => {
+                    const res = await fetch(
+                        `${baseUrl}/v6/badge?label=${label}&message=${message}&font=${font}&weight=${weight}`,
+                    );
+                    assert.equal(res.status, 200);
+                    assert.ok(res.headers.get('content-type')?.includes('image/svg+xml'));
+                    const parts = svgTexts(await res.text());
+                    assert.equal(parts.length, 2);
+                    assert.deepEqual(
+                        parts.map((part) => [part.family, part.weight, part.length, part.content]),
+                        [
+                            [stacks[font], weights[weight], expectedLength(label, font, weight, fontSize), label],
+                            [stacks[font], weights[weight], expectedLength(message, font, weight, fontSize), message],
+                        ],
+                    );
+                });
+            }
+        }
+
+        test('the text length depends on the font for the same label', async () => {
+            const lengths: Record<string, number> = {};
+            for (const font of ['sans', 'serif', 'mono']) {
+                const [part] = svgTexts(await (await fetch(`${baseUrl}/v6/badge?label=${label}&font=${font}`)).text());
+                lengths[font] = part!.length;
+            }
+            assert.equal(new Set(Object.values(lengths)).size, 3, JSON.stringify(lengths));
+        });
+
+        test('the text length depends on the weight for a proportional font', async () => {
+            for (const font of ['sans', 'serif']) {
+                const normal = svgTexts(
+                    await (await fetch(`${baseUrl}/v6/badge?label=${label}&font=${font}&weight=normal`)).text(),
+                );
+                const bold = svgTexts(
+                    await (await fetch(`${baseUrl}/v6/badge?label=${label}&font=${font}&weight=bold`)).text(),
+                );
+                assert.notEqual(normal[0]!.length, bold[0]!.length, font);
+            }
+        });
+
+        test('mono has the same width in both weights and a fixed advance per character', async () => {
+            const normal = svgTexts(
+                await (await fetch(`${baseUrl}/v6/badge?label=iiiiWWWW&font=mono&weight=normal`)).text(),
+            );
+            const bold = svgTexts(
+                await (await fetch(`${baseUrl}/v6/badge?label=iiiiWWWW&font=mono&weight=bold`)).text(),
+            );
+            assert.equal(normal[0]!.length, bold[0]!.length);
+            // Eight characters of 1233 units at 11 pixels
+            assert.equal(normal[0]!.length, Math.round((8 * 1233 * fontSize) / 2048));
+        });
+
+        test('the badge width follows the font', async () => {
+            const widthOf = (svg: string): number => Number(svg.match(/<svg[^>]* width="([\d.]+)"/)![1]);
+            const sans = widthOf(await (await fetch(`${baseUrl}/v6/badge?label=${label}&font=sans`)).text());
+            const mono = widthOf(await (await fetch(`${baseUrl}/v6/badge?label=${label}&font=mono`)).text());
+            const sansLength = expectedLength(label, 'sans', 'bold', fontSize);
+            const monoLength = expectedLength(label, 'mono', 'bold', fontSize);
+            assert.equal(mono - sans, monoLength - sansLength);
+        });
+
+        test('the size sets the font size the widths are measured at', async () => {
+            const text = await (
+                await fetch(`${baseUrl}/v6/badge?label=${label}&font=serif&weight=normal&size=lg`)
+            ).text();
+            assert.ok(text.includes('font-size="13"'));
+            assert.equal(svgTexts(text)[0]!.length, expectedLength(label, 'serif', 'normal', 13));
+        });
+
+        test('font and weight change the ETag and the body', async () => {
+            const base = await rawGet(`/v6/badge?label=${label}`);
+            const serif = await rawGet(`/v6/badge?label=${label}&font=serif`);
+            const normal = await rawGet(`/v6/badge?label=${label}&weight=normal`);
+            assert.notEqual(base.body, serif.body);
+            assert.notEqual(base.body, normal.body);
+            assert.notEqual(serif.body, normal.body);
+            assert.equal(new Set([base.headers.etag, serif.headers.etag, normal.headers.etag]).size, 3);
+        });
+
+        test('the cache and hardening headers stay on a styled badge', async () => {
+            const res = await fetch(`${baseUrl}/v6/badge?label=a&font=mono&weight=normal`);
+            assert.equal(res.status, 200);
+            assert.equal(res.headers.get('cache-control'), 'public, max-age=86400');
+            assert.equal(res.headers.get('content-security-policy'), "default-src 'none'");
+            assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
+            const first = await rawGet('/v6/badge?label=a&font=mono&weight=normal');
+            const second = await rawGet('/v6/badge?label=a&font=mono&weight=normal', {
+                'If-None-Match': first.headers.etag as string,
+            });
+            assert.equal(second.status, 304);
+        });
+
+        test('a styled badge is deterministic', async () => {
+            const [a, b] = await Promise.all([
+                fetch(`${baseUrl}/v6/badge?label=a&font=serif&weight=normal`).then((r) => r.text()),
+                fetch(`${baseUrl}/v6/badge?label=a&font=serif&weight=normal`).then((r) => r.text()),
+            ]);
+            assert.equal(a, b);
+        });
+
+        test('v4 and v5 answer 404 even with font and weight', async () => {
+            for (const version of ['v4', 'v5']) {
+                const { status, body } = await getJson(`/${version}/badge?label=a&font=mono&weight=normal`);
+                assert.equal(status, 404);
+                assert.equal(body.message, 'Not Found');
+                assert.equal(body.error, `Endpoint not available in ${version}.`);
+                assert.equal(body.status, 404);
+            }
+        });
+
+        const FONT_ERROR = 'Invalid font (use sans, serif or mono)';
+        const WEIGHT_ERROR = 'Invalid weight (use normal or bold)';
+        const rejected: [string, string, string][] = [
+            ['unknown font', 'font=comic', FONT_ERROR],
+            ['font in capitals', 'font=Sans', FONT_ERROR],
+            ['font with a trailing space', 'font=sans%20', FONT_ERROR],
+            ['empty font', 'font=', FONT_ERROR],
+            ['repeated font key', 'font=sans&font=serif', FONT_ERROR],
+            ['font named constructor', 'font=constructor', FONT_ERROR],
+            ['font named __proto__', 'font=__proto__', FONT_ERROR],
+            ['font named toString', 'font=toString', FONT_ERROR],
+            ['font named hasOwnProperty', 'font=hasOwnProperty', FONT_ERROR],
+            ['font with an injected attribute', 'font=sans%22%20onload%3D%22alert(1)', FONT_ERROR],
+            ['font with angle brackets', 'font=%3Cscript%3Ealert(1)%3C%2Fscript%3E', FONT_ERROR],
+            ['font with a quote and a tag', 'font=%22%3E%3Csvg%2Fonload%3Dalert(1)%3E', FONT_ERROR],
+            ['unknown weight', 'weight=heavy', WEIGHT_ERROR],
+            ['weight in capitals', 'weight=Bold', WEIGHT_ERROR],
+            ['numeric weight', 'weight=600', WEIGHT_ERROR],
+            ['empty weight', 'weight=', WEIGHT_ERROR],
+            ['repeated weight key', 'weight=bold&weight=normal', WEIGHT_ERROR],
+            ['weight named constructor', 'weight=constructor', WEIGHT_ERROR],
+            ['weight named __proto__', 'weight=__proto__', WEIGHT_ERROR],
+            ['weight named toString', 'weight=toString', WEIGHT_ERROR],
+            ['weight named hasOwnProperty', 'weight=hasOwnProperty', WEIGHT_ERROR],
+            ['weight with an injected attribute', 'weight=bold%22%20onload%3D%22alert(1)', WEIGHT_ERROR],
+            ['weight with angle brackets', 'weight=%3Cscript%3Ealert(1)%3C%2Fscript%3E', WEIGHT_ERROR],
+        ];
+        for (const [name, query, message] of rejected) {
+            test(`${name} returns 400`, async () => {
+                const res = await fetch(`${baseUrl}/v6/badge?label=a&${query}`);
+                assert.equal(res.status, 400);
+                assert.ok(res.headers.get('content-type')?.includes('application/json'));
+                const body = (await res.json()) as Record<string, unknown>;
+                assert.equal(body.message, 'Bad Request');
+                assert.equal(body.error, message);
+                assert.equal(body.status, 400);
+            });
+        }
+
+        test('bracket forms are plain unknown keys with the simple query parser and never reach the options', async () => {
+            const plain = await (await fetch(`${baseUrl}/v6/badge?label=a`)).text();
+            for (const query of ['font[]=mono', 'font[a]=b', 'font[sans]=sans', 'weight[]=normal', 'weight[a]=b']) {
+                const res = await fetch(`${baseUrl}/v6/badge?label=a&${query}`);
+                assert.equal(res.status, 200, query);
+                assert.equal(await res.text(), plain, query);
+            }
+        });
+
+        test('an invalid font is reported before an invalid weight', async () => {
+            const { body } = await getJson('/v6/badge?label=a&font=comic&weight=heavy');
+            assert.equal(body.error, FONT_ERROR);
+        });
+
+        test('a valid font with an invalid weight is reported as a weight error', async () => {
+            const { status, body } = await getJson('/v6/badge?label=a&font=mono&weight=heavy');
+            assert.equal(status, 400);
+            assert.equal(body.error, WEIGHT_ERROR);
+        });
+    });
+
+    const invalid: [string, string, string][] = [
+        ['missing label', '/v6/badge', 'Please provide a label (?label={text})'],
+        ['empty label', '/v6/badge?label=', 'Please provide a label (?label={text})'],
+        ['blank label', '/v6/badge?label=%20%20', 'Please provide a label (?label={text})'],
+        ['repeated label key', '/v6/badge?label=a&label=b', 'Please provide a label (?label={text})'],
+        ['repeated start key', '/v6/badge?label=a&start=fff&start=000', 'Please provide a valid start color'],
+        ['bad colour', '/v6/badge?label=a&start=zzz', 'Invalid start color (use hex like ff6600)'],
+        ['bad ink colour', '/v6/badge?label=a&ink=12345', 'Invalid ink color (use hex like ff6600)'],
+        ['unknown icon', '/v6/badge?label=a&icon=nope', '"nope"'],
+        ['unknown trail icon', '/v6/badge?label=a&trail=nope', '"nope"'],
+        ['bad size', '/v6/badge?label=a&size=xl', 'Invalid size (use xs, sm, md or lg)'],
+        ['lift not a number', '/v6/badge?label=a&lift=abc', 'Invalid lift (use a number from 0 to 10)'],
+        ['negative lift', '/v6/badge?label=a&lift=-1', 'Invalid lift (use a number from 0 to 10)'],
+        ['lift above the maximum', '/v6/badge?label=a&lift=11', 'Invalid lift (use a number from 0 to 10)'],
+        ['lift in hexadecimal', '/v6/badge?label=a&lift=0x5', 'Invalid lift (use a number from 0 to 10)'],
+        ['lift in exponent form', '/v6/badge?label=a&lift=1e1', 'Invalid lift (use a number from 0 to 10)'],
+        ['empty lift', '/v6/badge?label=a&lift=', 'Invalid lift (use a number from 0 to 10)'],
+        ['lift with three decimals', '/v6/badge?label=a&lift=1.123', 'Invalid lift (use a number from 0 to 10)'],
+        ['repeated lift key', '/v6/badge?label=a&lift=1&lift=2', 'Invalid lift (use a number from 0 to 10)'],
+        ['lift of 100', '/v6/badge?label=a&lift=100', 'Invalid lift (use a number from 0 to 10)'],
+        ['radius not a number', '/v6/badge?label=a&radius=abc', 'Invalid radius (use a number from 0 to 100)'],
+        ['negative radius', '/v6/badge?label=a&radius=-1', 'Invalid radius (use a number from 0 to 100)'],
+        ['radius above the maximum', '/v6/badge?label=a&radius=101', 'Invalid radius (use a number from 0 to 100)'],
+        ['radius in hexadecimal', '/v6/badge?label=a&radius=0x5', 'Invalid radius (use a number from 0 to 100)'],
+        ['radius in exponent form', '/v6/badge?label=a&radius=1e1', 'Invalid radius (use a number from 0 to 100)'],
+        ['empty radius', '/v6/badge?label=a&radius=', 'Invalid radius (use a number from 0 to 100)'],
+        ['radius with three decimals', '/v6/badge?label=a&radius=1.123', 'Invalid radius (use a number from 0 to 100)'],
+        ['repeated radius key', '/v6/badge?label=a&radius=1&radius=2', 'Invalid radius (use a number from 0 to 100)'],
+        ['angle not a number', '/v6/badge?label=a&angle=abc', 'Invalid angle (use a number from 0 to 360)'],
+        ['negative angle', '/v6/badge?label=a&angle=-1', 'Invalid angle (use a number from 0 to 360)'],
+        ['angle above the maximum', '/v6/badge?label=a&angle=361', 'Invalid angle (use a number from 0 to 360)'],
+        ['angle in hexadecimal', '/v6/badge?label=a&angle=0x5', 'Invalid angle (use a number from 0 to 360)'],
+        ['angle in exponent form', '/v6/badge?label=a&angle=1e1', 'Invalid angle (use a number from 0 to 360)'],
+        ['empty angle', '/v6/badge?label=a&angle=', 'Invalid angle (use a number from 0 to 360)'],
+        ['angle with three decimals', '/v6/badge?label=a&angle=1.123', 'Invalid angle (use a number from 0 to 360)'],
+        ['repeated angle key', '/v6/badge?label=a&angle=1&angle=2', 'Invalid angle (use a number from 0 to 360)'],
+        ['blank message', '/v6/badge?label=a&message=%20%20', 'Please provide a valid message'],
+        ['repeated message key', '/v6/badge?label=a&message=b&message=c', 'Please provide a valid message'],
+        [
+            'message with a zero-width space',
+            '/v6/badge?label=a&message=a%E2%80%8Bb',
+            'Message cannot contain control or invisible characters',
+        ],
+        [
+            'control character in the message',
+            '/v6/badge?label=a&message=a%00b',
+            'Message cannot contain control or invisible characters',
+        ],
+        [
+            'message of 65 characters',
+            `/v6/badge?label=a&message=${'b'.repeat(65)}`,
+            'Message cannot exceed 64 characters',
+        ],
+        [
+            'bad messageStart colour',
+            '/v6/badge?label=a&message=b&messageStart=zzz',
+            'Invalid messageStart color (use hex like ff6600)',
+        ],
+        [
+            'bad messageEnd colour',
+            '/v6/badge?label=a&message=b&messageEnd=12345',
+            'Invalid messageEnd color (use hex like ff6600)',
+        ],
+        [
+            'bad messageInk colour',
+            '/v6/badge?label=a&message=b&messageInk=xyz',
+            'Invalid messageInk color (use hex like ff6600)',
+        ],
+        [
+            'repeated messageStart key',
+            '/v6/badge?label=a&message=b&messageStart=fff&messageStart=000',
+            'Please provide a valid messageStart color',
+        ],
+        [
+            'repeated messageEnd key',
+            '/v6/badge?label=a&message=b&messageEnd=fff&messageEnd=000',
+            'Please provide a valid messageEnd color',
+        ],
+        [
+            'repeated messageInk key',
+            '/v6/badge?label=a&message=b&messageInk=fff&messageInk=000',
+            'Please provide a valid messageInk color',
+        ],
+        [
+            'bad messageStart colour without a message',
+            '/v6/badge?label=a&messageStart=zzz',
+            'Invalid messageStart color (use hex like ff6600)',
+        ],
+        [
+            'label with a zero-width space',
+            '/v6/badge?label=a%E2%80%8Bb',
+            'Label cannot contain control or invisible characters',
+        ],
+        ['label of 65 characters', `/v6/badge?label=${'a'.repeat(65)}`, 'Label cannot exceed 64 characters'],
+        [
+            'control character in the label',
+            '/v6/badge?label=a%00b',
+            'Label cannot contain control or invisible characters',
+        ],
+    ];
+    for (const [name, path, message] of invalid) {
+        test(`${name} returns 400`, async () => {
+            const { status, body } = await getJson(path);
+            assert.equal(status, 400);
+            assert.equal(body.message, 'Bad Request');
+            assert.ok(String(body.error).includes(message), `unexpected error: ${String(body.error)}`);
+            assert.equal(body.status, 400);
+        });
+    }
+
+    test('is not available in v4 and v5', async () => {
+        for (const version of ['v4', 'v5']) {
+            const { status, body } = await getJson(`/${version}/badge?label=a`);
+            assert.equal(status, 404);
+            assert.equal(body.message, 'Not Found');
+            assert.equal(body.error, `Endpoint not available in ${version}.`);
+            assert.equal(body.status, 404);
+        }
+    });
+
+    test('is listed in v6 only', async () => {
+        const v6 = (await getJson('/v6')).body.endpoints as Record<string, Record<string, string>>;
+        assert.ok('badge' in v6.get!);
+        assert.ok(v6.get!.badge!.startsWith('/v6/badge?label={text}'));
+        assert.ok(
+            v6.get!.badge!.includes('&size={xs|sm|md|lg}&font={sans|serif|mono}&weight={normal|bold}&lift={0-10}'),
+        );
+        for (const name of [
+            'message',
+            'messageStart',
+            'messageEnd',
+            'messageInk',
+            'radius',
+            'angle',
+            'font',
+            'weight',
+        ]) {
+            assert.ok(v6.get!.badge!.includes(`${name}={`), `badge path does not list ${name}`);
+        }
+        const v5 = (await getJson('/v5')).body.endpoints as Record<string, Record<string, string>>;
+        assert.equal('badge' in v5.get!, false);
+        const v4 = (await getJson('/v4')).body.endpoints as Record<string, Record<string, string>>;
+        assert.equal('badge' in v4.get!, false);
     });
 });
 
