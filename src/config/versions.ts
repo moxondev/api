@@ -238,6 +238,10 @@ const v6 = {
         v5.get.filter((e) => e.name !== 'levenshtein'),
         [
             {
+                name: 'badge',
+                path: '/badge?label={text}(&icon={name}&trail={name}&start={hex}&end={hex}&ink={hex}&message={text}&messageStart={hex}&messageEnd={hex}&messageInk={hex}&border={hex}&size={xs|sm|md|lg}&font={sans|serif|mono}&weight={normal|bold}&lift={0-10}&radius={0-100}&angle={0-360})',
+            },
+            {
                 name: 'captcha',
                 path: '/captcha(&mode={challenge|image}&text={text}&length={n}&width={px}&height={px}&noise={low|medium|high}&bg={hex}&color={hex})',
             },
