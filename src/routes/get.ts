@@ -6,7 +6,6 @@ import type { UserAgentResult } from '../modules/v4/agent.js';
 import type { AvatarOptions, AvatarResult } from '../modules/v4/avatar.js';
 import type { BarcodeOptions, BarcodeResult } from '../modules/v4/barcode.js';
 import type { CaptchaOptions, CaptchaResult } from '../modules/v4/captcha.js';
-import type { ColorResult } from '../modules/v4/color.js';
 import type { IpResult } from '../modules/v4/ip.js';
 import type { PasswordResult } from '../modules/v4/password.js';
 import type { QRCodeOptions, QRCodeResult } from '../modules/v4/qrcode.js';
@@ -265,18 +264,6 @@ router.get('/:version/chat', (req: Request, res: Response) => {
 // GET private chat error
 router.get('/:version/chat/private', postOnly('chat'));
 
-// Generate color
-router.get('/:version/color', (req: Request, res: Response) => {
-    try {
-        const colorFn = req.module.color as (hex?: string) => ColorResult;
-        const hex = req.query.hex as string | undefined;
-        const result = colorFn(hex || undefined);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // GET csv error
 router.get('/:version/csv', postOnly('csv'));
 
@@ -386,33 +373,6 @@ router.get('/:version/matrix', postOnly('matrix'));
 
 // GET otp error
 router.get('/:version/otp', postOnly('otp'));
-
-// Generate a color palette from a base color
-router.get('/:version/palette', (req: Request, res: Response) => {
-    const { color, type } = req.query;
-    const { version } = req.params;
-
-    const palette = (req.module as { palette?: (c: string, t: string) => unknown }).palette;
-    if (!palette) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!color) {
-        error(res, 400, 'Please provide a base color (?color=#ff6600)');
-        return;
-    }
-    if (!type) {
-        error(res, 400, 'Please provide a palette type (&type=complementary)');
-        return;
-    }
-
-    try {
-        const result = palette(color as string, type as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 // Generate a password or passphrase
 router.get('/:version/password', (req: Request, res: Response) => {
