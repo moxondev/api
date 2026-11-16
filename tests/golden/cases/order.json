@@ -1,0 +1,555 @@
+[
+    {
+        "id": "levenshtein query order: str1=a&str1=b",
+        "path": "/levenshtein?str1=a&str1=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.1"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str1=b&str2=c",
+        "path": "/levenshtein?str1=a&str1=b&str2=c",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.2"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str1=",
+        "path": "/levenshtein?str1=&str1=",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.3"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a",
+        "path": "/levenshtein?str1[]=a",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.4"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a&str2=b",
+        "path": "/levenshtein?str1[]=a&str2=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.5"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=b&str2=c",
+        "path": "/levenshtein?str1=a&str2=b&str2=c",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.6"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2[]=b",
+        "path": "/levenshtein?str1=a&str2[]=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.7"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str2=b",
+        "path": "/levenshtein?str1=&str2=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.8"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=",
+        "path": "/levenshtein?str1=a&str2=",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.9"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a",
+        "path": "/levenshtein?str1=a",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.10"
+        }
+    },
+    {
+        "id": "levenshtein query order: str2=b",
+        "path": "/levenshtein?str2=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.11"
+        }
+    },
+    {
+        "id": "levenshtein query order: no parameter",
+        "path": "/levenshtein?",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.12"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=0&str2=b",
+        "path": "/levenshtein?str1=0&str2=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.13"
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=0",
+        "path": "/levenshtein?str1=a&str2=0",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.14"
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 5}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.15"
+        },
+        "method": "POST",
+        "body": {
+            "str1": 5
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 1.5}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.16"
+        },
+        "method": "POST",
+        "body": {
+            "str1": 1.5
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": []}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.17"
+        },
+        "method": "POST",
+        "body": {
+            "str1": []
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": {}}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.18"
+        },
+        "method": "POST",
+        "body": {
+            "str1": {}
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": true, \"str2\": null, \"extra\": 1}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.19"
+        },
+        "method": "POST",
+        "body": {
+            "str1": true,
+            "str2": null,
+            "extra": 1
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": [\"a\"]}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.20"
+        },
+        "method": "POST",
+        "body": {
+            "str1": ["a"]
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.21"
+        },
+        "method": "POST",
+        "body": {
+            "str1": "a"
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 5}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.22"
+        },
+        "method": "POST",
+        "body": {
+            "str1": "a",
+            "str2": 5
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"\", \"str2\": \"b\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.23"
+        },
+        "method": "POST",
+        "body": {
+            "str1": "",
+            "str2": "b"
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 0, \"str2\": \"b\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.24"
+        },
+        "method": "POST",
+        "body": {
+            "str1": 0,
+            "str2": "b"
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str2\": \"b\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.25"
+        },
+        "method": "POST",
+        "body": {
+            "str2": "b"
+        }
+    },
+    {
+        "id": "levenshtein body order: {}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.26"
+        },
+        "method": "POST",
+        "body": {}
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": [\"b\"]}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.27"
+        },
+        "method": "POST",
+        "body": {
+            "str1": "a",
+            "str2": ["b"]
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": null, \"str2\": \"b\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.28"
+        },
+        "method": "POST",
+        "body": {
+            "str1": null,
+            "str2": "b"
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": false, \"str2\": \"b\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.29"
+        },
+        "method": "POST",
+        "body": {
+            "str1": false,
+            "str2": "b"
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": \"\"}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.30"
+        },
+        "method": "POST",
+        "body": {
+            "str1": "a",
+            "str2": ""
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 0}",
+        "path": "/levenshtein",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.31"
+        },
+        "method": "POST",
+        "body": {
+            "str1": "a",
+            "str2": 0
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.32"
+        },
+        "method": "POST",
+        "body": {
+            "a": 1
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 16, \"mode\": \"lines\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.33"
+        },
+        "method": "POST",
+        "body": {
+            "a": 16,
+            "mode": "lines"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1, \"b\": \"x\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.34"
+        },
+        "method": "POST",
+        "body": {
+            "a": 1,
+            "b": "x"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.35"
+        },
+        "method": "POST",
+        "body": {
+            "a": "x"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": 1}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.36"
+        },
+        "method": "POST",
+        "body": {
+            "a": "x",
+            "b": 1
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.37"
+        },
+        "method": "POST",
+        "body": {
+            "a": "",
+            "b": ""
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": null, \"b\": \"x\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.38"
+        },
+        "method": "POST",
+        "body": {
+            "a": null,
+            "b": "x"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": [\"x\"], \"b\": \"y\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.39"
+        },
+        "method": "POST",
+        "body": {
+            "a": ["x"],
+            "b": "y"
+        }
+    },
+    {
+        "id": "diff body order: {\"b\": \"y\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.40"
+        },
+        "method": "POST",
+        "body": {
+            "b": "y"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"y\", \"mode\": 5}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.41"
+        },
+        "method": "POST",
+        "body": {
+            "a": "x",
+            "b": "y",
+            "mode": 5
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": {}, \"b\": {}}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.42"
+        },
+        "method": "POST",
+        "body": {
+            "a": {},
+            "b": {}
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": null}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.43"
+        },
+        "method": "POST",
+        "body": {
+            "a": "x",
+            "b": null
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 0, \"b\": 0}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.44"
+        },
+        "method": "POST",
+        "body": {
+            "a": 0,
+            "b": 0
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": false, \"b\": \"y\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.45"
+        },
+        "method": "POST",
+        "body": {
+            "a": false,
+            "b": "y"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"y\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.46"
+        },
+        "method": "POST",
+        "body": {
+            "a": "",
+            "b": "y"
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"\"}",
+        "path": "/diff",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.47"
+        },
+        "method": "POST",
+        "body": {
+            "a": "x",
+            "b": ""
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b",
+        "path": "/regex?pattern=a&pattern=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.48"
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b&text=c",
+        "path": "/regex?pattern=a&pattern=b&text=c",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.49"
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text=",
+        "path": "/regex?pattern=a&text=",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.50"
+        }
+    },
+    {
+        "id": "regex query order: pattern=&text=b",
+        "path": "/regex?pattern=&text=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.51"
+        }
+    },
+    {
+        "id": "regex query order: pattern[]=a&text=b",
+        "path": "/regex?pattern[]=a&text=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.52"
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text[]=b",
+        "path": "/regex?pattern=a&text[]=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.53"
+        }
+    },
+    {
+        "id": "regex query order: pattern=a",
+        "path": "/regex?pattern=a",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.54"
+        }
+    },
+    {
+        "id": "regex query order: text=b",
+        "path": "/regex?text=b",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.55"
+        }
+    },
+    {
+        "id": "regex query order: no parameter",
+        "path": "/regex?",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.56"
+        }
+    },
+    {
+        "id": "regex query order: pattern=0&text=0",
+        "path": "/regex?pattern=0&text=0",
+        "headers": {
+            "X-Forwarded-For": "100.66.0.57"
+        }
+    }
+]

@@ -1,0 +1,1962 @@
+[
+    {
+        "id": "levenshtein query order: str1=a&str1=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str1=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str1=b",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str1=b&str2=c",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str1=b&str2=c",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str1=b&str2=c",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str1=",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str1=",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str1=",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a&str2=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a&str2=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1[]=a&str2=b",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=b&str2=c",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=b&str2=c",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=b&str2=c",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2[]=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2[]=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2[]=b",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str2=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str2=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=&str2=b",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (&str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str2=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str2=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: str2=b",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: no parameter",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: no parameter",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (?str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein query order: no parameter",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=0&str2=b",
+        "version": "v4",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "str1": "0",
+            "str2": "b",
+            "distance": 1
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=0&str2=b",
+        "version": "v5",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "str1": "0",
+            "str2": "b",
+            "distance": 1
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=0&str2=b",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=0",
+        "version": "v4",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "str1": "a",
+            "str2": "0",
+            "distance": 1
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=0",
+        "version": "v5",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "str1": "a",
+            "str2": "0",
+            "distance": 1
+        }
+    },
+    {
+        "id": "levenshtein query order: str1=a&str2=0",
+        "version": "v6",
+        "status": 405,
+        "type": "application/json",
+        "body": {
+            "message": "Method Not Allowed",
+            "error": "This endpoint only supports POST requests.",
+            "status": 405
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 5}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 5}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 5}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 1.5}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 1.5}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 1.5}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": []}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": []}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": []}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": {}}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": {}}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": {}}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": true, \"str2\": null, \"extra\": 1}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": true, \"str2\": null, \"extra\": 1}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": true, \"str2\": null, \"extra\": 1}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": [\"a\"]}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": [\"a\"]}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": [\"a\"]}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 5}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 5}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 5}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"\", \"str2\": \"b\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"\", \"str2\": \"b\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"\", \"str2\": \"b\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 0, \"str2\": \"b\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 0, \"str2\": \"b\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": 0, \"str2\": \"b\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str2\": \"b\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str2\": \"b\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str2\": \"b\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": [\"b\"]}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": [\"b\"]}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": [\"b\"]}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": null, \"str2\": \"b\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": null, \"str2\": \"b\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": null, \"str2\": \"b\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": false, \"str2\": \"b\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": false, \"str2\": \"b\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": false, \"str2\": \"b\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first string (str1={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": \"\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": \"\"}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": \"\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 0}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 0}",
+        "version": "v5",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v5.",
+            "status": 404
+        }
+    },
+    {
+        "id": "levenshtein body order: {\"str1\": \"a\", \"str2\": 0}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second string (str2={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 16, \"mode\": \"lines\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 16, \"mode\": \"lines\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 16, \"mode\": \"lines\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1, \"b\": \"x\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1, \"b\": \"x\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 1, \"b\": \"x\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second text (b={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second text (b={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": 1}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": 1}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second text (b={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": 1}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second text (b={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"\"}",
+        "version": "v5",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "mode": "line",
+            "added": 0,
+            "removed": 0,
+            "changes": [
+                {
+                    "type": "equal",
+                    "value": ""
+                }
+            ]
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"\"}",
+        "version": "v6",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "mode": "line",
+            "added": 0,
+            "removed": 0,
+            "changes": [
+                {
+                    "type": "equal",
+                    "value": ""
+                }
+            ]
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": null, \"b\": \"x\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": null, \"b\": \"x\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": null, \"b\": \"x\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": [\"x\"], \"b\": \"y\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": [\"x\"], \"b\": \"y\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": [\"x\"], \"b\": \"y\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"b\": \"y\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"b\": \"y\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"b\": \"y\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"y\", \"mode\": 5}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"y\", \"mode\": 5}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Mode must be one of: line, word",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"y\", \"mode\": 5}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Mode must be one of: line, word",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": {}, \"b\": {}}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": {}, \"b\": {}}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": {}, \"b\": {}}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": null}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": null}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second text (b={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": null}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a second text (b={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 0, \"b\": 0}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 0, \"b\": 0}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": 0, \"b\": 0}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": false, \"b\": \"y\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": false, \"b\": \"y\"}",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": false, \"b\": \"y\"}",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a first text (a={text})",
+            "status": 400
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"y\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"y\"}",
+        "version": "v5",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "mode": "line",
+            "added": 1,
+            "removed": 1,
+            "changes": [
+                {
+                    "type": "del",
+                    "value": ""
+                },
+                {
+                    "type": "add",
+                    "value": "y"
+                }
+            ]
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"\", \"b\": \"y\"}",
+        "version": "v6",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "mode": "line",
+            "added": 1,
+            "removed": 1,
+            "changes": [
+                {
+                    "type": "del",
+                    "value": ""
+                },
+                {
+                    "type": "add",
+                    "value": "y"
+                }
+            ]
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"\"}",
+        "version": "v4",
+        "status": 404,
+        "type": "application/json",
+        "body": {
+            "message": "Not Found",
+            "error": "Endpoint not available in v4.",
+            "status": 404
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"\"}",
+        "version": "v5",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "mode": "line",
+            "added": 1,
+            "removed": 1,
+            "changes": [
+                {
+                    "type": "del",
+                    "value": "x"
+                },
+                {
+                    "type": "add",
+                    "value": ""
+                }
+            ]
+        }
+    },
+    {
+        "id": "diff body order: {\"a\": \"x\", \"b\": \"\"}",
+        "version": "v6",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "mode": "line",
+            "added": 1,
+            "removed": 1,
+            "changes": [
+                {
+                    "type": "del",
+                    "value": "x"
+                },
+                {
+                    "type": "add",
+                    "value": ""
+                }
+            ]
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b&text=c",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b&text=c",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&pattern=b&text=c",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text=",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text=",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text=",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=&text=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=&text=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=&text=b",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern[]=a&text=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern[]=a&text=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern[]=a&text=b",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text[]=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text[]=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a&text[]=b",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=a",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a text (&text={string})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: text=b",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: text=b",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: text=b",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: no parameter",
+        "version": "v4",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: no parameter",
+        "version": "v5",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: no parameter",
+        "version": "v6",
+        "status": 400,
+        "type": "application/json",
+        "body": {
+            "message": "Bad Request",
+            "error": "Please provide a pattern (?pattern={regex})",
+            "status": 400
+        }
+    },
+    {
+        "id": "regex query order: pattern=0&text=0",
+        "version": "v4",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "valid": true,
+            "pattern": "0",
+            "flags": "g",
+            "matches": [
+                {
+                    "match": "0",
+                    "index": 0,
+                    "groups": [],
+                    "namedGroups": {}
+                }
+            ],
+            "count": 1
+        }
+    },
+    {
+        "id": "regex query order: pattern=0&text=0",
+        "version": "v5",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "valid": true,
+            "pattern": "0",
+            "flags": "g",
+            "matches": [
+                {
+                    "match": "0",
+                    "index": 0,
+                    "groups": [],
+                    "namedGroups": {}
+                }
+            ],
+            "count": 1
+        }
+    },
+    {
+        "id": "regex query order: pattern=0&text=0",
+        "version": "v6",
+        "status": 200,
+        "type": "application/json",
+        "body": {
+            "valid": true,
+            "pattern": "0",
+            "flags": "g",
+            "matches": [
+                {
+                    "match": "0",
+                    "index": 0,
+                    "groups": [],
+                    "namedGroups": {}
+                }
+            ],
+            "count": 1
+        }
+    }
+]
