@@ -1,4 +1,4 @@
-import express, { type Request, type Response, type Router } from 'express';
+import express, { type NextFunction, type Request, type Response, type Router } from 'express';
 
 import { env } from './config/env.js';
 import { endpoints } from './endpoints/index.js';
@@ -14,6 +14,7 @@ import getRoutes from './routes/get.js';
 import indexRoutes from './routes/index.js';
 import patchRoutes from './routes/patch.js';
 import postRoutes from './routes/post.js';
+import { since } from './utils/helpers.js';
 import { error } from './utils/response.js';
 
 const app = express();
@@ -48,6 +49,15 @@ try {
 } catch {
     // No plugins bundled in this build
 }
+
+// GET /levenshtein stops at v5 in its contract, which would answer 404 from v6: it keeps its 405 stub instead
+app.get('/:version/levenshtein', (req: Request, res: Response, next: NextFunction) => {
+    if (!since(req.version, 6)) {
+        next();
+        return;
+    }
+    error(res, 405, 'This endpoint only supports POST requests.');
+});
 
 // Versioned routes, declared endpoints first
 app.use(build(endpoints));
