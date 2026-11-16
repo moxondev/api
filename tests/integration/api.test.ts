@@ -1626,6 +1626,21 @@ describe('GET /v6/badge', () => {
             '/v6/badge?label=a%E2%80%8Bb',
             'Label cannot contain control or invisible characters',
         ],
+        [
+            'label with a soft hyphen',
+            '/v6/badge?label=a%C2%ADb',
+            'Label cannot contain control or invisible characters',
+        ],
+        [
+            'label made of a Braille blank',
+            '/v6/badge?label=%E2%A0%80',
+            'Label cannot contain control or invisible characters',
+        ],
+        [
+            'message made of a Hangul filler',
+            '/v6/badge?label=a&message=%E3%85%A4',
+            'Message cannot contain control or invisible characters',
+        ],
         ['label of 65 characters', `/v6/badge?label=${'a'.repeat(65)}`, 'Label cannot exceed 64 characters'],
         [
             'control character in the label',
