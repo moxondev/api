@@ -1,8 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { describe, test } from 'node:test';
 
+import type { Request } from 'express';
+
 import { endpoints } from '../../src/endpoints/index.js';
 import { manifest } from '../../src/manifest.js';
+import * as latest from '../../src/modules/v6.js';
 
 describe('manifest', () => {
     test('describes every declared endpoint', () => {
@@ -21,7 +24,8 @@ describe('manifest', () => {
     test('runs every example to a real result', async () => {
         for (const endpoint of endpoints) {
             const values = Object.fromEntries(Object.keys(endpoint.params).map((k) => [k, undefined]));
-            const result = await endpoint.run({ ...values, ...endpoint.example }, {} as never);
+            const req = { version: 'v6', module: latest } as unknown as Request;
+            const result = await endpoint.run({ ...values, ...endpoint.example }, req);
             assert.ok(result, `${endpoint.name} example returned nothing`);
         }
     });
