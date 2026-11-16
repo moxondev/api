@@ -195,23 +195,6 @@ router.post('/:version/chat/private', (req: Request, res: Response) => {
     }
 });
 
-// Display a planning from an ICS file
-router.post('/:version/hyperplanning', async (req: Request, res: Response) => {
-    const { url, detail } = (req.body as Record<string, string>) || {};
-
-    if (!url) {
-        error(res, 400, 'Please provide a valid ICS file URL (?url={URL})');
-        return;
-    }
-
-    try {
-        const hyperplanning = await req.module.hyperplanning(url, detail);
-        res.jsonResponse(hyperplanning);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Decode a JSON Web Token without verifying the signature
 router.post('/:version/jwt', (req: Request, res: Response) => {
     const body = (req.body as Record<string, unknown>) || {};

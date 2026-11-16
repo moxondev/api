@@ -2,11 +2,9 @@ import { type Request, type Response, Router } from 'express';
 
 import { env } from '../config/env.js';
 import { versions } from '../config/versions.js';
-import type { UserAgentResult } from '../modules/v4/agent.js';
 import type { AvatarOptions, AvatarResult } from '../modules/v4/avatar.js';
 import type { BarcodeOptions, BarcodeResult } from '../modules/v4/barcode.js';
 import type { CaptchaOptions, CaptchaResult } from '../modules/v4/captcha.js';
-import type { IpResult } from '../modules/v4/ip.js';
 import type { PasswordResult } from '../modules/v4/password.js';
 import type { QRCodeOptions, QRCodeResult } from '../modules/v4/qrcode.js';
 import type { CaptchaChallenge } from '../modules/v5/captcha.js';
@@ -63,22 +61,6 @@ router.get('/:version', (req: Request, res: Response) => {
         ...(env.DOCS_URL ? { documentation: `${env.DOCS_URL}/${version}` } : {}),
         endpoints,
     });
-});
-
-// Parse a User-Agent string
-router.get('/:version/agent', (req: Request, res: Response) => {
-    const ua = (req.query.ua as string | undefined) ?? (req.headers['user-agent'] as string) ?? '';
-    const agentFn = (req.module as { agent?: (ua: string) => UserAgentResult }).agent;
-    if (!agentFn) {
-        error(res, 404, `Endpoint not available in ${req.version}.`);
-        return;
-    }
-    try {
-        const result = agentFn(ua);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
 });
 
 // GET asymmetric error
@@ -270,66 +252,8 @@ router.get('/:version/csv', postOnly('csv'));
 // GET diff error
 router.get('/:version/diff', postOnly('diff'));
 
-// Generate domain informations
-router.get('/:version/domain', (req: Request, res: Response) => {
-    try {
-        const result = req.module.domain();
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Geographic distance and bearing between two coordinates
-router.get('/:version/geo', (req: Request, res: Response) => {
-    const { lat1, lon1, lat2, lon2 } = req.query;
-    const { version } = req.params;
-
-    const geo = (req.module as { geo?: (a: string, b: string, c: string, d: string) => unknown }).geo;
-    if (!geo) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) {
-        error(res, 400, 'Please provide lat1, lon1, lat2 and lon2');
-        return;
-    }
-
-    try {
-        const result = geo(lat1 as string, lon1 as string, lat2 as string, lon2 as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Hash a text, answered by the declared endpoint on POST
 router.get('/:version/hash', postOnly('hash'));
-
-// Echo request headers
-router.get('/:version/headers', (req: Request, res: Response) => {
-    const redacted = new Set(['authorization', 'cookie', 'set-cookie', 'proxy-authorization']);
-    let headers: Record<string, unknown> = {};
-
-    for (const [k, v] of Object.entries(req.headers)) {
-        headers[k] = redacted.has(k) ? '[redacted]' : v;
-    }
-
-    const filterParam = req.query.filter;
-    const filter = Array.isArray(filterParam) ? filterParam.join(',') : (filterParam as string | undefined);
-    if (filter) {
-        const keys = new Set(filter.split(',').map((k) => k.trim().toLowerCase()));
-        headers = Object.fromEntries(Object.entries(headers).filter(([k]) => keys.has(k)));
-    }
-
-    res.jsonResponse({
-        count: Object.keys(headers).length,
-        headers,
-        ip: req.ip,
-        method: req.method,
-        url: req.originalUrl,
-    });
-});
 
 // GET planning error
 router.get('/:version/hyperplanning', postOnly('hyperplanning'));
@@ -347,22 +271,6 @@ router.get('/:version/infos', (req: Request, res: Response) => {
         ...(env.REPO_URL ? { github: env.REPO_URL } : {}),
         ...(env.INSTANCE_CREATED ? { creation: env.INSTANCE_CREATED } : {}),
     });
-});
-
-// Analyze an IP address
-router.get('/:version/ip', (req: Request, res: Response) => {
-    const address = (req.query.address as string | undefined) ?? req.ip ?? '';
-    const ipFn = (req.module as { ip?: (a: string) => IpResult }).ip;
-    if (!ipFn) {
-        error(res, 404, `Endpoint not available in ${req.version}.`);
-        return;
-    }
-    try {
-        const result = ipFn(address);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
 });
 
 // GET jwt error
@@ -503,28 +411,5 @@ router.get('/:version/tic-tac-toe/list', postOnly('tic_tac_toe'));
 
 // GET token error
 router.get('/:version/token', postOnly('token'));
-
-// Parse a URL into its components
-router.get('/:version/url', (req: Request, res: Response) => {
-    const { url } = req.query;
-    const { version } = req.params;
-
-    const parseUrlFn = (req.module as { parseUrl?: (u: string) => unknown }).parseUrl;
-    if (!parseUrlFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!url || typeof url !== 'string') {
-        error(res, 400, 'Please provide a URL (?url={URL})');
-        return;
-    }
-
-    try {
-        const result = parseUrlFn(url);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 export default router;
