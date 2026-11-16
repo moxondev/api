@@ -137,8 +137,18 @@ function measure(label: string, fontSize: number, widths: Map<number, number>): 
 }
 
 /**
+ * Characters a badge text cannot hold: controls, format and default-ignorable characters (soft hyphen, word
+ * joiner, filler letters, tags, bidirectional marks), line separators, lone surrogates, noncharacters and the
+ * blank Braille pattern. Variation selectors are tested apart, as emoji need them.
+ */
+const FORBIDDEN_CHARS = /[\p{Cc}\p{Cf}\p{Cs}\p{Zl}\p{Zp}\p{Default_Ignorable_Code_Point}⠀￾￿]/u;
+
+// A text needs a character that draws something: not a space, a combining mark or a variation selector
+const VISIBLE_CHAR = /[^\s\p{M}]/u;
+
+/**
  * Validates a text of the badge: a non-empty string without control or invisible characters, within the length
- * limit.
+ * limit, and with at least one character that draws something.
  *
  * The text is put in canonical composed form, so a letter followed by a combining accent is measured and
  * drawn like the single accented letter, and runs of spaces collapse into one, as an SVG renders them.
@@ -156,23 +166,14 @@ function parseText(value: unknown, name: 'label' | 'message'): string {
     // A code point takes at most two UTF-16 units, so this bounds the work before the text is walked
     if (value.length > MAX_LABEL * 2 * 4) throw new Error(`${title} cannot exceed ${MAX_LABEL} characters`);
     const composed = value.normalize('NFC');
+    const invisible = `${title} cannot contain control or invisible characters`;
     for (const char of composed) {
         const code = char.codePointAt(0)!;
-        const forbidden =
-            code < 0x20 ||
-            (code >= 0x7f && code <= 0x9f) ||
-            (code >= 0xd800 && code <= 0xdfff) ||
-            (code >= 0x200b && code <= 0x200f) ||
-            (code >= 0x202a && code <= 0x202e) ||
-            (code >= 0x2066 && code <= 0x2069) ||
-            code === 0x2028 ||
-            code === 0x2029 ||
-            code === 0xfeff ||
-            code === 0xfffe ||
-            code === 0xffff;
-        if (forbidden) throw new Error(`${title} cannot contain control or invisible characters`);
+        const selector = code >= 0xfe00 && code <= 0xfe0f;
+        if (FORBIDDEN_CHARS.test(char) && !selector) throw new Error(invisible);
     }
     const text = composed.replace(/ {2,}/g, ' ').trim();
+    if (!VISIBLE_CHAR.test(text)) throw new Error(invisible);
     if ([...text].length > MAX_LABEL) throw new Error(`${title} cannot exceed ${MAX_LABEL} characters`);
     return text;
 }
