@@ -268,6 +268,37 @@ Higher quotas can be granted per client: `ADVANCED_`, `PRO_` and `BUSINESS_` var
 
 > _Captcha and proof-of-work tokens are signed with `CHALLENGE_SECRET`. While it is unset each process invents its own key, so tokens stop verifying after a restart and are rejected by sibling instances — set it explicitly for any deployment running more than one process, with a full-entropy value such as `openssl rand -hex 32`._
 
+### Docker
+
+A public image is published to the GitHub Container Registry for `linux/amd64` and `linux/arm64`. It listens on port `3000` and is configured with the variables above.
+
+```console
+$ docker run -d --name moxon -p 3000:3000 ghcr.io/moxondev/api:latest
+```
+
+| Tag                 | What it points to                                   |
+| ------------------- | --------------------------------------------------- |
+| `6.4.0`, `6.4`, `6` | A release, down to the minor and the major version  |
+| `latest`            | The most recent stable release                      |
+| `edge`              | The tip of the default branch, ahead of any release |
+
+Variables go in with `-e`, or in a file with `--env-file`. The image runs as the unprivileged `node` user and writes nothing to disk, so it also starts with a read-only filesystem:
+
+```console
+$ docker run -d --name moxon -p 3000:3000 --read-only --tmpfs /tmp \
+    --env-file moxon.env ghcr.io/moxondev/api:latest
+```
+
+```console
+$ cat moxon.env
+CHALLENGE_SECRET=<openssl rand -hex 32>
+TRUSTED_PROXIES=uniquelocal
+```
+
+The image checks itself: `docker ps` reports it `healthy` once `GET /` answers. To build it from a clone, run `docker build -t moxon-api .`.
+
+> _Behind Docker, the client address seen by the server is the one of the reverse proxy or of the Docker network, not the caller's. Set `TRUSTED_PROXIES` to the proxy so that rate limits count real clients._
+
 ## Versioning
 
 | Version | What it changes                                                                                                                                                                        |
