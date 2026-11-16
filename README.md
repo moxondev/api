@@ -191,7 +191,7 @@ console.log(validate.email('alice@example.com').valid); // true
 
 ## Endpoint manifest
 
-`@moxon/api/manifest` describes the HTTP endpoints as data — method, path, category, parameters and a request example — for tools that document or call the API. Each entry is typed as `ManifestEntry`.
+`@moxon/api/manifest` describes the HTTP endpoints as data, for tools that document or call the API. Each entry is typed as `ManifestEntry`: its `name`, `method`, `path` and `category`, the first (`since`) and last (`until`) version that serve it when they are bounded, its `params` and a request example.
 
 ```js
 import { manifest } from '@moxon/api/manifest';
@@ -199,10 +199,13 @@ import { manifest } from '@moxon/api/manifest';
 const hash = manifest.find((entry) => entry.name === 'hash');
 console.log(hash.method, hash.path); // 'post' '/hash'
 console.log(Object.keys(hash.params)); // ['text', 'method', 'encoding']
+console.log(hash.params.encoding); // { type: 'string', options: ['hex', 'base64'], default: 'hex' }
 console.log(hash.example); // { text: 'hello', method: 'sha256' }
 ```
 
-> _The manifest is experimental: it only lists the endpoints already declared as contracts (`hash` for now), and its shape may still change in a minor release._
+A parameter lists its `type`, its fixed `options` and its `default`. It is marked `required` only when a request without it is refused before the endpoint runs; the other checks stay with the endpoint, so a parameter that is not marked can still be mandatory.
+
+> _The manifest is experimental, and its shape may still change in a minor release. It lists the 41 endpoints that answer plain JSON and keep no state, as 42 entries because `levenshtein` is a GET until `v5` and a POST from `v6`. The endpoints that answer an image, keep a state (chat, tic-tac-toe, the verification of captcha and proof of work) or describe the API itself are not declared yet._
 
 ## Running the server
 
