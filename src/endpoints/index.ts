@@ -1,4 +1,5 @@
 import address from './address.js';
+import agent from './agent.js';
 import algorithms from './algorithms.js';
 import base from './base.js';
 import caseConvert from './case.js';
@@ -10,9 +11,14 @@ import csv from './csv.js';
 import type { Endpoint } from './define.js';
 import dice from './dice.js';
 import diff from './diff.js';
+import domain from './domain.js';
 import encode from './encode.js';
 import evaluate from './evaluate.js';
+import geo from './geo.js';
 import hash from './hash.js';
+import headers from './headers.js';
+import hyperplanning from './hyperplanning.js';
+import ip from './ip.js';
 import levenshtein, { legacy as levenshteinLegacy } from './levenshtein.js';
 import matrix from './matrix.js';
 import palette from './palette.js';
@@ -23,6 +29,7 @@ import semver from './semver.js';
 import statistics from './statistics.js';
 import text from './text.js';
 import time from './time.js';
+import url from './url.js';
 import username from './username.js';
 import uuid from './uuid.js';
 import validate from './validate.js';
@@ -30,6 +37,7 @@ import validate from './validate.js';
 // Endpoints declared as contracts; the others are still hand-written in routes/ and move here one by one
 export const endpoints: Endpoint[] = [
     address,
+    agent,
     algorithms,
     base,
     caseConvert,
@@ -40,9 +48,14 @@ export const endpoints: Endpoint[] = [
     csv,
     dice,
     diff,
+    domain,
     encode,
     evaluate,
+    geo,
     hash,
+    headers,
+    hyperplanning,
+    ip,
     levenshtein,
     levenshteinLegacy,
     matrix,
@@ -54,6 +67,7 @@ export const endpoints: Endpoint[] = [
     statistics,
     text,
     time,
+    url,
     username,
     uuid,
     validate,

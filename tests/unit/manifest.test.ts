@@ -24,7 +24,17 @@ describe('manifest', () => {
     test('runs every example to a real result', async () => {
         for (const endpoint of endpoints) {
             const values = Object.fromEntries(Object.keys(endpoint.params).map((k) => [k, undefined]));
-            const req = { version: 'v6', module: latest } as unknown as Request;
+
+            // The network endpoints read the caller from the request, and hyperplanning must not reach a real server
+            const module = { ...latest, hyperplanning: async () => [{ summary: 'Example', start: '', end: '' }] };
+            const req = {
+                version: 'v6',
+                module,
+                ip: '203.0.113.7',
+                method: 'GET',
+                originalUrl: '/v6/example',
+                headers: { accept: '*/*', 'user-agent': 'Mozilla/5.0' },
+            } as unknown as Request;
             const result = await endpoint.run({ ...values, ...endpoint.example }, req);
             assert.ok(result, `${endpoint.name} example returned nothing`);
         }
