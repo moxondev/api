@@ -250,14 +250,21 @@ describe('asymmetricAsync', () => {
 
     test('a burst of keygens leaves threadpool slots to file access and DNS', async () => {
         assert.equal(MAX_CONCURRENT_KEYGENS, 2);
-        const burst = Array.from({ length: 24 }, () => asymmetricAsync('keygen', {}));
+        let finished = 0;
+        const burst = Array.from({ length: 24 }, () =>
+            asymmetricAsync('keygen', {}).then((key) => {
+                finished++;
+                return key;
+            }),
+        );
 
-        // Queued behind 20 keygens on four threads, this read would wait for several of them
-        const start = performance.now();
+        // Counted in finished keygens, not in milliseconds, so machine load cannot change it
         await readFile(fileURLToPath(import.meta.url));
-        const waited = performance.now() - start;
+        const finishedBeforeRead = finished;
         const keys = (await Promise.all(burst)) as { publicKey: string }[];
         assert.equal(new Set(keys.map((k) => k.publicKey)).size, 24);
-        assert.ok(waited < 150, `file read waited ${waited} ms behind the keygens`);
+
+        // Half of the burst leaves a wide margin: a free slot gives about 0, a FIFO queue gives 20 or more
+        assert.ok(finishedBeforeRead < 12, `file read waited behind ${finishedBeforeRead} of 24 keygens`);
     });
 });
