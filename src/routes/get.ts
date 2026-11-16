@@ -82,24 +82,6 @@ router.get('/:version/agent', (req: Request, res: Response) => {
     }
 });
 
-// Algorithms
-router.get('/:version/algorithms', (req: Request, res: Response) => {
-    const { method, value, value2 } = req.query;
-
-    const algorithms = req.module.algorithms as Record<string, (v: string, v2?: string) => unknown>;
-    if (!algorithms || !method || !Object.hasOwn(algorithms, method as string)) {
-        error(res, 400, 'Please provide a valid algorithm (?method={algorithm})');
-        return;
-    }
-
-    try {
-        const answer = algorithms[method as string]!(value as string, value2 as string);
-        res.jsonResponse({ answer });
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // GET asymmetric error
 router.get('/:version/asymmetric', postOnly('asymmetric'));
 
@@ -295,60 +277,6 @@ router.get('/:version/color', (req: Request, res: Response) => {
     }
 });
 
-// Convert units
-router.get('/:version/convert', (req: Request, res: Response) => {
-    const { value, from, to } = req.query;
-
-    if (!value || isNaN(Number(value))) {
-        error(res, 400, 'Please provide a valid value (?value={value})');
-        return;
-    }
-    if (!from) {
-        error(res, 400, 'Please provide a valid source unit (&from={unit})');
-        return;
-    }
-    if (!to) {
-        error(res, 400, 'Please provide a valid target unit (&to={unit})');
-        return;
-    }
-
-    try {
-        const convertFn = req.module.convert as (v: number, f: string, t: string) => Record<string, unknown>;
-        const result = convertFn(Number(value), from as string, to as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Parse a cron expression and compute next execution dates
-router.get('/:version/cron', (req: Request, res: Response) => {
-    const { expr, count, from, timezone } = req.query;
-    const { version } = req.params;
-
-    const cronFn = (req.module as { cron?: (e: string, n?: number, f?: string, tz?: string) => unknown }).cron;
-    if (!cronFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!expr) {
-        error(res, 400, 'Please provide a cron expression (?expr=* * * * *)');
-        return;
-    }
-    const parsedCount = count !== undefined ? parseInt(count as string, 10) : 5;
-    if (isNaN(parsedCount)) {
-        error(res, 400, 'Please provide a valid count (&count={n})');
-        return;
-    }
-
-    try {
-        const result = cronFn(expr as string, parsedCount, from as string | undefined, (timezone as string) ?? 'UTC');
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // GET csv error
 router.get('/:version/csv', postOnly('csv'));
 
@@ -359,29 +287,6 @@ router.get('/:version/diff', postOnly('diff'));
 router.get('/:version/domain', (req: Request, res: Response) => {
     try {
         const result = req.module.domain();
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Evaluate a math expression
-router.get('/:version/evaluate', (req: Request, res: Response) => {
-    const { expr, precision } = req.query;
-    const { version } = req.params;
-
-    const evaluateFn = (req.module as { evaluate?: (e: string, p?: number) => unknown }).evaluate;
-    if (!evaluateFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!expr || typeof expr !== 'string') {
-        error(res, 400, 'Please provide a math expression (?expr={expression})');
-        return;
-    }
-
-    try {
-        const result = evaluateFn(expr, precision !== undefined ? parseInt(precision as string, 10) : undefined);
         res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
@@ -626,58 +531,6 @@ router.get('/:version/qrcode', async (req: Request, res: Response) => {
 // GET read error
 router.get('/:version/read', postOnly('read'));
 
-// Parse, bump or compare semantic versions
-router.get('/:version/semver', (req: Request, res: Response) => {
-    const { version: input, action, part, other } = req.query;
-    const { version } = req.params;
-
-    const semverFn = (req.module as { semver?: (v: string, a?: string, p?: string, o?: string) => unknown }).semver;
-    if (!semverFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!input || typeof input !== 'string') {
-        error(res, 400, 'Please provide a version (?version={version})');
-        return;
-    }
-
-    const restorePlus = (v: string): string => v.replace(/ /g, '+');
-    try {
-        const result = semverFn(
-            restorePlus(input),
-            action as string | undefined,
-            part as string | undefined,
-            typeof other === 'string' ? restorePlus(other) : undefined,
-        );
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Statistics on a list of numbers
-router.get('/:version/statistics', (req: Request, res: Response) => {
-    const { values } = req.query;
-    const { version } = req.params;
-
-    const statistics = (req.module as { statistics?: (v: string) => unknown }).statistics;
-    if (!statistics) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!values) {
-        error(res, 400, 'Please provide a list of values (?values=1,2,3)');
-        return;
-    }
-
-    try {
-        const result = statistics(values as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // GET symmetric error
 router.get('/:version/symmetric', postOnly('symmetric'));
 
@@ -687,33 +540,6 @@ router.get('/:version/tic-tac-toe', postOnly('tic_tac_toe'));
 router.get('/:version/tic-tac-toe/fetch', postOnly('tic_tac_toe'));
 
 router.get('/:version/tic-tac-toe/list', postOnly('tic_tac_toe'));
-
-// Display or generate time informations, or compute a countdown
-router.get('/:version/time', (req: Request, res: Response) => {
-    const { type = 'live', start, end, format, timezone, target } = req.query;
-
-    try {
-        const timeFn = req.module.time as (
-            t: string,
-            s?: string,
-            e?: string,
-            f?: string,
-            tz?: string,
-            target?: string,
-        ) => Record<string, unknown>;
-        const time = timeFn(
-            type as string,
-            start as string,
-            end as string,
-            format as string,
-            timezone as string,
-            target as string,
-        );
-        res.jsonResponse(time);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 // GET token error
 router.get('/:version/token', postOnly('token'));
@@ -735,33 +561,6 @@ router.get('/:version/url', (req: Request, res: Response) => {
 
     try {
         const result = parseUrlFn(url);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Validate data (luhn, iban, email)
-router.get('/:version/validate', (req: Request, res: Response) => {
-    const { type, value } = req.query;
-    const { version } = req.params;
-
-    const validate = (req.module as { validate?: Record<string, (v: string) => unknown> }).validate;
-    if (!validate) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!type || !Object.hasOwn(validate, type as string)) {
-        error(res, 400, 'Please provide a valid type (?type={luhn|iban|email})');
-        return;
-    }
-    if (!value) {
-        error(res, 400, 'Please provide a value (&value={value})');
-        return;
-    }
-
-    try {
-        const result = validate[type as string]!(value as string);
         res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);

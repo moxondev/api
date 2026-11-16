@@ -3,7 +3,6 @@ import { type Request, type Response, Router } from 'express';
 import { MAX_TOKEN_LENGTH, MIN_TOKEN_LENGTH } from '../constants.js';
 import type { asymmetricAsync, default as asymmetric } from '../modules/v5/asymmetric.js';
 import type { CaptchaVerification } from '../modules/v5/captcha.js';
-import type { CsvResult } from '../modules/v5/csv.js';
 import type { JwtResult } from '../modules/v5/jwt.js';
 import { challengeStorage, chatStorage, ticTacToeStorage } from '../storage/index.js';
 import type { ChallengeStorage } from '../types/storage.js';
@@ -196,45 +195,6 @@ router.post('/:version/chat/private', (req: Request, res: Response) => {
     }
 });
 
-// Convert between CSV and JSON
-router.post('/:version/csv', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { action, csv: csvData, json: jsonData, delimiter, headers } = body;
-    const { version } = req.params;
-
-    const csvFn = (
-        req.module as {
-            csv?: (
-                a: string,
-                d: { csv?: string; json?: Record<string, unknown>[] },
-                o?: { delimiter?: string; headers?: boolean },
-            ) => CsvResult;
-        }
-    ).csv;
-    if (!csvFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!action) {
-        error(res, 400, 'Please provide an action (?action=parse|format)');
-        return;
-    }
-
-    try {
-        const result = csvFn(
-            action as string,
-            { csv: csvData as string | undefined, json: jsonData as Record<string, unknown>[] | undefined },
-            {
-                delimiter: delimiter as string | undefined,
-                headers: headers !== undefined ? Boolean(headers) : undefined,
-            },
-        );
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Display a planning from an ICS file
 router.post('/:version/hyperplanning', async (req: Request, res: Response) => {
     const { url, detail } = (req.body as Record<string, string>) || {};
@@ -270,54 +230,6 @@ router.post('/:version/jwt', (req: Request, res: Response) => {
 
     try {
         const result = jwtFn(token as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Matrix operations
-router.post('/:version/matrix', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { operation, matrix: m, matrix2, scalar } = body;
-    const { version } = req.params;
-
-    const matrixMod = (req.module as { matrix?: Record<string, (...args: unknown[]) => unknown> }).matrix;
-    if (!matrixMod) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!operation || typeof operation !== 'string' || !Object.hasOwn(matrixMod, operation)) {
-        error(
-            res,
-            400,
-            'Please provide a valid operation (?operation=add|subtract|multiply|scalar|transpose|determinant|inverse|identity)',
-        );
-        return;
-    }
-
-    try {
-        let result: unknown;
-        switch (operation) {
-            case 'add':
-            case 'subtract':
-            case 'multiply':
-                result = matrixMod[operation]!(m, matrix2);
-                break;
-            case 'scalar':
-                result = matrixMod.scalar!(m, scalar);
-                break;
-            case 'transpose':
-            case 'determinant':
-            case 'inverse':
-                result = matrixMod[operation]!(m);
-                break;
-            case 'identity':
-                result = matrixMod.identity!(scalar);
-                break;
-            default:
-                throw new Error('Unknown operation');
-        }
         res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
