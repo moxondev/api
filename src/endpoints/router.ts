@@ -34,7 +34,7 @@ export function build(endpoints: Endpoint[]): Router {
             (!endpoint.since || since(req.version, endpoint.since)) &&
             (!endpoint.until || !since(req.version, endpoint.until + 1));
 
-        router[endpoint.method](`/:version${endpoint.path}`, async (req: Request, res: Response) => {
+        router[endpoint.method](`/:version${endpoint.path}`, (req: Request, res: Response) => {
             if (!served(req)) {
                 error(res, 404, `Endpoint not available in ${req.version}.`);
                 return;
@@ -52,12 +52,20 @@ export function build(endpoints: Endpoint[]): Router {
                 values[name] = value;
             }
 
-            try {
-                const result = await endpoint.run(values, req);
+            const respond = (result: unknown) => {
                 if (result instanceof Reply) res.status(result.status).jsonResponse(result.body);
                 else res.jsonResponse(result);
-            } catch (err) {
+            };
+            const refuse = (err: unknown) =>
                 error(res, err instanceof HttpError ? err.status : 400, (err as Error).message);
+
+            // A synchronous run answers within the same tick, like the handlers written by hand did
+            try {
+                const result = endpoint.run(values, req);
+                if (result instanceof Promise) result.then(respond).catch(refuse);
+                else respond(result);
+            } catch (err) {
+                refuse(err);
             }
         });
     }
