@@ -2,13 +2,11 @@ import { type Request, type Response, Router } from 'express';
 
 import { env } from '../config/env.js';
 import { versions } from '../config/versions.js';
-import type { AddressResult } from '../modules/v4/address.js';
 import type { UserAgentResult } from '../modules/v4/agent.js';
 import type { AvatarOptions, AvatarResult } from '../modules/v4/avatar.js';
 import type { BarcodeOptions, BarcodeResult } from '../modules/v4/barcode.js';
 import type { CaptchaOptions, CaptchaResult } from '../modules/v4/captcha.js';
 import type { ColorResult } from '../modules/v4/color.js';
-import type { CreditResult } from '../modules/v4/credit.js';
 import type { IpResult } from '../modules/v4/ip.js';
 import type { PasswordResult } from '../modules/v4/password.js';
 import type { QRCodeOptions, QRCodeResult } from '../modules/v4/qrcode.js';
@@ -66,31 +64,6 @@ router.get('/:version', (req: Request, res: Response) => {
         ...(env.DOCS_URL ? { documentation: `${env.DOCS_URL}/${version}` } : {}),
         endpoints,
     });
-});
-
-// Generate a fictional postal address
-router.get('/:version/address', (req: Request, res: Response) => {
-    const { country, count } = req.query;
-    const { version } = req.params;
-
-    const addressFn = (req.module as { address?: (c?: string, n?: number) => AddressResult }).address;
-    if (!addressFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-
-    const parsedCount = count !== undefined ? parseInt(count as string, 10) : 1;
-    if (isNaN(parsedCount)) {
-        error(res, 400, 'Please provide a valid count (&count={n})');
-        return;
-    }
-
-    try {
-        const result = addressFn(country as string | undefined, parsedCount);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
 });
 
 // Parse a User-Agent string
@@ -398,27 +371,6 @@ router.get('/:version/convert', (req: Request, res: Response) => {
     }
 });
 
-// Generate fictitious credit card numbers
-router.get('/:version/credit', (req: Request, res: Response) => {
-    const creditFn = (req.module as { credit?: (brand?: string, count?: number, format?: string) => CreditResult })
-        .credit;
-    if (!creditFn) {
-        error(res, 404, `Endpoint not available in ${req.version}.`);
-        return;
-    }
-    const { brand, count, format } = req.query;
-    try {
-        const result = creditFn(
-            brand as string | undefined,
-            count !== undefined ? parseInt(count as string, 10) : 1,
-            format as string | undefined,
-        );
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Parse a cron expression and compute next execution dates
 router.get('/:version/cron', (req: Request, res: Response) => {
     const { expr, count, from, timezone } = req.query;
@@ -449,29 +401,6 @@ router.get('/:version/cron', (req: Request, res: Response) => {
 
 // GET csv error
 router.get('/:version/csv', postOnly('csv'));
-
-// RPG Dice roller
-router.get('/:version/dice', (req: Request, res: Response) => {
-    const { roll } = req.query;
-    const { version } = req.params;
-
-    const dice = (req.module as { dice?: (r: string) => unknown }).dice;
-    if (!dice) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!roll) {
-        error(res, 400, 'Please provide a roll notation (?roll=2d6+3)');
-        return;
-    }
-
-    try {
-        const result = dice(roll as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 // GET diff error
 router.get('/:version/diff', postOnly('diff'));
@@ -708,16 +637,6 @@ router.get('/:version/password', (req: Request, res: Response) => {
                 separator: (separator as string) ?? '-',
             },
         );
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Generate personal data
-router.get('/:version/personal', (req: Request, res: Response) => {
-    try {
-        const result = req.module.personal();
         res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
@@ -979,39 +898,6 @@ router.get('/:version/url', (req: Request, res: Response) => {
 
     try {
         const result = parseUrlFn(url);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Generate username
-router.get('/:version/username', (req: Request, res: Response) => {
-    try {
-        const result = req.module.username();
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Generate or parse a UUID
-router.get('/:version/uuid', (req: Request, res: Response) => {
-    const { uuid: input, count } = req.query;
-    const { version } = req.params;
-
-    const uuidFn = (req.module as { uuid?: (u?: string, c?: number) => unknown }).uuid;
-    if (!uuidFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (input !== undefined && typeof input !== 'string') {
-        error(res, 400, 'Please provide a valid UUID (?uuid={uuid})');
-        return;
-    }
-
-    try {
-        const result = uuidFn(input, count !== undefined ? Number(count) : undefined);
         res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
