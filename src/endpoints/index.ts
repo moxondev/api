@@ -1,6 +1,7 @@
 import address from './address.js';
 import agent from './agent.js';
 import algorithms from './algorithms.js';
+import asymmetric from './asymmetric.js';
 import base from './base.js';
 import caseConvert from './case.js';
 import color from './color.js';
@@ -19,16 +20,22 @@ import hash from './hash.js';
 import headers from './headers.js';
 import hyperplanning from './hyperplanning.js';
 import ip from './ip.js';
+import jwt from './jwt.js';
 import levenshtein, { legacy as levenshteinLegacy } from './levenshtein.js';
 import matrix from './matrix.js';
+import otp from './otp.js';
 import palette from './palette.js';
+import password from './password.js';
 import personal from './personal.js';
+import pow from './pow.js';
 import read from './read.js';
 import regex from './regex.js';
 import semver from './semver.js';
 import statistics from './statistics.js';
+import symmetric from './symmetric.js';
 import text from './text.js';
 import time from './time.js';
+import token from './token.js';
 import url from './url.js';
 import username from './username.js';
 import uuid from './uuid.js';
@@ -39,6 +46,7 @@ export const endpoints: Endpoint[] = [
     address,
     agent,
     algorithms,
+    asymmetric,
     base,
     caseConvert,
     color,
@@ -56,17 +64,23 @@ export const endpoints: Endpoint[] = [
     headers,
     hyperplanning,
     ip,
+    jwt,
     levenshtein,
     levenshteinLegacy,
     matrix,
+    otp,
     palette,
+    password,
     personal,
+    pow,
     read,
     regex,
     semver,
     statistics,
+    symmetric,
     text,
     time,
+    token,
     url,
     username,
     uuid,
