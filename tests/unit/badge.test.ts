@@ -730,6 +730,57 @@ describe('badge', () => {
             assert.throws(() => badge({ label: 'a￿b' }), { message });
         });
 
+        test('invisible format and filler characters throw', () => {
+            const message = 'Label cannot contain control or invisible characters';
+            const forbidden: [string, string][] = [
+                ['soft hyphen', '\u00ad'],
+                ['combining grapheme joiner', '\u034f'],
+                ['Arabic letter mark', '\u061c'],
+                ['Hangul choseong filler', '\u115f'],
+                ['Hangul jungseong filler', '\u1160'],
+                ['Mongolian vowel separator', '\u180e'],
+                ['word joiner', '\u2060'],
+                ['invisible times', '\u2062'],
+                ['inhibit symmetric swapping', '\u206a'],
+                ['Braille pattern blank', '\u2800'],
+                ['Hangul filler', '\u3164'],
+                ['halfwidth Hangul filler', '\uffa0'],
+                ['interlinear annotation anchor', '\ufff9'],
+                ['language tag', '\u{e0001}'],
+                ['tag letter A', '\u{e0041}'],
+            ];
+            for (const [name, char] of forbidden) {
+                assert.throws(() => badge({ label: `a${char}b` }), { message }, name);
+                assert.throws(() => badge({ label: char }), { message }, `only ${name}`);
+                assert.throws(
+                    () => badge({ label: 'a', message: `a${char}b` }),
+                    { message: 'Message cannot contain control or invisible characters' },
+                    `message ${name}`,
+                );
+            }
+        });
+
+        test('a text with nothing that draws is refused', () => {
+            const message = 'Label cannot contain control or invisible characters';
+            for (const label of ['\ufe0f', '\u0301', '\u0301\u0323', ' \ufe0f ', '\ufe0f\ufe0f']) {
+                assert.throws(() => badge({ label }), { message }, JSON.stringify(label));
+            }
+            assert.throws(() => badge({ label: 'a', message: '\u0301' }), {
+                message: 'Message cannot contain control or invisible characters',
+            });
+        });
+
+        test('variation selectors stay allowed, so emoji and symbols keep their presentation', () => {
+            for (const label of ['\u2764\ufe0f', '\u2764\ufe0e', 'ok \u2705\ufe0f', 'a\ufe0fb']) {
+                assert.doesNotThrow(() => badge({ label }), JSON.stringify(label));
+            }
+        });
+
+        test('no-break and wide spaces around visible text are kept as spaces', () => {
+            assert.doesNotThrow(() => badge({ label: 'a\u00a0b' }));
+            assert.doesNotThrow(() => badge({ label: 'a\u3000b' }));
+        });
+
         test('non-ASCII text, a no-break space and U+00A0 are fine', () => {
             assert.doesNotThrow(() => badge({ label: 'Mis à jour   日本 ✓ €' }));
         });
@@ -2224,10 +2275,8 @@ describe('badge', () => {
             });
 
             test('every code point of the tables is measured in every face', () => {
-                const forbidden = (code: number): boolean =>
-                    (code >= 0x200b && code <= 0x200f) ||
-                    (code >= 0x2028 && code <= 0x202e) ||
-                    (code >= 0x2066 && code <= 0x2069);
+                const hidden = /[\p{Cc}\p{Cf}\p{Cs}\p{Zl}\p{Zp}\p{Default_Ignorable_Code_Point}\u2800]/u;
+                const forbidden = (code: number): boolean => hidden.test(String.fromCodePoint(code));
                 let checked = 0;
                 for (const [first, list] of SANS_BOLD) {
                     for (let offset = 0; offset < list.length; offset++) {
@@ -2248,16 +2297,6 @@ describe('badge', () => {
                     }
                 }
                 assert.ok(checked > 1200, `${checked} code points checked`);
-            });
-
-            test('the soft hyphen is invisible in every face', () => {
-                for (const face of FACES) {
-                    assert.equal(
-                        textLength(inFace({ label: 'a\u00ad', size: 'lg' }, face)),
-                        textLength(inFace({ label: 'a', size: 'lg' }, face)),
-                    );
-                    assert.equal(textLength(inFace({ label: '\u00ad\u00ad' }, face)), 0, name(face));
-                }
             });
 
             test('combining marks that stay decomposed take no width in the proportional faces', () => {
@@ -2316,12 +2355,7 @@ describe('badge', () => {
                 assert.equal(textLength(svg({ label: 'WWWWWWWWWW', font: 'mono', size: 'md' })), 72);
             });
 
-            test('the soft hyphen is 0 and its neighbours are not', () => {
-                // a, soft hyphen, b: 2 * 1233 units, 15.65 px at lg
-                assert.equal(textLength(svg({ label: 'a\u00adb', font: 'mono', size: 'lg' })), 16);
-                assert.equal(textLength(svg({ label: 'ab', font: 'mono', size: 'lg' })), 16);
-                assert.equal(textLength(svg({ label: '\u00ad', font: 'mono' })), 0);
-                assert.equal(textLength(svg({ label: 'a\u00ad\u00ad\u00ad', font: 'mono', size: 'lg' })), 8);
+            test('the soft hyphen is 0 in the table and its neighbours are not', () => {
                 assert.equal(faceWidth(0xad, { font: 'mono', weight: 'bold' }), 0);
                 assert.equal(faceWidth(0xa0, { font: 'mono', weight: 'bold' }), 1233);
             });
@@ -2417,7 +2451,7 @@ describe('badge', () => {
                     ['Mis à jour', 'Très long message ici'],
                     ['Привет', 'Αθήνα'],
                     ['日本語', '世界'],
-                    ['a\u00adb', 'x\u00ady'],
+                    ['a\u00b7b', 'x\u00b7y'],
                 ];
                 for (const face of FACES) {
                     for (const size of Object.keys(SIZES) as (keyof typeof SIZES)[]) {
