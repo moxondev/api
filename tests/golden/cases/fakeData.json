@@ -1,0 +1,3401 @@
+[
+    {
+        "id": "address no parameters, random country",
+        "path": "/address",
+        "volatile": [
+            "addresses.*.street",
+            "addresses.*.city",
+            "addresses.*.zip",
+            "addresses.*.state",
+            "addresses.*.country",
+            "addresses.*.countryCode"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.1"
+        }
+    },
+    {
+        "id": "address country fr",
+        "path": "/address?country=fr",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.2"
+        }
+    },
+    {
+        "id": "address country us",
+        "path": "/address?country=us",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.3"
+        }
+    },
+    {
+        "id": "address country uk",
+        "path": "/address?country=uk",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.4"
+        }
+    },
+    {
+        "id": "address country de",
+        "path": "/address?country=de",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.5"
+        }
+    },
+    {
+        "id": "address country es",
+        "path": "/address?country=es",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.6"
+        }
+    },
+    {
+        "id": "address country fr count 5 (street word order)",
+        "path": "/address?country=fr&count=5",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.7"
+        }
+    },
+    {
+        "id": "address country us count 5 (street word order)",
+        "path": "/address?country=us&count=5",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.8"
+        }
+    },
+    {
+        "id": "address country uk count 5 (street word order)",
+        "path": "/address?country=uk&count=5",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.9"
+        }
+    },
+    {
+        "id": "address country de count 5 (street word order)",
+        "path": "/address?country=de&count=5",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.10"
+        }
+    },
+    {
+        "id": "address country es count 5 (street word order)",
+        "path": "/address?country=es&count=5",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.11"
+        }
+    },
+    {
+        "id": "address country uppercase FR",
+        "path": "/address?country=FR",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.12"
+        }
+    },
+    {
+        "id": "address country mixed case Us",
+        "path": "/address?country=Us",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.13"
+        }
+    },
+    {
+        "id": "address country with leading space",
+        "path": "/address?country=%20fr",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.14"
+        }
+    },
+    {
+        "id": "address country with trailing space",
+        "path": "/address?country=fr%20",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.15"
+        }
+    },
+    {
+        "id": "address country empty string",
+        "path": "/address?country=",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.16"
+        }
+    },
+    {
+        "id": "address country empty string with count",
+        "path": "/address?country=&count=3",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.17"
+        }
+    },
+    {
+        "id": "address country whitespace only",
+        "path": "/address?country=%20%20",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.18"
+        }
+    },
+    {
+        "id": "address country zero",
+        "path": "/address?country=0",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.19"
+        }
+    },
+    {
+        "id": "address country unknown xx",
+        "path": "/address?country=xx",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.20"
+        }
+    },
+    {
+        "id": "address country gb (not supported)",
+        "path": "/address?country=gb",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.21"
+        }
+    },
+    {
+        "id": "address country long name france",
+        "path": "/address?country=france",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.22"
+        }
+    },
+    {
+        "id": "address country comma list",
+        "path": "/address?country=fr%2Cus",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.23"
+        }
+    },
+    {
+        "id": "address country repeated key",
+        "path": "/address?country=fr&country=us",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.24"
+        }
+    },
+    {
+        "id": "address country repeated key same value",
+        "path": "/address?country=fr&country=fr",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.25"
+        }
+    },
+    {
+        "id": "address country unicode",
+        "path": "/address?country=fr%C3%A9",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.26"
+        }
+    },
+    {
+        "id": "address country emoji",
+        "path": "/address?country=%F0%9F%87%AB%F0%9F%87%B7",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.27"
+        }
+    },
+    {
+        "id": "address country very long",
+        "path": "/address?country=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.28"
+        }
+    },
+    {
+        "id": "address country turkish dotted I (lowercasing)",
+        "path": "/address?country=%C4%B0S",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.29"
+        }
+    },
+    {
+        "id": "address country bracket syntax (key is not parsed as an array, random country)",
+        "path": "/address?country[]=fr",
+        "volatile": [
+            "addresses.*.street",
+            "addresses.*.city",
+            "addresses.*.zip",
+            "addresses.*.state",
+            "addresses.*.country",
+            "addresses.*.countryCode"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.30"
+        }
+    },
+    {
+        "id": "address country proto-like key (prototype name)",
+        "path": "/address?country=constructor",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.31"
+        }
+    },
+    {
+        "id": "address country toString",
+        "path": "/address?country=__proto__",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.32"
+        }
+    },
+    {
+        "id": "address count 1",
+        "path": "/address?country=fr&count=1",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.33"
+        }
+    },
+    {
+        "id": "address count 2 random country",
+        "path": "/address?count=2",
+        "volatile": [
+            "addresses.*.street",
+            "addresses.*.city",
+            "addresses.*.zip",
+            "addresses.*.state",
+            "addresses.*.country",
+            "addresses.*.countryCode"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.34"
+        }
+    },
+    {
+        "id": "address count 10 (max)",
+        "path": "/address?country=us&count=10",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.35"
+        }
+    },
+    {
+        "id": "address count 11 (one over max)",
+        "path": "/address?country=us&count=11",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.36"
+        }
+    },
+    {
+        "id": "address count 0",
+        "path": "/address?country=us&count=0",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.37"
+        }
+    },
+    {
+        "id": "address count negative",
+        "path": "/address?country=us&count=-1",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.38"
+        }
+    },
+    {
+        "id": "address count empty string",
+        "path": "/address?country=us&count=",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.39"
+        }
+    },
+    {
+        "id": "address count whitespace only",
+        "path": "/address?country=us&count=%20",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.40"
+        }
+    },
+    {
+        "id": "address count abc",
+        "path": "/address?country=us&count=abc",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.41"
+        }
+    },
+    {
+        "id": "address count NaN literal",
+        "path": "/address?country=us&count=NaN",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.42"
+        }
+    },
+    {
+        "id": "address count Infinity",
+        "path": "/address?country=us&count=Infinity",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.43"
+        }
+    },
+    {
+        "id": "address count decimal 2.9 (parseInt truncation)",
+        "path": "/address?country=us&count=2.9",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.44"
+        }
+    },
+    {
+        "id": "address count decimal 0.9 (parseInt gives 0)",
+        "path": "/address?country=us&count=0.9",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.45"
+        }
+    },
+    {
+        "id": "address count trailing garbage 3abc",
+        "path": "/address?country=us&count=3abc",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.46"
+        }
+    },
+    {
+        "id": "address count leading garbage abc3",
+        "path": "/address?country=us&count=abc3",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.47"
+        }
+    },
+    {
+        "id": "address count leading space",
+        "path": "/address?country=us&count=%204",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.48"
+        }
+    },
+    {
+        "id": "address count plus sign",
+        "path": "/address?country=us&count=%2B3",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.49"
+        }
+    },
+    {
+        "id": "address count exponent 1e1 (parseInt gives 1)",
+        "path": "/address?country=us&count=1e1",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.50"
+        }
+    },
+    {
+        "id": "address count hex 0x10 (parseInt radix 10 gives 0)",
+        "path": "/address?country=us&count=0x10",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.51"
+        }
+    },
+    {
+        "id": "address count leading zeros 00005",
+        "path": "/address?country=us&count=00005",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.52"
+        }
+    },
+    {
+        "id": "address count huge integer",
+        "path": "/address?country=us&count=99999999999999999999",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.53"
+        }
+    },
+    {
+        "id": "address count repeated key",
+        "path": "/address?country=us&count=2&count=3",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.54"
+        }
+    },
+    {
+        "id": "address count repeated key with garbage first",
+        "path": "/address?country=us&count=abc&count=3",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.55"
+        }
+    },
+    {
+        "id": "address count unicode digits",
+        "path": "/address?country=us&count=%EF%BC%95",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.56"
+        }
+    },
+    {
+        "id": "address count emoji",
+        "path": "/address?country=us&count=%F0%9F%8E%B2",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.57"
+        }
+    },
+    {
+        "id": "address invalid country and invalid count (which error wins)",
+        "path": "/address?country=xx&count=99",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.58"
+        }
+    },
+    {
+        "id": "address invalid country and NaN count (which error wins)",
+        "path": "/address?country=xx&count=abc",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.59"
+        }
+    },
+    {
+        "id": "address unknown extra parameter ignored",
+        "path": "/address?country=de&foo=bar",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.60"
+        }
+    },
+    {
+        "id": "address parameter names are case sensitive",
+        "path": "/address?Country=de&Count=3",
+        "volatile": [
+            "addresses.*.street",
+            "addresses.*.city",
+            "addresses.*.zip",
+            "addresses.*.state",
+            "addresses.*.country",
+            "addresses.*.countryCode"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.61"
+        }
+    },
+    {
+        "id": "address trailing slash",
+        "path": "/address/?country=fr",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.62"
+        }
+    },
+    {
+        "id": "address uppercase endpoint name",
+        "path": "/ADDRESS?country=fr",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.63"
+        }
+    },
+    {
+        "id": "address POST on a GET endpoint",
+        "path": "/address?country=fr",
+        "method": "POST",
+        "body": {
+            "country": "fr"
+        },
+        "headers": {
+            "X-Forwarded-For": "100.64.0.64"
+        }
+    },
+    {
+        "id": "address POST without body",
+        "path": "/address",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "100.64.0.65"
+        }
+    },
+    {
+        "id": "address with Accept-Language and agent headers",
+        "path": "/address?country=es",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.66",
+            "Accept-Language": "fr-FR,fr;q=0.9",
+            "User-Agent": "curl/8.0"
+        }
+    },
+    {
+        "id": "address with IPv6 forwarded for",
+        "path": "/address?country=uk",
+        "volatile": ["addresses.*.street", "addresses.*.city", "addresses.*.zip", "addresses.*.state"],
+        "headers": {
+            "X-Forwarded-For": "2001:db8::1"
+        }
+    },
+    {
+        "id": "credit no parameters, random brand",
+        "path": "/credit",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.68"
+        }
+    },
+    {
+        "id": "credit brand visa",
+        "path": "/credit?brand=visa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.69"
+        }
+    },
+    {
+        "id": "credit brand visa full",
+        "path": "/credit?brand=visa&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.70"
+        }
+    },
+    {
+        "id": "credit brand visa masked explicit",
+        "path": "/credit?brand=visa&format=masked",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.71"
+        }
+    },
+    {
+        "id": "credit brand visa count 3 full",
+        "path": "/credit?brand=visa&count=3&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.72"
+        }
+    },
+    {
+        "id": "credit brand mastercard",
+        "path": "/credit?brand=mastercard",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.73"
+        }
+    },
+    {
+        "id": "credit brand mastercard full",
+        "path": "/credit?brand=mastercard&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.74"
+        }
+    },
+    {
+        "id": "credit brand mastercard masked explicit",
+        "path": "/credit?brand=mastercard&format=masked",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.75"
+        }
+    },
+    {
+        "id": "credit brand mastercard count 3 full",
+        "path": "/credit?brand=mastercard&count=3&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.76"
+        }
+    },
+    {
+        "id": "credit brand amex",
+        "path": "/credit?brand=amex",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.77"
+        }
+    },
+    {
+        "id": "credit brand amex full",
+        "path": "/credit?brand=amex&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.78"
+        }
+    },
+    {
+        "id": "credit brand amex masked explicit",
+        "path": "/credit?brand=amex&format=masked",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.79"
+        }
+    },
+    {
+        "id": "credit brand amex count 3 full",
+        "path": "/credit?brand=amex&count=3&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.80"
+        }
+    },
+    {
+        "id": "credit brand discover",
+        "path": "/credit?brand=discover",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.81"
+        }
+    },
+    {
+        "id": "credit brand discover full",
+        "path": "/credit?brand=discover&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.82"
+        }
+    },
+    {
+        "id": "credit brand discover masked explicit",
+        "path": "/credit?brand=discover&format=masked",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.83"
+        }
+    },
+    {
+        "id": "credit brand discover count 3 full",
+        "path": "/credit?brand=discover&count=3&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.84"
+        }
+    },
+    {
+        "id": "credit brand random keyword",
+        "path": "/credit?brand=random",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.85"
+        }
+    },
+    {
+        "id": "credit brand empty string (random)",
+        "path": "/credit?brand=",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.86"
+        }
+    },
+    {
+        "id": "credit brand empty string with format full",
+        "path": "/credit?brand=&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.87"
+        }
+    },
+    {
+        "id": "credit brand uppercase VISA",
+        "path": "/credit?brand=VISA",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.88"
+        }
+    },
+    {
+        "id": "credit brand capitalised Visa",
+        "path": "/credit?brand=Visa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.89"
+        }
+    },
+    {
+        "id": "credit brand with trailing space",
+        "path": "/credit?brand=visa%20",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.90"
+        }
+    },
+    {
+        "id": "credit brand whitespace only",
+        "path": "/credit?brand=%20",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.91"
+        }
+    },
+    {
+        "id": "credit brand zero",
+        "path": "/credit?brand=0",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.92"
+        }
+    },
+    {
+        "id": "credit brand unknown diners",
+        "path": "/credit?brand=diners",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.93"
+        }
+    },
+    {
+        "id": "credit brand jcb",
+        "path": "/credit?brand=jcb",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.94"
+        }
+    },
+    {
+        "id": "credit brand unicode",
+        "path": "/credit?brand=v%C3%AEsa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.95"
+        }
+    },
+    {
+        "id": "credit brand emoji",
+        "path": "/credit?brand=%F0%9F%92%B3",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.96"
+        }
+    },
+    {
+        "id": "credit brand very long",
+        "path": "/credit?brand=vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.97"
+        }
+    },
+    {
+        "id": "credit brand repeated key",
+        "path": "/credit?brand=visa&brand=amex",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.98"
+        }
+    },
+    {
+        "id": "credit brand repeated key same value",
+        "path": "/credit?brand=visa&brand=visa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.99"
+        }
+    },
+    {
+        "id": "credit brand repeated unknown",
+        "path": "/credit?brand=x&brand=y",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.100"
+        }
+    },
+    {
+        "id": "credit brand bracket syntax",
+        "path": "/credit?brand[]=visa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.101"
+        }
+    },
+    {
+        "id": "credit brand prototype name",
+        "path": "/credit?brand=constructor",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.102"
+        }
+    },
+    {
+        "id": "credit brand toString",
+        "path": "/credit?brand=toString",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.103"
+        }
+    },
+    {
+        "id": "credit count 1",
+        "path": "/credit?brand=visa&count=1",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.104"
+        }
+    },
+    {
+        "id": "credit count 10 (max)",
+        "path": "/credit?brand=mastercard&count=10",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.105"
+        }
+    },
+    {
+        "id": "credit count 10 random brand",
+        "path": "/credit?count=10",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.106"
+        }
+    },
+    {
+        "id": "credit count 11 (one over max)",
+        "path": "/credit?brand=visa&count=11",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.107"
+        }
+    },
+    {
+        "id": "credit count 0",
+        "path": "/credit?brand=visa&count=0",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.108"
+        }
+    },
+    {
+        "id": "credit count negative",
+        "path": "/credit?brand=visa&count=-1",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.109"
+        }
+    },
+    {
+        "id": "credit count empty string",
+        "path": "/credit?brand=visa&count=",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.110"
+        }
+    },
+    {
+        "id": "credit count whitespace only",
+        "path": "/credit?brand=visa&count=%20",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.111"
+        }
+    },
+    {
+        "id": "credit count abc",
+        "path": "/credit?brand=visa&count=abc",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.112"
+        }
+    },
+    {
+        "id": "credit count NaN literal",
+        "path": "/credit?brand=visa&count=NaN",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.113"
+        }
+    },
+    {
+        "id": "credit count Infinity",
+        "path": "/credit?brand=visa&count=Infinity",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.114"
+        }
+    },
+    {
+        "id": "credit count decimal 2.9 (parseInt truncation)",
+        "path": "/credit?brand=visa&count=2.9",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.115"
+        }
+    },
+    {
+        "id": "credit count decimal 0.5",
+        "path": "/credit?brand=visa&count=0.5",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.116"
+        }
+    },
+    {
+        "id": "credit count trailing garbage 3abc",
+        "path": "/credit?brand=visa&count=3abc",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.117"
+        }
+    },
+    {
+        "id": "credit count leading garbage abc3",
+        "path": "/credit?brand=visa&count=abc3",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.118"
+        }
+    },
+    {
+        "id": "credit count leading space",
+        "path": "/credit?brand=visa&count=%204",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.119"
+        }
+    },
+    {
+        "id": "credit count plus sign",
+        "path": "/credit?brand=visa&count=%2B3",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.120"
+        }
+    },
+    {
+        "id": "credit count exponent 1e1",
+        "path": "/credit?brand=visa&count=1e1",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.121"
+        }
+    },
+    {
+        "id": "credit count hex 0x10",
+        "path": "/credit?brand=visa&count=0x10",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.122"
+        }
+    },
+    {
+        "id": "credit count leading zeros",
+        "path": "/credit?brand=visa&count=00005",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.123"
+        }
+    },
+    {
+        "id": "credit count huge integer",
+        "path": "/credit?brand=visa&count=99999999999999999999",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.124"
+        }
+    },
+    {
+        "id": "credit count repeated key",
+        "path": "/credit?brand=visa&count=2&count=3",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.125"
+        }
+    },
+    {
+        "id": "credit count repeated key garbage first",
+        "path": "/credit?brand=visa&count=abc&count=3",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.126"
+        }
+    },
+    {
+        "id": "credit count unicode digits",
+        "path": "/credit?brand=visa&count=%EF%BC%95",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.127"
+        }
+    },
+    {
+        "id": "credit format full without brand",
+        "path": "/credit?format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.128"
+        }
+    },
+    {
+        "id": "credit format masked without brand",
+        "path": "/credit?format=masked",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.129"
+        }
+    },
+    {
+        "id": "credit format empty string",
+        "path": "/credit?brand=visa&format=",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.130"
+        }
+    },
+    {
+        "id": "credit format uppercase FULL",
+        "path": "/credit?brand=visa&format=FULL",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.131"
+        }
+    },
+    {
+        "id": "credit format unknown",
+        "path": "/credit?brand=visa&format=raw",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.132"
+        }
+    },
+    {
+        "id": "credit format whitespace only",
+        "path": "/credit?brand=visa&format=%20",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.133"
+        }
+    },
+    {
+        "id": "credit format zero",
+        "path": "/credit?brand=visa&format=0",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.134"
+        }
+    },
+    {
+        "id": "credit format with trailing space",
+        "path": "/credit?brand=visa&format=full%20",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.135"
+        }
+    },
+    {
+        "id": "credit format repeated key",
+        "path": "/credit?brand=visa&format=full&format=masked",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.136"
+        }
+    },
+    {
+        "id": "credit format repeated key same value",
+        "path": "/credit?brand=visa&format=full&format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.137"
+        }
+    },
+    {
+        "id": "credit format unicode",
+        "path": "/credit?brand=visa&format=f%C3%BBll",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.138"
+        }
+    },
+    {
+        "id": "credit invalid brand and invalid count (which error wins)",
+        "path": "/credit?brand=zzz&count=99&format=raw",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.139"
+        }
+    },
+    {
+        "id": "credit valid brand, invalid count and invalid format (which error wins)",
+        "path": "/credit?brand=visa&count=99&format=raw",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.140"
+        }
+    },
+    {
+        "id": "credit valid brand and count, invalid format",
+        "path": "/credit?brand=visa&count=2&format=raw",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.141"
+        }
+    },
+    {
+        "id": "credit unknown extra parameter ignored",
+        "path": "/credit?brand=amex&foo=bar",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.142"
+        }
+    },
+    {
+        "id": "credit parameter names are case sensitive",
+        "path": "/credit?Brand=amex&Count=3&Format=full",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv", "cards.*.brand"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.143"
+        }
+    },
+    {
+        "id": "credit trailing slash",
+        "path": "/credit/?brand=visa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.144"
+        }
+    },
+    {
+        "id": "credit uppercase endpoint name",
+        "path": "/CREDIT?brand=visa",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.145"
+        }
+    },
+    {
+        "id": "credit POST on a GET endpoint",
+        "path": "/credit?brand=visa",
+        "method": "POST",
+        "body": {
+            "brand": "visa"
+        },
+        "headers": {
+            "X-Forwarded-For": "100.64.0.146"
+        }
+    },
+    {
+        "id": "credit POST without body",
+        "path": "/credit",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "100.64.0.147"
+        }
+    },
+    {
+        "id": "credit with Accept-Language and agent headers",
+        "path": "/credit?brand=discover",
+        "volatile": ["cards.*.number", "cards.*.formatted", "cards.*.expiry", "cards.*.cvv"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.148",
+            "Accept-Language": "de",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)"
+        }
+    },
+    {
+        "id": "dice 2d6 plus 3 (encoded plus)",
+        "path": "/dice?roll=2d6%2B3",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.149"
+        }
+    },
+    {
+        "id": "dice 2d6 plus 3 (literal plus decoded as space)",
+        "path": "/dice?roll=2d6+3",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.150"
+        }
+    },
+    {
+        "id": "dice d20 no count",
+        "path": "/dice?roll=d20",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.151"
+        }
+    },
+    {
+        "id": "dice 4d8 minus 1",
+        "path": "/dice?roll=4d8-1",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.152"
+        }
+    },
+    {
+        "id": "dice uppercase D6",
+        "path": "/dice?roll=D6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.153"
+        }
+    },
+    {
+        "id": "dice uppercase 2D6+1",
+        "path": "/dice?roll=2D6%2B1",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.154"
+        }
+    },
+    {
+        "id": "dice 1d2 smallest die",
+        "path": "/dice?roll=1d2",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.155"
+        }
+    },
+    {
+        "id": "dice 3d2 smallest die",
+        "path": "/dice?roll=3d2",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.156"
+        }
+    },
+    {
+        "id": "dice 1d1000 largest die",
+        "path": "/dice?roll=1d1000",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.157"
+        }
+    },
+    {
+        "id": "dice 1d1001 one over largest die",
+        "path": "/dice?roll=1d1001",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.158"
+        }
+    },
+    {
+        "id": "dice 1d1 below smallest die",
+        "path": "/dice?roll=1d1",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.159"
+        }
+    },
+    {
+        "id": "dice 1d0 zero sides",
+        "path": "/dice?roll=1d0",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.160"
+        }
+    },
+    {
+        "id": "dice 100d6 largest count",
+        "path": "/dice?roll=100d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.161"
+        }
+    },
+    {
+        "id": "dice 100d1000 extreme",
+        "path": "/dice?roll=100d1000",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.162"
+        }
+    },
+    {
+        "id": "dice 101d6 one over largest count",
+        "path": "/dice?roll=101d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.163"
+        }
+    },
+    {
+        "id": "dice 0d6 zero dice",
+        "path": "/dice?roll=0d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.164"
+        }
+    },
+    {
+        "id": "dice 00d6 zero dice with leading zeros",
+        "path": "/dice?roll=00d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.165"
+        }
+    },
+    {
+        "id": "dice 007d006 leading zeros normalised",
+        "path": "/dice?roll=007d006",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.166"
+        }
+    },
+    {
+        "id": "dice 1000000d6 huge count",
+        "path": "/dice?roll=1000000d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.167"
+        }
+    },
+    {
+        "id": "dice 99999999999999999999d6 count beyond safe integer",
+        "path": "/dice?roll=99999999999999999999d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.168"
+        }
+    },
+    {
+        "id": "dice 2d99999999999999999999 sides beyond safe integer",
+        "path": "/dice?roll=2d99999999999999999999",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.169"
+        }
+    },
+    {
+        "id": "dice 2d6 plus zero (modifier omitted from roll)",
+        "path": "/dice?roll=2d6%2B0",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.170"
+        }
+    },
+    {
+        "id": "dice 2d6 minus zero",
+        "path": "/dice?roll=2d6-0",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.171"
+        }
+    },
+    {
+        "id": "dice 2d6 plus 1 encoded",
+        "path": "/dice?roll=2d6%2B1",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.172"
+        }
+    },
+    {
+        "id": "dice 1d2 minus 100 negative total",
+        "path": "/dice?roll=1d2-100",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.173"
+        }
+    },
+    {
+        "id": "dice 2d6 plus huge modifier",
+        "path": "/dice?roll=2d6%2B99999999999999999999",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.174"
+        }
+    },
+    {
+        "id": "dice 2d6 minus huge modifier",
+        "path": "/dice?roll=2d6-99999999999999999999",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.175"
+        }
+    },
+    {
+        "id": "dice 2d6 plus 3 plus 4 double modifier",
+        "path": "/dice?roll=2d6%2B3%2B4",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.176"
+        }
+    },
+    {
+        "id": "dice 2d6 plus minus mixed",
+        "path": "/dice?roll=2d6%2B-3",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.177"
+        }
+    },
+    {
+        "id": "dice 2d6 trailing plus",
+        "path": "/dice?roll=2d6%2B",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.178"
+        }
+    },
+    {
+        "id": "dice 2d6 trailing minus",
+        "path": "/dice?roll=2d6-",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.179"
+        }
+    },
+    {
+        "id": "dice 2d6 space 3 (space becomes plus)",
+        "path": "/dice?roll=2d6%203",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.180"
+        }
+    },
+    {
+        "id": "dice 2d6 many spaces 3",
+        "path": "/dice?roll=2d6%20%20%203",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.181"
+        }
+    },
+    {
+        "id": "dice 2d6 tab 3",
+        "path": "/dice?roll=2d6%093",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.182"
+        }
+    },
+    {
+        "id": "dice 2d6 newline 3",
+        "path": "/dice?roll=2d6%0A3",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.183"
+        }
+    },
+    {
+        "id": "dice 2d6 space minus 3",
+        "path": "/dice?roll=2d6%20-3",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.184"
+        }
+    },
+    {
+        "id": "dice leading and trailing spaces",
+        "path": "/dice?roll=%20%202d6%20%20",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.185"
+        }
+    },
+    {
+        "id": "dice leading space only",
+        "path": "/dice?roll=%20d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.186"
+        }
+    },
+    {
+        "id": "dice inner spaces 2 d 6",
+        "path": "/dice?roll=2%20d%206",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.187"
+        }
+    },
+    {
+        "id": "dice whitespace only",
+        "path": "/dice?roll=%20%20%20",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.188"
+        }
+    },
+    {
+        "id": "dice empty roll",
+        "path": "/dice?roll=",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.189"
+        }
+    },
+    {
+        "id": "dice roll key absent",
+        "path": "/dice",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.190"
+        }
+    },
+    {
+        "id": "dice zero",
+        "path": "/dice?roll=0",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.191"
+        }
+    },
+    {
+        "id": "dice digits only 6",
+        "path": "/dice?roll=6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.192"
+        }
+    },
+    {
+        "id": "dice letter d only",
+        "path": "/dice?roll=d",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.193"
+        }
+    },
+    {
+        "id": "dice d without sides",
+        "path": "/dice?roll=2d",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.194"
+        }
+    },
+    {
+        "id": "dice abc",
+        "path": "/dice?roll=abc",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.195"
+        }
+    },
+    {
+        "id": "dice negative count -2d6",
+        "path": "/dice?roll=-2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.196"
+        }
+    },
+    {
+        "id": "dice plus count +2d6",
+        "path": "/dice?roll=%2B2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.197"
+        }
+    },
+    {
+        "id": "dice decimal sides",
+        "path": "/dice?roll=2d6.5",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.198"
+        }
+    },
+    {
+        "id": "dice decimal count",
+        "path": "/dice?roll=2.5d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.199"
+        }
+    },
+    {
+        "id": "dice exponent 1e1d6",
+        "path": "/dice?roll=1e1d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.200"
+        }
+    },
+    {
+        "id": "dice hex 0x2d6",
+        "path": "/dice?roll=0x2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.201"
+        }
+    },
+    {
+        "id": "dice two d separators",
+        "path": "/dice?roll=2d6d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.202"
+        }
+    },
+    {
+        "id": "dice trailing letter",
+        "path": "/dice?roll=2d6x",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.203"
+        }
+    },
+    {
+        "id": "dice fullwidth digits",
+        "path": "/dice?roll=%EF%BC%92d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.204"
+        }
+    },
+    {
+        "id": "dice emoji",
+        "path": "/dice?roll=%F0%9F%8E%B2",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.205"
+        }
+    },
+    {
+        "id": "dice emoji after notation",
+        "path": "/dice?roll=2d6%F0%9F%8E%B2",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.206"
+        }
+    },
+    {
+        "id": "dice unicode letter d lookalike",
+        "path": "/dice?roll=2%E1%B4%856",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.207"
+        }
+    },
+    {
+        "id": "dice very long garbage",
+        "path": "/dice?roll=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.208"
+        }
+    },
+    {
+        "id": "dice very long valid modifier digits",
+        "path": "/dice?roll=1d6%2B999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.209"
+        }
+    },
+    {
+        "id": "dice repeated key",
+        "path": "/dice?roll=2d6&roll=3d8",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.210"
+        }
+    },
+    {
+        "id": "dice repeated key empty first",
+        "path": "/dice?roll=&roll=2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.211"
+        }
+    },
+    {
+        "id": "dice repeated key same value",
+        "path": "/dice?roll=2d6&roll=2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.212"
+        }
+    },
+    {
+        "id": "dice bracket syntax",
+        "path": "/dice?roll[]=2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.213"
+        }
+    },
+    {
+        "id": "dice empty value then valid",
+        "path": "/dice?roll=&roll=2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.214"
+        }
+    },
+    {
+        "id": "dice Roll key capitalised",
+        "path": "/dice?Roll=2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.215"
+        }
+    },
+    {
+        "id": "dice unknown extra parameter ignored",
+        "path": "/dice?roll=1d4&foo=bar",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.216"
+        }
+    },
+    {
+        "id": "dice dice parameter alias",
+        "path": "/dice?dice=2d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.217"
+        }
+    },
+    {
+        "id": "dice count and sides as separate parameters",
+        "path": "/dice?count=2&sides=6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.218"
+        }
+    },
+    {
+        "id": "dice trailing slash",
+        "path": "/dice/?roll=1d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.219"
+        }
+    },
+    {
+        "id": "dice uppercase endpoint name",
+        "path": "/DICE?roll=1d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.220"
+        }
+    },
+    {
+        "id": "dice POST on a GET endpoint",
+        "path": "/dice?roll=2d6",
+        "method": "POST",
+        "body": {
+            "roll": "2d6"
+        },
+        "headers": {
+            "X-Forwarded-For": "100.64.0.221"
+        }
+    },
+    {
+        "id": "dice POST without body",
+        "path": "/dice",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "100.64.0.222"
+        }
+    },
+    {
+        "id": "dice with different headers",
+        "path": "/dice?roll=1d6",
+        "volatile": ["results.*", "total"],
+        "headers": {
+            "X-Forwarded-For": "::1",
+            "User-Agent": "x",
+            "Accept-Language": "ja"
+        }
+    },
+    {
+        "id": "personal no parameters",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.224"
+        }
+    },
+    {
+        "id": "personal second call (shape stays the same)",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.225"
+        }
+    },
+    {
+        "id": "personal query parameters are ignored",
+        "path": "/personal?foo=bar&count=5",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.226"
+        }
+    },
+    {
+        "id": "personal country parameter is ignored",
+        "path": "/personal?country=fr",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.227"
+        }
+    },
+    {
+        "id": "personal empty query value",
+        "path": "/personal?x=",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.228"
+        }
+    },
+    {
+        "id": "personal repeated query key",
+        "path": "/personal?x=1&x=2",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.229"
+        }
+    },
+    {
+        "id": "personal trailing slash",
+        "path": "/personal/",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.230"
+        }
+    },
+    {
+        "id": "personal uppercase endpoint name",
+        "path": "/PERSONAL",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.231"
+        }
+    },
+    {
+        "id": "personal double slash before endpoint",
+        "path": "//personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.232"
+        }
+    },
+    {
+        "id": "personal with a Firefox agent and Accept-Language",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.233",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
+            "Accept-Language": "fr-FR"
+        }
+    },
+    {
+        "id": "personal with an empty User-Agent",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.234",
+            "User-Agent": ""
+        }
+    },
+    {
+        "id": "personal with IPv4 forwarded for",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "198.51.100.9"
+        }
+    },
+    {
+        "id": "personal with IPv6 forwarded for",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "2001:db8::7"
+        }
+    },
+    {
+        "id": "personal with private forwarded for",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "10.0.0.1"
+        }
+    },
+    {
+        "id": "personal with garbage forwarded for",
+        "path": "/personal",
+        "volatile": [
+            "name",
+            "email",
+            "localisation",
+            "phone",
+            "job",
+            "hobbies",
+            "language",
+            "card",
+            "cvc",
+            "expiration",
+            "address.street",
+            "address.city",
+            "address.zip",
+            "address.state",
+            "address.country",
+            "address.countryCode",
+            "birthday",
+            "civil_status",
+            "children",
+            "vehicle",
+            "social_profiles.twitter",
+            "social_profiles.facebook",
+            "social_profiles.linkedin",
+            "social_profiles.instagram",
+            "year_income",
+            "month_income",
+            "education",
+            "work_experience",
+            "health_status",
+            "emergency_contacts",
+            "subscriptions",
+            "pets"
+        ],
+        "headers": {
+            "X-Forwarded-For": "not-an-ip"
+        }
+    },
+    {
+        "id": "personal POST on a GET endpoint",
+        "path": "/personal",
+        "method": "POST",
+        "body": {},
+        "headers": {
+            "X-Forwarded-For": "100.64.0.239"
+        }
+    },
+    {
+        "id": "personal POST with body",
+        "path": "/personal",
+        "method": "POST",
+        "body": {
+            "name": "x"
+        },
+        "headers": {
+            "X-Forwarded-For": "100.64.0.240"
+        }
+    },
+    {
+        "id": "personal POST without body",
+        "path": "/personal",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "100.64.0.241"
+        }
+    },
+    {
+        "id": "username no parameters",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.242"
+        }
+    },
+    {
+        "id": "username second call (shape stays the same)",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.243"
+        }
+    },
+    {
+        "id": "username query parameters are ignored",
+        "path": "/username?foo=bar&count=5",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.244"
+        }
+    },
+    {
+        "id": "username count parameter is ignored",
+        "path": "/username?count=3",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.245"
+        }
+    },
+    {
+        "id": "username empty query value",
+        "path": "/username?x=",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.246"
+        }
+    },
+    {
+        "id": "username repeated query key",
+        "path": "/username?x=1&x=2",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.247"
+        }
+    },
+    {
+        "id": "username trailing slash",
+        "path": "/username/",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.248"
+        }
+    },
+    {
+        "id": "username uppercase endpoint name",
+        "path": "/USERNAME",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.249"
+        }
+    },
+    {
+        "id": "username double slash before endpoint",
+        "path": "//username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.0.250"
+        }
+    },
+    {
+        "id": "username with a Chrome agent and Accept-Language",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.1",
+            "User-Agent": "Mozilla/5.0 (Macintosh) Chrome/120.0",
+            "Accept-Language": "en-US,en;q=0.8"
+        }
+    },
+    {
+        "id": "username with an empty User-Agent",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.2",
+            "User-Agent": ""
+        }
+    },
+    {
+        "id": "username with IPv4 forwarded for",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "198.51.100.9"
+        }
+    },
+    {
+        "id": "username with IPv6 forwarded for",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "2001:db8::7"
+        }
+    },
+    {
+        "id": "username with loopback forwarded for",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "127.0.0.1"
+        }
+    },
+    {
+        "id": "username with garbage forwarded for",
+        "path": "/username",
+        "volatile": ["username", "number", "adjective", "animal", "job"],
+        "headers": {
+            "X-Forwarded-For": "not-an-ip"
+        }
+    },
+    {
+        "id": "username POST on a GET endpoint",
+        "path": "/username",
+        "method": "POST",
+        "body": {},
+        "headers": {
+            "X-Forwarded-For": "100.64.1.7"
+        }
+    },
+    {
+        "id": "username POST with a username in the body",
+        "path": "/username",
+        "method": "POST",
+        "body": {
+            "username": "bob"
+        },
+        "headers": {
+            "X-Forwarded-For": "100.64.1.8"
+        }
+    },
+    {
+        "id": "username POST without body",
+        "path": "/username",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.9"
+        }
+    },
+    {
+        "id": "uuid no parameters, generates one",
+        "path": "/uuid",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.10"
+        }
+    },
+    {
+        "id": "uuid second call (shape stays the same)",
+        "path": "/uuid",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.11"
+        }
+    },
+    {
+        "id": "uuid count 1 gives a single uuid",
+        "path": "/uuid?count=1",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.12"
+        }
+    },
+    {
+        "id": "uuid count 2 gives a batch",
+        "path": "/uuid?count=2",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.13"
+        }
+    },
+    {
+        "id": "uuid count 10 batch",
+        "path": "/uuid?count=10",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.14"
+        }
+    },
+    {
+        "id": "uuid count 50 (max)",
+        "path": "/uuid?count=50",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.15"
+        }
+    },
+    {
+        "id": "uuid count 51 (one over max)",
+        "path": "/uuid?count=51",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.16"
+        }
+    },
+    {
+        "id": "uuid count 0",
+        "path": "/uuid?count=0",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.17"
+        }
+    },
+    {
+        "id": "uuid count negative",
+        "path": "/uuid?count=-1",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.18"
+        }
+    },
+    {
+        "id": "uuid count negative zero",
+        "path": "/uuid?count=-0",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.19"
+        }
+    },
+    {
+        "id": "uuid count empty string (Number gives 0)",
+        "path": "/uuid?count=",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.20"
+        }
+    },
+    {
+        "id": "uuid count whitespace only (Number gives 0)",
+        "path": "/uuid?count=%20",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.21"
+        }
+    },
+    {
+        "id": "uuid count abc",
+        "path": "/uuid?count=abc",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.22"
+        }
+    },
+    {
+        "id": "uuid count NaN literal",
+        "path": "/uuid?count=NaN",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.23"
+        }
+    },
+    {
+        "id": "uuid count Infinity",
+        "path": "/uuid?count=Infinity",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.24"
+        }
+    },
+    {
+        "id": "uuid count negative Infinity",
+        "path": "/uuid?count=-Infinity",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.25"
+        }
+    },
+    {
+        "id": "uuid count decimal 1.5",
+        "path": "/uuid?count=1.5",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.26"
+        }
+    },
+    {
+        "id": "uuid count decimal 2.0 (integer valued)",
+        "path": "/uuid?count=2.0",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.27"
+        }
+    },
+    {
+        "id": "uuid count trailing dot 3.",
+        "path": "/uuid?count=3.",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.28"
+        }
+    },
+    {
+        "id": "uuid count leading dot .5e1 (5)",
+        "path": "/uuid?count=.5e1",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.29"
+        }
+    },
+    {
+        "id": "uuid count trailing garbage 3abc",
+        "path": "/uuid?count=3abc",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.30"
+        }
+    },
+    {
+        "id": "uuid count leading garbage abc3",
+        "path": "/uuid?count=abc3",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.31"
+        }
+    },
+    {
+        "id": "uuid count padded with spaces (Number trims)",
+        "path": "/uuid?count=%203%20",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.32"
+        }
+    },
+    {
+        "id": "uuid count plus sign (Number accepts)",
+        "path": "/uuid?count=%2B3",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.33"
+        }
+    },
+    {
+        "id": "uuid count exponent 1e1 (10)",
+        "path": "/uuid?count=1e1",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.34"
+        }
+    },
+    {
+        "id": "uuid count exponent 1e2 (100, over max)",
+        "path": "/uuid?count=1e2",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.35"
+        }
+    },
+    {
+        "id": "uuid count hex 0x10 (16)",
+        "path": "/uuid?count=0x10",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.36"
+        }
+    },
+    {
+        "id": "uuid count octal 0o7 (7)",
+        "path": "/uuid?count=0o7",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.37"
+        }
+    },
+    {
+        "id": "uuid count binary 0b11 (3)",
+        "path": "/uuid?count=0b11",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.38"
+        }
+    },
+    {
+        "id": "uuid count leading zeros 003",
+        "path": "/uuid?count=003",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.39"
+        }
+    },
+    {
+        "id": "uuid count huge integer",
+        "path": "/uuid?count=99999999999999999999",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.40"
+        }
+    },
+    {
+        "id": "uuid count null literal",
+        "path": "/uuid?count=null",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.41"
+        }
+    },
+    {
+        "id": "uuid count true literal",
+        "path": "/uuid?count=true",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.42"
+        }
+    },
+    {
+        "id": "uuid count repeated key (array becomes NaN)",
+        "path": "/uuid?count=2&count=3",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.43"
+        }
+    },
+    {
+        "id": "uuid count repeated key same value",
+        "path": "/uuid?count=2&count=2",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.44"
+        }
+    },
+    {
+        "id": "uuid count single element via bracket syntax",
+        "path": "/uuid?count[]=2",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.45"
+        }
+    },
+    {
+        "id": "uuid count unicode digits",
+        "path": "/uuid?count=%EF%BC%95",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.46"
+        }
+    },
+    {
+        "id": "uuid count emoji",
+        "path": "/uuid?count=%F0%9F%8E%B2",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.47"
+        }
+    },
+    {
+        "id": "uuid parse a valid v1 uuid",
+        "path": "/uuid?uuid=123e4567-e89b-12d3-a456-426614174000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.48"
+        }
+    },
+    {
+        "id": "uuid parse a valid v4 uuid",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.49"
+        }
+    },
+    {
+        "id": "uuid parse a valid v4 uuid, uppercase",
+        "path": "/uuid?uuid=550E8400-E29B-41D4-A716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.50"
+        }
+    },
+    {
+        "id": "uuid parse a valid v4 uuid, mixed case",
+        "path": "/uuid?uuid=550e8400-E29B-41d4-A716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.51"
+        }
+    },
+    {
+        "id": "uuid parse nil uuid",
+        "path": "/uuid?uuid=00000000-0000-0000-0000-000000000000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.52"
+        }
+    },
+    {
+        "id": "uuid parse max uuid",
+        "path": "/uuid?uuid=ffffffff-ffff-ffff-ffff-ffffffffffff",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.53"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 0",
+        "path": "/uuid?uuid=550e8400-e29b-01d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.54"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 1",
+        "path": "/uuid?uuid=550e8400-e29b-11d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.55"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 2",
+        "path": "/uuid?uuid=550e8400-e29b-21d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.56"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 3",
+        "path": "/uuid?uuid=550e8400-e29b-31d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.57"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 4",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.58"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 5",
+        "path": "/uuid?uuid=550e8400-e29b-51d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.59"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 6",
+        "path": "/uuid?uuid=550e8400-e29b-61d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.60"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 7",
+        "path": "/uuid?uuid=550e8400-e29b-71d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.61"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 8",
+        "path": "/uuid?uuid=550e8400-e29b-81d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.62"
+        }
+    },
+    {
+        "id": "uuid parse version nibble 9",
+        "path": "/uuid?uuid=550e8400-e29b-91d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.63"
+        }
+    },
+    {
+        "id": "uuid parse version nibble a",
+        "path": "/uuid?uuid=550e8400-e29b-a1d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.64"
+        }
+    },
+    {
+        "id": "uuid parse version nibble f",
+        "path": "/uuid?uuid=550e8400-e29b-f1d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.65"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble 0",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-0716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.66"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble 7",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-7716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.67"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble 8",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-8716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.68"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble 9",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-9716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.69"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble a",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.70"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble b",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-b716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.71"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble c",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-c716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.72"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble d",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-d716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.73"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble e",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-e716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.74"
+        }
+    },
+    {
+        "id": "uuid parse variant nibble f",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-f716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.75"
+        }
+    },
+    {
+        "id": "uuid parse invalid: too short",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.76"
+        }
+    },
+    {
+        "id": "uuid parse invalid: one char short",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-44665544000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.77"
+        }
+    },
+    {
+        "id": "uuid parse invalid: one char long",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-4466554400000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.78"
+        }
+    },
+    {
+        "id": "uuid parse invalid: no dashes",
+        "path": "/uuid?uuid=550e8400e29b41d4a716446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.79"
+        }
+    },
+    {
+        "id": "uuid parse invalid: non hex char",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-44665544000g",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.80"
+        }
+    },
+    {
+        "id": "uuid parse invalid: braces",
+        "path": "/uuid?uuid=%7B550e8400-e29b-41d4-a716-446655440000%7D",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.81"
+        }
+    },
+    {
+        "id": "uuid parse invalid: urn prefix",
+        "path": "/uuid?uuid=urn:uuid:550e8400-e29b-41d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.82"
+        }
+    },
+    {
+        "id": "uuid parse invalid: leading space",
+        "path": "/uuid?uuid=%20550e8400-e29b-41d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.83"
+        }
+    },
+    {
+        "id": "uuid parse invalid: trailing space",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-446655440000%20",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.84"
+        }
+    },
+    {
+        "id": "uuid parse invalid: trailing newline",
+        "path": "/uuid?uuid=550e8400-e29b-41d4-a716-446655440000%0A",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.85"
+        }
+    },
+    {
+        "id": "uuid parse invalid: whitespace only",
+        "path": "/uuid?uuid=%20%20%20",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.86"
+        }
+    },
+    {
+        "id": "uuid parse invalid: zero",
+        "path": "/uuid?uuid=0",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.87"
+        }
+    },
+    {
+        "id": "uuid parse invalid: word",
+        "path": "/uuid?uuid=hello",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.88"
+        }
+    },
+    {
+        "id": "uuid parse invalid: unicode",
+        "path": "/uuid?uuid=%C3%A950e8400-e29b-41d4-a716-446655440000",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.89"
+        }
+    },
+    {
+        "id": "uuid parse invalid: emoji",
+        "path": "/uuid?uuid=%F0%9F%8E%B2",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.90"
+        }
+    },
+    {
+        "id": "uuid parse invalid: very long input",
+        "path": "/uuid?uuid=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.91"
+        }
+    },
+    {
+        "id": "uuid parse invalid: html in input (echoed back)",
+        "path": "/uuid?uuid=%3Cscript%3Ealert(1)%3C%2Fscript%3E",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.92"
+        }
+    },
+    {
+        "id": "uuid uuid empty string generates one",
+        "path": "/uuid?uuid=",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.93"
+        }
+    },
+    {
+        "id": "uuid uuid empty string with count",
+        "path": "/uuid?uuid=&count=3",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.94"
+        }
+    },
+    {
+        "id": "uuid uuid empty string with invalid count",
+        "path": "/uuid?uuid=&count=abc",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.95"
+        }
+    },
+    {
+        "id": "uuid uuid parse ignores count",
+        "path": "/uuid?uuid=123e4567-e89b-12d3-a456-426614174000&count=5",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.96"
+        }
+    },
+    {
+        "id": "uuid uuid parse ignores invalid count",
+        "path": "/uuid?uuid=123e4567-e89b-12d3-a456-426614174000&count=abc",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.97"
+        }
+    },
+    {
+        "id": "uuid uuid invalid string ignores invalid count",
+        "path": "/uuid?uuid=zzz&count=abc",
+        "headers": {
+            "X-Forwarded-For": "100.64.1.98"
+        }
+    },
+    {
+        "id": "uuid uuid repeated key (array rejected)",
+        "path": "/uuid?uuid=123e4567-e89b-12d3-a456-426614174000&uuid=123e4567-e89b-12d3-a456-426614174000",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.99"
+        }
+    },
+    {
+        "id": "uuid uuid repeated key with different values",
+        "path": "/uuid?uuid=123e4567-e89b-12d3-a456-426614174000&uuid=zzz",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.100"
+        }
+    },
+    {
+        "id": "uuid uuid repeated key empty values",
+        "path": "/uuid?uuid=&uuid=",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.101"
+        }
+    },
+    {
+        "id": "uuid uuid bracket syntax",
+        "path": "/uuid?uuid[]=123e4567-e89b-12d3-a456-426614174000",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.102"
+        }
+    },
+    {
+        "id": "uuid uuid object syntax",
+        "path": "/uuid?uuid[a]=123e4567-e89b-12d3-a456-426614174000",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.103"
+        }
+    },
+    {
+        "id": "uuid UUID parameter name capitalised",
+        "path": "/uuid?UUID=123e4567-e89b-12d3-a456-426614174000",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.104"
+        }
+    },
+    {
+        "id": "uuid unknown extra parameter ignored",
+        "path": "/uuid?foo=bar",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.105"
+        }
+    },
+    {
+        "id": "uuid trailing slash",
+        "path": "/uuid/",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.106"
+        }
+    },
+    {
+        "id": "uuid uppercase endpoint name",
+        "path": "/UUID",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.107"
+        }
+    },
+    {
+        "id": "uuid POST on a GET endpoint",
+        "path": "/uuid",
+        "method": "POST",
+        "body": {
+            "count": 2
+        },
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.108"
+        }
+    },
+    {
+        "id": "uuid POST without body",
+        "path": "/uuid",
+        "method": "POST",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.109"
+        }
+    },
+    {
+        "id": "uuid with Accept-Language and agent headers",
+        "path": "/uuid",
+        "volatile": ["uuid"],
+        "headers": {
+            "X-Forwarded-For": "100.64.1.110",
+            "Accept-Language": "fr",
+            "User-Agent": "curl/8.0"
+        }
+    },
+    {
+        "id": "uuid with IPv6 forwarded for",
+        "path": "/uuid?count=2",
+        "volatile": ["uuids.*"],
+        "headers": {
+            "X-Forwarded-For": "2001:db8::1"
+        }
+    }
+]
