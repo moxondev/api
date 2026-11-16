@@ -217,33 +217,6 @@ router.get('/:version/barcode', (req: Request, res: Response) => {
     }
 });
 
-// Convert a number between bases
-router.get('/:version/base', (req: Request, res: Response) => {
-    const { value, from, to } = req.query;
-    const { version } = req.params;
-
-    const baseFn = (req.module as { base?: (v: string, f?: number, t?: number) => unknown }).base;
-    if (!baseFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!value || typeof value !== 'string') {
-        error(res, 400, 'Please provide a value (?value={value})');
-        return;
-    }
-
-    try {
-        const result = baseFn(
-            value,
-            from !== undefined ? Number(from) : undefined,
-            to !== undefined ? Number(to) : undefined,
-        );
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Generate captcha
 router.get('/:version/captcha', (req: Request, res: Response) => {
     try {
@@ -286,29 +259,6 @@ router.get('/:version/captcha', (req: Request, res: Response) => {
         const result = captchaFn(options);
         res.set('X-Captcha-Text', result.text);
         res.type('png').send(result.body);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Convert text to a different case format
-router.get('/:version/case', (req: Request, res: Response) => {
-    const { text, to } = req.query;
-    const { version } = req.params;
-
-    const caseConvertFn = (req.module as { caseConvert?: (t: string, to?: string) => unknown }).caseConvert;
-    if (!caseConvertFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!text || typeof text !== 'string') {
-        error(res, 400, 'Please provide a text (?text={text})');
-        return;
-    }
-
-    try {
-        const result = caseConvertFn(text, to as string | undefined);
-        res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
@@ -410,29 +360,6 @@ router.get('/:version/domain', (req: Request, res: Response) => {
     try {
         const result = req.module.domain();
         res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Encode / decode text
-router.get('/:version/encode', (req: Request, res: Response) => {
-    const { method, text, shift } = req.query;
-    const { version } = req.params;
-
-    const encode = (req.module as { encode?: Record<string, (v: string, v2?: string) => string> }).encode;
-    if (!encode) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!method || !Object.hasOwn(encode, method as string)) {
-        error(res, 400, 'Please provide a valid method (?method={method})');
-        return;
-    }
-
-    try {
-        const result = encode[method as string]!(text as string, shift as string);
-        res.jsonResponse({ method, result });
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
@@ -548,32 +475,6 @@ router.get('/:version/ip', (req: Request, res: Response) => {
 
 // GET jwt error
 router.get('/:version/jwt', postOnly('jwt'));
-
-// Calculate Levenshtein distance
-router.get('/:version/levenshtein', (req: Request, res: Response) => {
-    if (since(req.version, 6)) {
-        error(res, 405, 'This endpoint only supports POST requests.');
-        return;
-    }
-
-    const { str1, str2 } = req.query;
-
-    if (!str1 || typeof str1 !== 'string') {
-        error(res, 400, 'Please provide a first string (?str1={string})');
-        return;
-    }
-    if (!str2 || typeof str2 !== 'string') {
-        error(res, 400, 'Please provide a second string (&str2={string})');
-        return;
-    }
-
-    try {
-        const result = req.module.levenshtein(str1, str2);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 // GET matrix error
 router.get('/:version/matrix', postOnly('matrix'));
@@ -725,33 +626,6 @@ router.get('/:version/qrcode', async (req: Request, res: Response) => {
 // GET read error
 router.get('/:version/read', postOnly('read'));
 
-// Test a regex pattern against a text
-router.get('/:version/regex', (req: Request, res: Response) => {
-    const { pattern, text, flags } = req.query;
-    const { version } = req.params;
-
-    const regexFn = (req.module as { regex?: (p: string, t: string, f?: string) => unknown }).regex;
-    if (!regexFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!pattern) {
-        error(res, 400, 'Please provide a pattern (?pattern={regex})');
-        return;
-    }
-    if (!text) {
-        error(res, 400, 'Please provide a text (&text={string})');
-        return;
-    }
-
-    try {
-        const result = regexFn(pattern as string, text as string, flags as string | undefined);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Parse, bump or compare semantic versions
 router.get('/:version/semver', (req: Request, res: Response) => {
     const { version: input, action, part, other } = req.query;
@@ -806,43 +680,6 @@ router.get('/:version/statistics', (req: Request, res: Response) => {
 
 // GET symmetric error
 router.get('/:version/symmetric', postOnly('symmetric'));
-
-// Text utilities (slug, stats, lorem, number)
-router.get('/:version/text', (req: Request, res: Response) => {
-    const { method, value, type, count, lang, text } = req.query;
-    const { version } = req.params;
-
-    const textMod = (req.module as { text?: Record<string, (...args: string[]) => unknown> }).text;
-    if (!textMod) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!method || !Object.hasOwn(textMod, method as string)) {
-        error(res, 400, 'Please provide a valid method (?method={slug|stats|lorem|number})');
-        return;
-    }
-
-    try {
-        let result: unknown;
-        switch (method) {
-            case 'slug':
-            case 'stats':
-                result = textMod[method as string]!((value ?? text) as string);
-                break;
-            case 'lorem':
-                result = textMod.lorem!((type as string) || 'words', (count as string) || '5');
-                break;
-            case 'number':
-                result = textMod.number!(value as string, (lang as string) || 'en');
-                break;
-            default:
-                throw new Error('Unknown method');
-        }
-        res.jsonResponse({ method, result });
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 // GET tic-tac-toe errors
 router.get('/:version/tic-tac-toe', postOnly('tic_tac_toe'));

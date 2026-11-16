@@ -235,34 +235,6 @@ router.post('/:version/csv', (req: Request, res: Response) => {
     }
 });
 
-// Compare two texts with a structured diff
-router.post('/:version/diff', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { a, b, mode } = body;
-    const { version } = req.params;
-
-    const diffFn = (req.module as { diff?: (a: string, b: string, m?: string) => unknown }).diff;
-    if (!diffFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (typeof a !== 'string') {
-        error(res, 400, 'Please provide a first text (a={text})');
-        return;
-    }
-    if (typeof b !== 'string') {
-        error(res, 400, 'Please provide a second text (b={text})');
-        return;
-    }
-
-    try {
-        const result = diffFn(a, b, mode as string | undefined);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Display a planning from an ICS file
 router.post('/:version/hyperplanning', async (req: Request, res: Response) => {
     const { url, detail } = (req.body as Record<string, string>) || {};
@@ -299,32 +271,6 @@ router.post('/:version/jwt', (req: Request, res: Response) => {
     try {
         const result = jwtFn(token as string);
         res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Compute the Levenshtein distance between two strings
-router.post('/:version/levenshtein', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { str1, str2 } = body;
-    const { version } = req.params;
-
-    if (!since(req.version, 6)) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!str1 || typeof str1 !== 'string') {
-        error(res, 400, 'Please provide a first string (str1={string})');
-        return;
-    }
-    if (!str2 || typeof str2 !== 'string') {
-        error(res, 400, 'Please provide a second string (str2={string})');
-        return;
-    }
-
-    try {
-        res.jsonResponse(req.module.levenshtein(str1, str2));
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
@@ -435,30 +381,6 @@ router.post('/:version/pow', (req: Request, res: Response) => {
 
     try {
         res.jsonResponse(verifyFn(token, String(nonce), challengeStorage));
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Compute readability scores on a text
-router.post('/:version/read', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { text, lang } = body;
-    const { version } = req.params;
-
-    const readFn = (req.module as { read?: (t: string, l?: string) => unknown }).read;
-    if (!readFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!text || typeof text !== 'string') {
-        error(res, 400, 'Please provide a text');
-        return;
-    }
-
-    try {
-        const result = readFn(text, lang as string | undefined);
-        res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
