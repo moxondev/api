@@ -1,9 +1,6 @@
 import { type Request, type Response, Router } from 'express';
 
-import { MAX_TOKEN_LENGTH, MIN_TOKEN_LENGTH } from '../constants.js';
-import type { asymmetricAsync, default as asymmetric } from '../modules/v5/asymmetric.js';
 import type { CaptchaVerification } from '../modules/v5/captcha.js';
-import type { JwtResult } from '../modules/v5/jwt.js';
 import { challengeStorage, chatStorage, ticTacToeStorage } from '../storage/index.js';
 import type { ChallengeStorage } from '../types/storage.js';
 import type { ChallengeVerification } from '../utils/challenge.js';
@@ -11,38 +8,6 @@ import { since } from '../utils/helpers.js';
 import { error } from '../utils/response.js';
 
 const router = Router();
-
-// Asymmetric RSA key generation, encryption and decryption
-router.post('/:version/asymmetric', async (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { action, text, publicKey, privateKey, modulusLength, algorithm } = body;
-    const { version } = req.params;
-
-    // Prefer the async variant so RSA keygen does not block the event loop
-    const mod = req.module as { asymmetric?: typeof asymmetric; asymmetricAsync?: typeof asymmetricAsync };
-    const asymmetricFn = mod.asymmetricAsync ?? mod.asymmetric;
-    if (!asymmetricFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!action) {
-        error(res, 400, 'Please provide an action (?action=keygen|encrypt|decrypt)');
-        return;
-    }
-
-    try {
-        const result = await asymmetricFn(action as string, {
-            text: text as string | undefined,
-            publicKey: publicKey as string | undefined,
-            privateKey: privateKey as string | undefined,
-            modulusLength: modulusLength !== undefined ? Number(modulusLength) : undefined,
-            algorithm: algorithm as string | undefined,
-        });
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
 
 // Verify a captcha answer against its token
 router.post('/:version/captcha', (req: Request, res: Response) => {
@@ -195,63 +160,6 @@ router.post('/:version/chat/private', (req: Request, res: Response) => {
     }
 });
 
-// Decode a JSON Web Token without verifying the signature
-router.post('/:version/jwt', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { token } = body;
-    const { version } = req.params;
-
-    const jwtFn = (req.module as { jwt?: (t: string) => JwtResult }).jwt;
-    if (!jwtFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!token) {
-        error(res, 400, 'Please provide a token (?token={token})');
-        return;
-    }
-
-    try {
-        const result = jwtFn(token as string);
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Generate or verify OTP codes
-router.post('/:version/otp', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { action, secret, code, algorithm, digits, period, counter, label, issuer } = body;
-    const { version } = req.params;
-
-    const otpFn = (req.module as { otp?: (a: string, o: Record<string, unknown>) => unknown }).otp;
-    if (!otpFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!action) {
-        error(res, 400, 'Please provide an action (?action=secret|generate|verify)');
-        return;
-    }
-
-    try {
-        const result = otpFn(action as string, {
-            secret: secret as string | undefined,
-            code: code as string | undefined,
-            algorithm: algorithm as string | undefined,
-            digits: digits !== undefined ? Number(digits) : undefined,
-            period: period !== undefined ? Number(period) : undefined,
-            counter: counter !== undefined ? Number(counter) : undefined,
-            label: label as string | undefined,
-            issuer: issuer as string | undefined,
-        });
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Verify a solved proof-of-work challenge
 router.post('/:version/pow', (req: Request, res: Response) => {
     const body = (req.body as Record<string, unknown>) || {};
@@ -276,39 +184,6 @@ router.post('/:version/pow', (req: Request, res: Response) => {
 
     try {
         res.jsonResponse(verifyFn(token, String(nonce), challengeStorage));
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Symmetric encrypt or decrypt text
-router.post('/:version/symmetric', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const { action, text, key, algorithm } = body;
-    const { version } = req.params;
-
-    const symmetricFn = (req.module as { symmetric?: (a: string, t: string, k: string, alg?: string) => unknown })
-        .symmetric;
-    if (!symmetricFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-    if (!action) {
-        error(res, 400, 'Please provide an action (?action=encrypt|decrypt)');
-        return;
-    }
-    if (!text) {
-        error(res, 400, 'Please provide a text (&text={text})');
-        return;
-    }
-    if (!key) {
-        error(res, 400, 'Please provide a key (&key={key})');
-        return;
-    }
-
-    try {
-        const result = symmetricFn(action as string, text as string, key as string, algorithm as string | undefined);
-        res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
@@ -446,33 +321,6 @@ router.post('/:version/tic-tac-toe/play', (req: Request, res: Response) => {
 
     try {
         res.jsonResponse(req.module.tic_tac_toe('play', { username, move, session, game, storage: ticTacToeStorage }));
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Generate Token
-router.post('/:version/token', (req: Request, res: Response) => {
-    const body = (req.body as Record<string, unknown>) || {};
-    const len = parseInt(String(body.len ?? 24), 10);
-    const type = body.type ? String(body.type).toLowerCase() : 'alpha';
-
-    if (isNaN(len) || len < 0) {
-        error(res, 400, 'Invalid number.');
-        return;
-    }
-    if (len > MAX_TOKEN_LENGTH) {
-        error(res, 400, 'Length cannot exceed 4096.');
-        return;
-    }
-    if (len < MIN_TOKEN_LENGTH) {
-        error(res, 400, 'Length cannot be less than 12.');
-        return;
-    }
-
-    try {
-        const token = req.module.token(len, type);
-        res.jsonResponse({ token });
     } catch (err) {
         error(res, 400, (err as Error).message);
     }

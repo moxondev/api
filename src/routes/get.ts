@@ -5,7 +5,6 @@ import { versions } from '../config/versions.js';
 import type { AvatarOptions, AvatarResult } from '../modules/v4/avatar.js';
 import type { BarcodeOptions, BarcodeResult } from '../modules/v4/barcode.js';
 import type { CaptchaOptions, CaptchaResult } from '../modules/v4/captcha.js';
-import type { PasswordResult } from '../modules/v4/password.js';
 import type { QRCodeOptions, QRCodeResult } from '../modules/v4/qrcode.js';
 import type { CaptchaChallenge } from '../modules/v5/captcha.js';
 import type { BadgeOptions, BadgeResult } from '../modules/v6/badge.js';
@@ -282,41 +281,6 @@ router.get('/:version/matrix', postOnly('matrix'));
 // GET otp error
 router.get('/:version/otp', postOnly('otp'));
 
-// Generate a password or passphrase
-router.get('/:version/password', (req: Request, res: Response) => {
-    const { type, length, uppercase, lowercase, digits, symbols, exclude, count, separator } = req.query;
-    const { version } = req.params;
-
-    const passwordFn = (
-        req.module as { password?: (t: string, l: number, o: Record<string, unknown>) => PasswordResult }
-    ).password;
-    if (!passwordFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-
-    const parseBool = (v: unknown, def: boolean): boolean => (v === undefined ? def : v !== 'false');
-
-    try {
-        const result = passwordFn(
-            (type as string) ?? 'random',
-            length !== undefined ? parseInt(length as string, 10) : 16,
-            {
-                uppercase: parseBool(uppercase, true),
-                lowercase: parseBool(lowercase, true),
-                digits: parseBool(digits, true),
-                symbols: parseBool(symbols, false),
-                exclude: (exclude as string) ?? '',
-                count: count !== undefined ? parseInt(count as string, 10) : 1,
-                separator: (separator as string) ?? '-',
-            },
-        );
-        res.jsonResponse(result);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
 // Generate a placeholder image or skeleton
 router.get('/:version/placeholder', (req: Request, res: Response) => {
     const { type = 'image' } = req.query;
@@ -338,25 +302,6 @@ router.get('/:version/placeholder', (req: Request, res: Response) => {
     try {
         const result = placeholder(type as string, req.query as Record<string, string | undefined>);
         res.type(result.contentType).send(result.body);
-    } catch (err) {
-        error(res, 400, (err as Error).message);
-    }
-});
-
-// Issue a proof-of-work challenge
-router.get('/:version/pow', (req: Request, res: Response) => {
-    const { difficulty } = req.query;
-    const { version } = req.params;
-
-    const powFn = (req.module as { pow?: (d?: number) => unknown }).pow;
-    if (!powFn) {
-        error(res, 404, `Endpoint not available in ${version}.`);
-        return;
-    }
-
-    try {
-        const result = powFn(difficulty !== undefined ? Number(difficulty) : undefined);
-        res.jsonResponse(result);
     } catch (err) {
         error(res, 400, (err as Error).message);
     }
