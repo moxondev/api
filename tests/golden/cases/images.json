@@ -1,0 +1,1372 @@
+[
+    {
+        "id": "color random",
+        "path": "/color",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.1"
+        }
+    },
+    {
+        "id": "color empty hex gives random",
+        "path": "/color?hex=",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.2"
+        }
+    },
+    {
+        "id": "color bare key hex gives random",
+        "path": "/color?hex",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.3"
+        }
+    },
+    {
+        "id": "color unknown param gives random",
+        "path": "/color?foo=bar",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.4"
+        }
+    },
+    {
+        "id": "color hex orange no hash",
+        "path": "/color?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.5"
+        }
+    },
+    {
+        "id": "color hex orange encoded hash",
+        "path": "/color?hex=%23ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.6"
+        }
+    },
+    {
+        "id": "color hex orange uppercase",
+        "path": "/color?hex=FF6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.7"
+        }
+    },
+    {
+        "id": "color hex orange mixed case",
+        "path": "/color?hex=fF66aA",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.8"
+        }
+    },
+    {
+        "id": "color hex black",
+        "path": "/color?hex=000000",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.9"
+        }
+    },
+    {
+        "id": "color hex white",
+        "path": "/color?hex=ffffff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.10"
+        }
+    },
+    {
+        "id": "color hex mid grey",
+        "path": "/color?hex=808080",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.11"
+        }
+    },
+    {
+        "id": "color hex grey 7f",
+        "path": "/color?hex=7f7f7f",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.12"
+        }
+    },
+    {
+        "id": "color hex near black",
+        "path": "/color?hex=010101",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.13"
+        }
+    },
+    {
+        "id": "color hex near white",
+        "path": "/color?hex=fefefe",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.14"
+        }
+    },
+    {
+        "id": "color hex pure red",
+        "path": "/color?hex=ff0000",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.15"
+        }
+    },
+    {
+        "id": "color hex pure green",
+        "path": "/color?hex=00ff00",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.16"
+        }
+    },
+    {
+        "id": "color hex pure blue",
+        "path": "/color?hex=0000ff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.17"
+        }
+    },
+    {
+        "id": "color hex yellow",
+        "path": "/color?hex=ffff00",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.18"
+        }
+    },
+    {
+        "id": "color hex cyan",
+        "path": "/color?hex=00ffff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.19"
+        }
+    },
+    {
+        "id": "color hex magenta",
+        "path": "/color?hex=ff00ff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.20"
+        }
+    },
+    {
+        "id": "color hex rose hue wrap g below b",
+        "path": "/color?hex=ff0080",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.21"
+        }
+    },
+    {
+        "id": "color hex dark red",
+        "path": "/color?hex=800000",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.22"
+        }
+    },
+    {
+        "id": "color hex dark blue",
+        "path": "/color?hex=000080",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.23"
+        }
+    },
+    {
+        "id": "color hex dark green",
+        "path": "/color?hex=008000",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.24"
+        }
+    },
+    {
+        "id": "color hex light pink",
+        "path": "/color?hex=ffc0cb",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.25"
+        }
+    },
+    {
+        "id": "color hex teal",
+        "path": "/color?hex=008080",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.26"
+        }
+    },
+    {
+        "id": "color hex one channel",
+        "path": "/color?hex=000001",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.27"
+        }
+    },
+    {
+        "id": "color hex lightness above half",
+        "path": "/color?hex=aabbcc",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.28"
+        }
+    },
+    {
+        "id": "color hex lightness below half",
+        "path": "/color?hex=223344",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.29"
+        }
+    },
+    {
+        "id": "color hex rounding case",
+        "path": "/color?hex=123456",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.30"
+        }
+    },
+    {
+        "id": "color hex rounding case 2",
+        "path": "/color?hex=abcdef",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.31"
+        }
+    },
+    {
+        "id": "color hex salmon",
+        "path": "/color?hex=fa8072",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.32"
+        }
+    },
+    {
+        "id": "color hex blue first max",
+        "path": "/color?hex=3333ff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.33"
+        }
+    },
+    {
+        "id": "color hex green max tie",
+        "path": "/color?hex=00ff7f",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.34"
+        }
+    },
+    {
+        "id": "color hex red max g equal b",
+        "path": "/color?hex=ff3333",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.35"
+        }
+    },
+    {
+        "id": "color hex hue near 360",
+        "path": "/color?hex=ff0001",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.36"
+        }
+    },
+    {
+        "id": "color hex three digits",
+        "path": "/color?hex=f60",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.37"
+        }
+    },
+    {
+        "id": "color hex three digits with hash",
+        "path": "/color?hex=%23f60",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.38"
+        }
+    },
+    {
+        "id": "color hex seven digits",
+        "path": "/color?hex=ff66001",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.39"
+        }
+    },
+    {
+        "id": "color hex five digits",
+        "path": "/color?hex=ff660",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.40"
+        }
+    },
+    {
+        "id": "color hex eight digits alpha",
+        "path": "/color?hex=ff6600ff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.41"
+        }
+    },
+    {
+        "id": "color hex non hex letters",
+        "path": "/color?hex=gg6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.42"
+        }
+    },
+    {
+        "id": "color hex zero string",
+        "path": "/color?hex=0",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.43"
+        }
+    },
+    {
+        "id": "color hex zero padded six",
+        "path": "/color?hex=000",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.44"
+        }
+    },
+    {
+        "id": "color hex minus sign",
+        "path": "/color?hex=-ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.45"
+        }
+    },
+    {
+        "id": "color hex plus sign",
+        "path": "/color?hex=%2Bff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.46"
+        }
+    },
+    {
+        "id": "color hex whitespace only",
+        "path": "/color?hex=%20",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.47"
+        }
+    },
+    {
+        "id": "color hex three spaces",
+        "path": "/color?hex=%20%20%20",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.48"
+        }
+    },
+    {
+        "id": "color hex leading space",
+        "path": "/color?hex=%20ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.49"
+        }
+    },
+    {
+        "id": "color hex trailing space",
+        "path": "/color?hex=ff6600%20",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.50"
+        }
+    },
+    {
+        "id": "color hex tab",
+        "path": "/color?hex=ff6600%09",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.51"
+        }
+    },
+    {
+        "id": "color hex newline trailing",
+        "path": "/color?hex=ff6600%0A",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.52"
+        }
+    },
+    {
+        "id": "color hex double hash",
+        "path": "/color?hex=%23%23ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.53"
+        }
+    },
+    {
+        "id": "color hex hash in the middle",
+        "path": "/color?hex=ff%236600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.54"
+        }
+    },
+    {
+        "id": "color hex trailing hash accepted by replace",
+        "path": "/color?hex=ff6600%23",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.55"
+        }
+    },
+    {
+        "id": "color hex hash after first char",
+        "path": "/color?hex=f%23f6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.56"
+        }
+    },
+    {
+        "id": "color hex word",
+        "path": "/color?hex=orange",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.57"
+        }
+    },
+    {
+        "id": "color hex rgb function",
+        "path": "/color?hex=rgb(255,102,0)",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.58"
+        }
+    },
+    {
+        "id": "color hex hex prefix 0x",
+        "path": "/color?hex=0xff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.59"
+        }
+    },
+    {
+        "id": "color hex unicode",
+        "path": "/color?hex=%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%82%E3%81%84",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.60"
+        }
+    },
+    {
+        "id": "color hex emoji",
+        "path": "/color?hex=%F0%9F%8E%A8%F0%9F%8E%A8%F0%9F%8E%A8",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.61"
+        }
+    },
+    {
+        "id": "color hex fullwidth digits",
+        "path": "/color?hex=%EF%BC%91%EF%BC%92%EF%BC%93%EF%BC%94%EF%BC%95%EF%BC%96",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.62"
+        }
+    },
+    {
+        "id": "color hex NaN",
+        "path": "/color?hex=NaN",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.63"
+        }
+    },
+    {
+        "id": "color hex null word",
+        "path": "/color?hex=null",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.64"
+        }
+    },
+    {
+        "id": "color hex undefined word",
+        "path": "/color?hex=undefined",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.65"
+        }
+    },
+    {
+        "id": "color hex true word",
+        "path": "/color?hex=true",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.66"
+        }
+    },
+    {
+        "id": "color hex false word",
+        "path": "/color?hex=false",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.67"
+        }
+    },
+    {
+        "id": "color hex only hash",
+        "path": "/color?hex=%23",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.68"
+        }
+    },
+    {
+        "id": "color hex very long",
+        "path": "/color?hex=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.69"
+        }
+    },
+    {
+        "id": "color hex very long valid prefix",
+        "path": "/color?hex=ff6600ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.70"
+        }
+    },
+    {
+        "id": "color hex sql injection",
+        "path": "/color?hex='%3B%20DROP%20TABLE%20x%3B--",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.71"
+        }
+    },
+    {
+        "id": "color hex html",
+        "path": "/color?hex=%3Cscript%3Ealert(1)%3C%2Fscript%3E",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.72"
+        }
+    },
+    {
+        "id": "color hex percent sign lone",
+        "path": "/color?hex=%25",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.73"
+        }
+    },
+    {
+        "id": "color hex invalid percent encoding",
+        "path": "/color?hex=%E0%A4%A",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.74"
+        }
+    },
+    {
+        "id": "color hex exponent",
+        "path": "/color?hex=1e10000",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.75"
+        }
+    },
+    {
+        "id": "color hex nul byte",
+        "path": "/color?hex=ff66%00",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.76"
+        }
+    },
+    {
+        "id": "color repeated hex both valid",
+        "path": "/color?hex=ff6600&hex=00ff00",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.77"
+        }
+    },
+    {
+        "id": "color repeated hex first empty",
+        "path": "/color?hex=&hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.78"
+        }
+    },
+    {
+        "id": "color repeated hex second empty",
+        "path": "/color?hex=ff6600&hex=",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.79"
+        }
+    },
+    {
+        "id": "color repeated hex both empty",
+        "path": "/color?hex=&hex=",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.80"
+        }
+    },
+    {
+        "id": "color repeated hex three",
+        "path": "/color?hex=a&hex=b&hex=c",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.81"
+        }
+    },
+    {
+        "id": "color bracket key is a plain key",
+        "path": "/color?hex[]=ff6600",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.82"
+        }
+    },
+    {
+        "id": "color bracket object key is a plain key",
+        "path": "/color?hex[a]=ff6600",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.83"
+        }
+    },
+    {
+        "id": "color uppercase key ignored",
+        "path": "/color?HEX=ff6600",
+        "volatile": ["hex", "rgb", "hsl", "hsv", "hwb", "cmyk"],
+        "headers": {
+            "X-Forwarded-For": "198.18.0.84"
+        }
+    },
+    {
+        "id": "color valid hex with extra params",
+        "path": "/color?hex=ff6600&format=rgb&foo=bar",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.85"
+        }
+    },
+    {
+        "id": "color hex plus decodes to space",
+        "path": "/color?hex=ff6600+",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.86"
+        }
+    },
+    {
+        "id": "color semicolon separator",
+        "path": "/color?hex=ff6600;hex=00ff00",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.87"
+        }
+    },
+    {
+        "id": "color trailing slash",
+        "path": "/color/?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.88"
+        }
+    },
+    {
+        "id": "color path in upper case",
+        "path": "/COLOR?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.89"
+        }
+    },
+    {
+        "id": "color path with extra segment",
+        "path": "/color/extra?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.90"
+        }
+    },
+    {
+        "id": "color POST is not a route",
+        "path": "/color?hex=ff6600",
+        "method": "POST",
+        "body": {
+            "hex": "ff6600"
+        },
+        "headers": {
+            "X-Forwarded-For": "198.18.0.91"
+        }
+    },
+    {
+        "id": "color POST without body",
+        "path": "/color",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.92"
+        }
+    },
+    {
+        "id": "color with accept language header",
+        "path": "/color?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.93",
+            "Accept-Language": "fr-FR,fr;q=0.9"
+        }
+    },
+    {
+        "id": "color with accept json header",
+        "path": "/color?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.94",
+            "Accept": "text/html"
+        }
+    },
+    {
+        "id": "color with other client headers",
+        "path": "/color?hex=ff6600",
+        "headers": {
+            "X-Forwarded-For": "::1",
+            "User-Agent": "curl/8.0.1"
+        }
+    },
+    {
+        "id": "palette complementary orange",
+        "path": "/palette?color=%23ff6600&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.96"
+        }
+    },
+    {
+        "id": "palette triadic orange",
+        "path": "/palette?color=%23ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.97"
+        }
+    },
+    {
+        "id": "palette analogous orange",
+        "path": "/palette?color=%23ff6600&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.98"
+        }
+    },
+    {
+        "id": "palette tetradic orange",
+        "path": "/palette?color=%23ff6600&type=tetradic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.99"
+        }
+    },
+    {
+        "id": "palette split-complementary orange",
+        "path": "/palette?color=%23ff6600&type=split-complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.100"
+        }
+    },
+    {
+        "id": "palette complementary without hash",
+        "path": "/palette?color=3366cc&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.101"
+        }
+    },
+    {
+        "id": "palette triadic without hash",
+        "path": "/palette?color=3366cc&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.102"
+        }
+    },
+    {
+        "id": "palette analogous without hash",
+        "path": "/palette?color=3366cc&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.103"
+        }
+    },
+    {
+        "id": "palette tetradic without hash",
+        "path": "/palette?color=3366cc&type=tetradic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.104"
+        }
+    },
+    {
+        "id": "palette split-complementary without hash",
+        "path": "/palette?color=3366cc&type=split-complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.105"
+        }
+    },
+    {
+        "id": "palette complementary grey has no hue",
+        "path": "/palette?color=808080&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.106"
+        }
+    },
+    {
+        "id": "palette triadic grey has no hue",
+        "path": "/palette?color=808080&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.107"
+        }
+    },
+    {
+        "id": "palette analogous grey has no hue",
+        "path": "/palette?color=808080&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.108"
+        }
+    },
+    {
+        "id": "palette tetradic grey has no hue",
+        "path": "/palette?color=808080&type=tetradic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.109"
+        }
+    },
+    {
+        "id": "palette split-complementary grey has no hue",
+        "path": "/palette?color=808080&type=split-complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.110"
+        }
+    },
+    {
+        "id": "palette complementary red hue wrap",
+        "path": "/palette?color=%23ff0000&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.111"
+        }
+    },
+    {
+        "id": "palette triadic red hue wrap",
+        "path": "/palette?color=%23ff0000&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.112"
+        }
+    },
+    {
+        "id": "palette analogous red hue wrap",
+        "path": "/palette?color=%23ff0000&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.113"
+        }
+    },
+    {
+        "id": "palette tetradic red hue wrap",
+        "path": "/palette?color=%23ff0000&type=tetradic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.114"
+        }
+    },
+    {
+        "id": "palette split-complementary red hue wrap",
+        "path": "/palette?color=%23ff0000&type=split-complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.115"
+        }
+    },
+    {
+        "id": "palette analogous black",
+        "path": "/palette?color=000000&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.116"
+        }
+    },
+    {
+        "id": "palette complementary white",
+        "path": "/palette?color=ffffff&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.117"
+        }
+    },
+    {
+        "id": "palette triadic pure green",
+        "path": "/palette?color=00ff00&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.118"
+        }
+    },
+    {
+        "id": "palette tetradic pure blue",
+        "path": "/palette?color=0000ff&type=tetradic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.119"
+        }
+    },
+    {
+        "id": "palette split-complementary yellow",
+        "path": "/palette?color=ffff00&type=split-complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.120"
+        }
+    },
+    {
+        "id": "palette analogous near 360 hue",
+        "path": "/palette?color=ff0001&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.121"
+        }
+    },
+    {
+        "id": "palette complementary uppercase hex",
+        "path": "/palette?color=%23AABBCC&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.122"
+        }
+    },
+    {
+        "id": "palette complementary pastel",
+        "path": "/palette?color=ffc0cb&type=complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.123"
+        }
+    },
+    {
+        "id": "palette triadic dark",
+        "path": "/palette?color=112233&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.124"
+        }
+    },
+    {
+        "id": "palette analogous rounding edge",
+        "path": "/palette?color=123456&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.125"
+        }
+    },
+    {
+        "id": "palette trailing hash accepted by replace",
+        "path": "/palette?color=ff6600%23&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.126"
+        }
+    },
+    {
+        "id": "palette extra params ignored",
+        "path": "/palette?color=ff6600&type=triadic&count=9&foo=bar",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.127"
+        }
+    },
+    {
+        "id": "palette keys in other order",
+        "path": "/palette?type=triadic&color=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.128"
+        }
+    },
+    {
+        "id": "palette no params",
+        "path": "/palette",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.129"
+        }
+    },
+    {
+        "id": "palette missing color",
+        "path": "/palette?type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.130"
+        }
+    },
+    {
+        "id": "palette missing type",
+        "path": "/palette?color=ff6600",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.131"
+        }
+    },
+    {
+        "id": "palette empty color",
+        "path": "/palette?color=&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.132"
+        }
+    },
+    {
+        "id": "palette empty type",
+        "path": "/palette?color=ff6600&type=",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.133"
+        }
+    },
+    {
+        "id": "palette both empty",
+        "path": "/palette?color=&type=",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.134"
+        }
+    },
+    {
+        "id": "palette bare keys",
+        "path": "/palette?color&type",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.135"
+        }
+    },
+    {
+        "id": "palette color zero string",
+        "path": "/palette?color=0&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.136"
+        }
+    },
+    {
+        "id": "palette type zero string",
+        "path": "/palette?color=ff6600&type=0",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.137"
+        }
+    },
+    {
+        "id": "palette color whitespace only",
+        "path": "/palette?color=%20&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.138"
+        }
+    },
+    {
+        "id": "palette type whitespace only",
+        "path": "/palette?color=ff6600&type=%20",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.139"
+        }
+    },
+    {
+        "id": "palette type with surrounding space",
+        "path": "/palette?color=ff6600&type=%20triadic%20",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.140"
+        }
+    },
+    {
+        "id": "palette color with surrounding space",
+        "path": "/palette?color=%20ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.141"
+        }
+    },
+    {
+        "id": "palette color three digits",
+        "path": "/palette?color=f60&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.142"
+        }
+    },
+    {
+        "id": "palette color three digits with hash",
+        "path": "/palette?color=%23f60&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.143"
+        }
+    },
+    {
+        "id": "palette color eight digits",
+        "path": "/palette?color=ff6600ff&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.144"
+        }
+    },
+    {
+        "id": "palette color non hex",
+        "path": "/palette?color=zzzzzz&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.145"
+        }
+    },
+    {
+        "id": "palette color word",
+        "path": "/palette?color=orange&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.146"
+        }
+    },
+    {
+        "id": "palette color double hash",
+        "path": "/palette?color=%23%23ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.147"
+        }
+    },
+    {
+        "id": "palette color negative",
+        "path": "/palette?color=-ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.148"
+        }
+    },
+    {
+        "id": "palette color NaN",
+        "path": "/palette?color=NaN&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.149"
+        }
+    },
+    {
+        "id": "palette color unicode",
+        "path": "/palette?color=%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%82%E3%81%84&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.150"
+        }
+    },
+    {
+        "id": "palette color emoji",
+        "path": "/palette?color=%F0%9F%8E%A8%F0%9F%8E%A8%F0%9F%8E%A8&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.151"
+        }
+    },
+    {
+        "id": "palette color very long",
+        "path": "/palette?color=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.152"
+        }
+    },
+    {
+        "id": "palette color html",
+        "path": "/palette?color=%3Cb%3Ex%3C%2Fb%3E&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.153"
+        }
+    },
+    {
+        "id": "palette color rgb function",
+        "path": "/palette?color=rgb(1,2,3)&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.154"
+        }
+    },
+    {
+        "id": "palette type unknown",
+        "path": "/palette?color=ff6600&type=rainbow",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.155"
+        }
+    },
+    {
+        "id": "palette type uppercase",
+        "path": "/palette?color=ff6600&type=TRIADIC",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.156"
+        }
+    },
+    {
+        "id": "palette type capitalised",
+        "path": "/palette?color=ff6600&type=Triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.157"
+        }
+    },
+    {
+        "id": "palette type underscore variant",
+        "path": "/palette?color=ff6600&type=split_complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.158"
+        }
+    },
+    {
+        "id": "palette type no dash variant",
+        "path": "/palette?color=ff6600&type=splitcomplementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.159"
+        }
+    },
+    {
+        "id": "palette type prefix only",
+        "path": "/palette?color=ff6600&type=tri",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.160"
+        }
+    },
+    {
+        "id": "palette type plural",
+        "path": "/palette?color=ff6600&type=triadics",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.161"
+        }
+    },
+    {
+        "id": "palette type monochromatic",
+        "path": "/palette?color=ff6600&type=monochromatic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.162"
+        }
+    },
+    {
+        "id": "palette type square",
+        "path": "/palette?color=ff6600&type=square",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.163"
+        }
+    },
+    {
+        "id": "palette type number",
+        "path": "/palette?color=ff6600&type=3",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.164"
+        }
+    },
+    {
+        "id": "palette type NaN",
+        "path": "/palette?color=ff6600&type=NaN",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.165"
+        }
+    },
+    {
+        "id": "palette type unicode",
+        "path": "/palette?color=ff6600&type=%E6%97%A5%E6%9C%AC",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.166"
+        }
+    },
+    {
+        "id": "palette type emoji",
+        "path": "/palette?color=ff6600&type=%F0%9F%8E%A8",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.167"
+        }
+    },
+    {
+        "id": "palette type very long",
+        "path": "/palette?color=ff6600&type=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.168"
+        }
+    },
+    {
+        "id": "palette type html",
+        "path": "/palette?color=ff6600&type=%3Ci%3Ex%3C%2Fi%3E",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.169"
+        }
+    },
+    {
+        "id": "palette type proto key",
+        "path": "/palette?color=ff6600&type=__proto__",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.170"
+        }
+    },
+    {
+        "id": "palette type constructor",
+        "path": "/palette?color=ff6600&type=constructor",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.171"
+        }
+    },
+    {
+        "id": "palette type toString",
+        "path": "/palette?color=ff6600&type=toString",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.172"
+        }
+    },
+    {
+        "id": "palette invalid color and invalid type",
+        "path": "/palette?color=zzzzzz&type=rainbow",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.173"
+        }
+    },
+    {
+        "id": "palette invalid color and missing type",
+        "path": "/palette?color=zzzzzz",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.174"
+        }
+    },
+    {
+        "id": "palette missing color and invalid type",
+        "path": "/palette?type=rainbow",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.175"
+        }
+    },
+    {
+        "id": "palette repeated color both valid",
+        "path": "/palette?color=ff6600&color=00ff00&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.176"
+        }
+    },
+    {
+        "id": "palette repeated color first empty",
+        "path": "/palette?color=&color=ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.177"
+        }
+    },
+    {
+        "id": "palette repeated type both valid",
+        "path": "/palette?color=ff6600&type=triadic&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.178"
+        }
+    },
+    {
+        "id": "palette repeated type valid then invalid",
+        "path": "/palette?color=ff6600&type=triadic&type=rainbow",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.179"
+        }
+    },
+    {
+        "id": "palette repeated type single repeated name",
+        "path": "/palette?color=ff6600&type=triadic&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.180"
+        }
+    },
+    {
+        "id": "palette repeated both keys",
+        "path": "/palette?color=ff6600&color=00ff00&type=triadic&type=analogous",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.181"
+        }
+    },
+    {
+        "id": "palette repeated type empty then valid",
+        "path": "/palette?color=ff6600&type=&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.182"
+        }
+    },
+    {
+        "id": "palette bracket keys are plain keys",
+        "path": "/palette?color[]=ff6600&type[]=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.183"
+        }
+    },
+    {
+        "id": "palette uppercase keys ignored",
+        "path": "/palette?COLOR=ff6600&TYPE=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.184"
+        }
+    },
+    {
+        "id": "palette plus in type decodes to space",
+        "path": "/palette?color=ff6600&type=split+complementary",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.185"
+        }
+    },
+    {
+        "id": "palette trailing slash",
+        "path": "/palette/?color=ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.186"
+        }
+    },
+    {
+        "id": "palette path in upper case",
+        "path": "/PALETTE?color=ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.187"
+        }
+    },
+    {
+        "id": "palette POST is not a route",
+        "path": "/palette?color=ff6600&type=triadic",
+        "method": "POST",
+        "body": {
+            "color": "ff6600",
+            "type": "triadic"
+        },
+        "headers": {
+            "X-Forwarded-For": "198.18.0.188"
+        }
+    },
+    {
+        "id": "palette POST without body",
+        "path": "/palette",
+        "method": "POST",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.189"
+        }
+    },
+    {
+        "id": "palette POST with empty object",
+        "path": "/palette",
+        "method": "POST",
+        "body": {},
+        "headers": {
+            "X-Forwarded-For": "198.18.0.190"
+        }
+    },
+    {
+        "id": "palette with accept language header",
+        "path": "/palette?color=ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "198.18.0.191",
+            "Accept-Language": "de-DE"
+        }
+    },
+    {
+        "id": "palette with other client headers",
+        "path": "/palette?color=ff6600&type=triadic",
+        "headers": {
+            "X-Forwarded-For": "10.0.0.5",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)"
+        }
+    }
+]
