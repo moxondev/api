@@ -326,7 +326,12 @@ describe('fetchRemote responses', () => {
             () => fetchRemote(`https://fake.test:${port}/endless`, local({ maxBytes: 1_000_000, timeout: 10_000 })),
             /too large/,
         );
-        await new Promise((resolve) => setTimeout(resolve, 50).unref());
+
+        // The server closes after the client rejected, the limit is only a hang guard
+        const deadline = performance.now() + 5000;
+        while (closedEarly === before && performance.now() < deadline) {
+            await new Promise((resolve) => setTimeout(resolve, 5).unref());
+        }
         assert.equal(closedEarly, before + 1);
     });
 
