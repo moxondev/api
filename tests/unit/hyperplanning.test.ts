@@ -144,11 +144,44 @@ describe('hyperplanning', () => {
 
 describe('hyperplanning parse cost', () => {
     test('parses a calendar of edited occurrences in linear time', async () => {
-        // ical.js used to scan every sibling event for each one: this calendar took several seconds
-        const start = performance.now();
-        const events = await fetchCalendar('https://fake.test/cal.ics', undefined, mockFetch(bulkIcs(MAX_ICS_EVENTS)));
-        assert.equal(events.length, MAX_ICS_EVENTS);
-        assert.ok(performance.now() - start < 2000, `took ${performance.now() - start} ms`);
+        // Compares how the cost scales, an absolute bound would depend on machine load
+        const large = MAX_ICS_EVENTS;
+        const small = Math.floor(large / 16);
+        const hangGuard = 10_000;
+        const smallFetcher = mockFetch(bulkIcs(small));
+        const largeFetcher = mockFetch(bulkIcs(large));
+
+        /**
+         * Measures one parse of a prepared calendar.
+         *
+         * @param count - Number of VEVENT blocks in the calendar behind the fetcher
+         * @param fetcher - Fetcher answering with that calendar
+         * @returns Elapsed milliseconds of the parse
+         */
+        async function parseTime(count: number, fetcher: RemoteFetcher): Promise<number> {
+            const start = performance.now();
+            const events = await fetchCalendar('https://fake.test/cal.ics', undefined, fetcher);
+            const elapsed = performance.now() - start;
+            assert.equal(events.length, count);
+
+            // Absolute bound kept only as a hang guard, far above any loaded machine and below a quadratic parse
+            assert.ok(elapsed < hangGuard, `parsing ${count} events took ${elapsed} ms`);
+            return elapsed;
+        }
+
+        // warm-up, so JIT compilation is not charged to the small size
+        await parseTime(small, smallFetcher);
+        let fast = Infinity;
+        let slow = Infinity;
+
+        // Both sizes are interleaved and the fastest of five runs kept, so a burst of load hits both of them alike
+        for (let round = 0; round < 5; round++) {
+            fast = Math.min(fast, await parseTime(small, smallFetcher));
+            slow = Math.min(slow, await parseTime(large, largeFetcher));
+        }
+
+        // Linear costs about 16x (40x on a loaded machine), quadratic about 140x, so 80 sits between
+        assert.ok(slow / fast < 80, `${large} events cost ${(slow / fast).toFixed(1)}x ${small} events`);
     });
 
     test('rejects a calendar with more events than the cap, in the module error style', async () => {
