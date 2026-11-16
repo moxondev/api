@@ -2,7 +2,7 @@
 
 ## About
 
-`@moxon/api` bundles 40+ self-contained utilities: encryption, matrix math, SVG charts, CSV, JWT, TOTP, barcodes, fake data generation, text processing, validation and more. Install it and import — no configuration, no setup step, types included.
+`@moxon/api` bundles 50+ self-contained endpoints, each usable as a function or over HTTP: encryption, matrix math, SVG charts, CSV, JWT, TOTP, barcodes, fake data generation, text processing, validation and more. Install it and import — no configuration, no setup step, types included.
 
 It works two ways:
 
