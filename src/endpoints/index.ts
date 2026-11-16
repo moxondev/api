@@ -2,6 +2,7 @@ import address from './address.js';
 import algorithms from './algorithms.js';
 import base from './base.js';
 import caseConvert from './case.js';
+import color from './color.js';
 import convert from './convert.js';
 import credit from './credit.js';
 import cron from './cron.js';
@@ -14,6 +15,7 @@ import evaluate from './evaluate.js';
 import hash from './hash.js';
 import levenshtein, { legacy as levenshteinLegacy } from './levenshtein.js';
 import matrix from './matrix.js';
+import palette from './palette.js';
 import personal from './personal.js';
 import read from './read.js';
 import regex from './regex.js';
@@ -31,6 +33,7 @@ export const endpoints: Endpoint[] = [
     algorithms,
     base,
     caseConvert,
+    color,
     convert,
     credit,
     cron,
@@ -43,6 +46,7 @@ export const endpoints: Endpoint[] = [
     levenshtein,
     levenshteinLegacy,
     matrix,
+    palette,
     personal,
     read,
     regex,
